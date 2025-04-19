@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feedback & Contact - BookMyFlight</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-700 text-white min-h-screen">
+
+  <!-- Navbar -->
+  <header class="bg-gray-900 p-4 flex justify-between items-center">
+    <div class="space-x-6 text-lg">
+      <a href="index.html" class="hover:text-indigo-300">Home</a>
+      <a href="feedback.html" class="text-indigo-300 font-semibold">Feedback</a>
+      <a href="about.html" class="hover:text-indigo-300">About</a>
+    </div>
+    <button onclick="login()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded">Login</button>
+  </header>
+
+  <!-- Page Heading -->
+  <section class="text-center mt-10 px-4">
+    <h1 class="text-3xl font-bold">Feedback & Contact Us</h1>
+    <p class="mt-2 text-gray-200">We value your suggestions and questions. Get in touch with us below!</p>
+  </section>
+
+  <!-- Main Section -->
+  <section class="max-w-6xl mx-auto mt-10 grid md:grid-cols-2 gap-8 px-4">
+
+    <!-- Feedback Form -->
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-semibold mb-4 text-indigo-300">Send Feedback</h2>
+      <form id="feedbackForm" class="space-y-4">
+        <div>
+          <label class="block mb-1 text-sm">Your Name</label>
+          <input type="text" class="w-full px-3 py-2 rounded bg-gray-200 text-gray-800" required />
+        </div>
+        <div>
+          <label class="block mb-1 text-sm">Email Address</label>
+          <input type="email" class="w-full px-3 py-2 rounded bg-gray-200 text-gray-800" required />
+        </div>
+        <div>
+          <label class="block mb-1 text-sm">Feedback or Message</label>
+          <textarea rows="5" class="w-full px-3 py-2 rounded bg-gray-200 text-gray-800" required></textarea>
+        </div>
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 px-5 py-2 rounded text-white">Submit</button>
+      </form>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-semibold mb-4 text-indigo-300">Contact Us</h2>
+      <p class="mb-4 text-gray-300">
+        Got a question about your flight, booking status, or refund? Reach out to our support team anytime.
+      </p>
+      <ul class="text-gray-200 space-y-3 text-sm">
+        <li><strong>📍 Office Address:</strong><br/> BookMyFlight Pvt. Ltd.,<br/> Sector 62, Noida, Uttar Pradesh – 201309</li>
+        <li><strong>📞 Customer Care:</strong><br/> 1800-123-4567 (Toll-free)</li>
+        <li><strong>📧 Email:</strong><br/> support@bookmyflight.in</li>
+        <li><strong>🕐 Working Hours:</strong><br/> Mon - Sat, 9:00 AM to 7:00 PM</li>
+      </ul>
+      <div class="mt-6">
+        <p class="text-sm italic text-gray-400">For urgent travel issues, please call our helpline directly.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center p-6 mt-12 bg-gray-900 text-sm text-gray-300">
+    © 2025 BOOKMYFLIGHT | Making Indian skies friendlier ✈️
+  </footer>
+
+  <!-- Script -->
+  <script>
+    function login() {
+      const confirmLogin = confirm("Do you want to log in?");
+      if (confirmLogin) window.location.href = "login.html";
+    }
+
+    document.getElementById("feedbackForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      alert("Thank you for your feedback! We'll get back to you soon.");
+      this.reset();
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flight Results - BookMyFlight</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-700 text-white min-h-screen">
+
+  <!-- Navbar -->
+  <header class="bg-gray-900 p-4 flex justify-between items-center">
+    <div class="space-x-6 text-lg">
+      <a href="index.html" class="hover:text-indigo-300">Home</a>
+      <a href="feedback.html" class="hover:text-indigo-300">Feedback</a>
+      <a href="about.html" class="hover:text-indigo-300">About</a>
+    </div>
+    <button onclick="login()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded">Login</button>
+  </header>
+
+  <!-- Page Title -->
+  <section class="text-center mt-10">
+    <h1 class="text-3xl font-bold">Available Flights</h1>
+    <p class="mt-2 text-gray-200">Showing results for: <span id="routeInfo" class="text-indigo-300">Delhi to Mumbai</span></p>
+  </section>
+
+  <!-- Flights Table -->
+  <section class="flex justify-center mt-10 px-4">
+    <div class="overflow-auto w-full max-w-5xl">
+      <table class="w-full text-left bg-white text-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="p-4">Airline</th>
+            <th class="p-4">Departure</th>
+            <th class="p-4">Arrival</th>
+            <th class="p-4">Fare</th>
+            <th class="p-4">Book</th>
+          </tr>
+        </thead>
+        <tbody id="flightTable">
+          <!-- Example static data -->
+          <tr class="border-t border-gray-300">
+            <td class="p-4">IndiGo</td>
+            <td class="p-4">2025-04-22 10:30</td>
+            <td class="p-4">2025-04-22 12:45</td>
+            <td class="p-4 font-semibold">₹3,499</td>
+            <td class="p-4">
+              <button onclick="bookNow()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Book Now</button>
+            </td>
+          </tr>
+          <tr class="border-t border-gray-300">
+            <td class="p-4">Air India</td>
+            <td class="p-4">2025-04-22 13:00</td>
+            <td class="p-4">2025-04-22 15:15</td>
+            <td class="p-4 font-semibold">₹3,950</td>
+            <td class="p-4">
+              <button onclick="bookNow()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Book Now</button>
+            </td>
+          </tr>
+          <tr class="border-t border-gray-300">
+            <td class="p-4">Vistara</td>
+            <td class="p-4">2025-04-22 18:00</td>
+            <td class="p-4">2025-04-22 20:00</td>
+            <td class="p-4 font-semibold">₹4,200</td>
+            <td class="p-4">
+              <button onclick="bookNow()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Book Now</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center p-6 mt-10 bg-gray-900 text-sm text-gray-300">
+    © 2025 BOOKMYFLIGHT | Your trusted Indian flight partner ✈️
+  </footer>
+
+  <!-- Script -->
+  <script>
+    function login() {
+      const confirmLogin = confirm("Do you want to log in?");
+      if (confirmLogin) {
+        window.location.href = "login.html";
+      }
+    }
+
+    function bookNow() {
+      alert("You need to login to book your flight.");
+      window.location.href = "login.html";
+    }
+
+    // Optional: dynamically update route info from URL (basic simulation)
+    const params = new URLSearchParams(window.location.search);
+    const from = params.get("from") || "Delhi";
+    const to = params.get("to") || "Mumbai";
+    document.getElementById("routeInfo").innerText = `${from} to ${to}`;
+  </script>
+
+</body>
+</html>
