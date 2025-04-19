@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-gray-100 font-sans text-gray-900">
+
+  <!-- Admin Login Container -->
+  <div class="container mx-auto flex justify-center items-center min-h-screen">
+    <div class="card shadow-lg p-8 bg-white w-full sm:w-[400px] rounded-lg">
+
+      <!-- Admin Login Title -->
+      <h3 class="text-3xl font-semibold text-center text-indigo-600 mb-6">Admin Login</h3>
+
+      <!-- Admin Login Form -->
+      <form id="adminLoginForm">
+        <!-- Email Input -->
+        <div class="mb-4">
+          <label for="adminEmail" class="block text-lg text-gray-700">Email</label>
+          <input type="email" id="adminEmail" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required />
+        </div>
+
+        <!-- Password Input with Show/Hide -->
+        <div class="mb-4">
+          <label for="adminPassword" class="block text-lg text-gray-700">Password</label>
+          <div class="input-group relative">
+            <input type="password" id="adminPassword" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required />
+            <button type="button" class="absolute top-1/2 right-4 transform -translate-y-1/2" onclick="togglePassword('adminPassword')">👁️</button>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-lg w-full hover:bg-indigo-700 transition-all">Login as Admin</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center text-gray-500 mt-12">
+    <p>© 2025 TUXIMO | All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Toggle password visibility
+    function togglePassword(inputId) {
+      const input = document.getElementById(inputId);
+      const type = input.type === 'password' ? 'text' : 'password';
+      input.type = type;
+    }
+
+    // Admin login form submission
+    document.getElementById('adminLoginForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      alert("Logging in as Admin...");
+    });
+  </script>
+
+</body>
+</html>
