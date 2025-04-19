@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Your Flight</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <!-- Header -->
+  <header class="bg-indigo-700 text-white p-5 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <img src="logo.png" alt="BookMyFlight Logo" class="h-10 w-10 rounded-full shadow-md" />
+        <h1 class="text-2xl font-bold">BookMyFlight</h1>
+      </div>
+    </div>
+  </header>
+
+  <!-- Booking Form -->
+  <main class="max-w-xl mx-auto mt-12 bg-white p-8 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Passenger Information</h2>
+    <form onsubmit="event.preventDefault(); goToPayment();">
+      <!-- Name -->
+      <div class="mb-4">
+        <label for="name" class="block text-gray-700">Full Name</label>
+        <input type="text" id="name" name="name" class="w-full p-3 border border-gray-300 rounded-md" required>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <label for="email" class="block text-gray-700">Email</label>
+        <input type="email" id="email" name="email" class="w-full p-3 border border-gray-300 rounded-md" required>
+      </div>
+
+      <!-- Phone -->
+      <div class="mb-4">
+        <label for="phone" class="block text-gray-700">Phone Number</label>
+        <input type="tel" id="phone" name="phone" class="w-full p-3 border border-gray-300 rounded-md" required>
+      </div>
+
+      <!-- Seat Selection -->
+      <div class="mb-6">
+        <label for="seat" class="block text-gray-700">Select Seat</label>
+        <select id="seat" name="seat" class="w-full p-3 border border-gray-300 rounded-md" required>
+          <option value="14A">14A (Window)</option>
+          <option value="14B">14B (Middle)</option>
+          <option value="14C">14C (Aisle)</option>
+          <option value="15A">15A (Window)</option>
+          <option value="15C">15C (Aisle)</option>
+        </select>
+      </div>
+
+      <!-- Submit -->
+      <div class="text-center">
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-md shadow-md">
+          Proceed to Payment
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-sm text-gray-500 mt-16 p-4">
+    © 2025 BookMyFlight. All rights reserved.
+  </footer>
+
+  <script>
+    function goToPayment() {
+      window.location.href = "payment.html";
+    }
+  </script>
+
+</body>
+</html>

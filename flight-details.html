@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flight Ticket Details - BOOKMYFLIGHT</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .bg-dashboard {
+      background-image: url('https://images.unsplash.com/photo-1600047507282-71247b5c2c9b');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .bg-overlay {
+      background-color: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px);
+    }
+  </style>
+</head>
+<body class="bg-dashboard min-h-screen font-sans text-white">
+
+  <!-- Header -->
+  <header class="bg-black bg-opacity-80 p-5 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/airport.png" alt="Logo" class="h-10 w-10" />
+        <h1 class="text-2xl font-bold text-indigo-400">BOOKMYFLIGHT</h1>
+      </div>
+      <nav class="space-x-6 text-white">
+        <a href="index.html" class="hover:text-indigo-400 transition">Home</a>
+        <a href="feedback.html" class="hover:text-indigo-400 transition">Feedback</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto mt-12 p-6 max-w-3xl bg-overlay rounded-xl shadow-2xl">
+    <h2 class="text-3xl font-semibold text-indigo-300 mb-6 text-center">Flight Ticket Details</h2>
+
+    <div class="space-y-4 text-white text-lg">
+      <p><span class="font-semibold text-indigo-200">Passenger Name:</span> John Doe</p>
+      <p><span class="font-semibold text-indigo-200">Flight:</span> Aero Airways - AA203</p>
+      <p><span class="font-semibold text-indigo-200">From:</span> Trerdence</p>
+      <p><span class="font-semibold text-indigo-200">To:</span> Zhotrora</p>
+      <p><span class="font-semibold text-indigo-200">Departure:</span> 2025-04-25 22:14</p>
+      <p><span class="font-semibold text-indigo-200">Arrival:</span> 2025-04-25 23:58</p>
+      <p><span class="font-semibold text-indigo-200">Fare:</span> $370</p>
+    </div>
+
+    <div class="mt-10 text-center">
+      <button onclick="goToBookingForm()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-lg px-8 py-3 rounded-lg transition duration-300 ease-in-out shadow-md">
+        BookMyFlight
+      </button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-sm text-white mt-16 p-4 bg-black bg-opacity-60">
+    © 2025 BookMyFlight. All rights reserved.
+  </footer>
+
+  <!-- Script -->
+  <script>
+    function goToBookingForm() {
+      window.location.href = "booking-form.html";
+    }
+  </script>
+
+</body>
+</html>
+
+
+
