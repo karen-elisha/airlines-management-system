@@ -31,7 +31,7 @@
   <div class="flex items-center gap-6">
     <!-- Navigation Links -->
     <a href="feedback.html" class="text-white hover:text-indigo-400 transition duration-300 text-lg">Feedback</a>
-    <a href="about.html" class="text-white hover:text-indigo-400 transition duration-300 text-lg">About</a>
+    <a href="#explore" class="text-white hover:text-indigo-400 transition duration-300 text-lg">About</a> <!-- Updated link to use anchor -->
 
     <!-- Login Dropdown -->
     <div class="relative">
@@ -114,7 +114,7 @@
   </main>
 
   <!-- Explore Section -->
-  <section class="bg-gray-900 py-16 px-6">
+  <section id="explore" class="bg-gray-900 py-16 px-6">
     <div class="max-w-6xl mx-auto text-center">
       <h2 class="text-3xl font-bold text-indigo-400 mb-6">Explore New Places</h2>
       <div class="grid md:grid-cols-4 gap-6">
@@ -152,58 +152,6 @@
 
   <!-- Remaining Sections Stay Unchanged -->
 
-  <section class="bg-gray-800 py-16 px-6">
-    <div class="max-w-6xl mx-auto text-center">
-      <h2 class="text-2xl font-bold text-indigo-400 mb-6">Why Book with BOOKMYFLIGHT?</h2>
-      <div class="grid md:grid-cols-3 gap-8">
-        
-        <div class="bg-gray-700 p-6 rounded-xl shadow-lg">
-          <img src="https://img.icons8.com/color/96/airplane-take-off.png" class="mx-auto mb-4 w-24 h-24 object-contain" />
-          <h3 class="text-xl font-semibold mb-2">Top Airline Deals</h3>
-          <p class="text-gray-300">Find the best fares across multiple Indian airlines at one place.</p>
-        </div>
-  
-        <div class="bg-gray-700 p-6 rounded-xl shadow-lg">
-          <img src="https://assets.onecompiler.app/42xkraykw/43fa8c7cc/47784410d0788bcbc2af3e2bba23e1cd-double-bed-flat-icon.webp" class="mx-auto mb-4 w-24 h-24 object-contain" />
-          <h3 class="text-xl font-semibold mb-2">One-Stop Booking</h3>
-          <p class="text-gray-300">Book flights, hotels and holiday packages in just a few clicks.</p>
-        </div>
-  
-        <div class="bg-gray-700 p-6 rounded-xl shadow-lg">
-          <img src="https://img.icons8.com/color/96/technical-support.png" class="mx-auto mb-4 w-24 h-24 object-contain" />
-          <h3 class="text-xl font-semibold mb-2">24x7 Support</h3>
-          <p class="text-gray-300">Round-the-clock customer support for a smooth travel experience.</p>
-        </div>
-  
-      </div>
-    </div>
-  </section>
-  
-
-  <section class="bg-gray-900 py-16 px-6">
-    <div class="max-w-6xl mx-auto text-center">
-      <h2 class="text-2xl font-bold text-indigo-400 mb-6">Trending Routes</h2>
-      <div class="grid md:grid-cols-4 gap-6">
-        <div class="bg-gray-800 p-4 rounded-lg shadow">
-          <h4 class="text-white font-semibold">Delhi → Mumbai</h4>
-          <p class="text-gray-400">From ₹2,799</p>
-        </div>
-        <div class="bg-gray-800 p-4 rounded-lg shadow">
-          <h4 class="text-white font-semibold">Bangalore → Goa</h4>
-          <p class="text-gray-400">From ₹1,999</p>
-        </div>
-        <div class="bg-gray-800 p-4 rounded-lg shadow">
-          <h4 class="text-white font-semibold">Hyderabad → Chennai</h4>
-          <p class="text-gray-400">From ₹2,299</p>
-        </div>
-        <div class="bg-gray-800 p-4 rounded-lg shadow">
-          <h4 class="text-white font-semibold">Kolkata → Delhi</h4>
-          <p class="text-gray-400">From ₹2,999</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <footer class="text-center p-6 text-gray-300 bg-black bg-opacity-60">
     © 2025 BOOKMYFLIGHT | Built for Student Projects
   </footer>
@@ -231,18 +179,11 @@
     function swapLocations() {
       const from = document.getElementById("from");
       const to = document.getElementById("to");
+
       const temp = from.value;
       from.value = to.value;
       to.value = temp;
     }
-
-    window.addEventListener("click", function (e) {
-      const dropdown = document.getElementById("loginDropdown");
-      const button = e.target.closest("button");
-      if (!dropdown.contains(e.target) && (!button || button.innerText !== "Log In")) {
-        dropdown.classList.add("hidden");
-      }
-    });
   </script>
 </body>
 </html>
