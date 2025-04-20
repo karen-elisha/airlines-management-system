@@ -9,7 +9,7 @@
 </head>
 <body class="bg-gray-200 font-sans text-gray-900">
 
-  <!-- Dashboard with Home Link -->
+  <!-- Dashboard Header -->
   <header class="bg-gray-300 text-gray-900 p-6 shadow-md">
     <div class="container mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-3">
@@ -20,22 +20,22 @@
     </div>
   </header>
 
-  <!-- User Login Container -->
+  <!-- Login Container -->
   <div class="container mx-auto flex justify-center items-center min-h-screen mt-12">
     <div class="bg-white shadow-lg p-8 w-full sm:w-[400px] rounded-xl">
 
-      <!-- User Login Title -->
+      <!-- Title -->
       <h3 class="text-3xl font-semibold text-center text-indigo-600 mb-6">User Login</h3>
 
-      <!-- User Login Form -->
+      <!-- Login Form -->
       <form id="userLoginForm">
-        <!-- Email Input -->
+        <!-- Email -->
         <div class="mb-4">
           <label for="userEmail" class="block text-lg text-gray-700">Email</label>
           <input type="email" id="userEmail" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required />
         </div>
 
-        <!-- Password Input with Show/Hide -->
+        <!-- Password -->
         <div class="mb-4">
           <label for="userPassword" class="block text-lg text-gray-700">Password</label>
           <div class="relative">
@@ -44,36 +44,29 @@
           </div>
         </div>
 
-        <!-- Submit Button -->
+        <!-- Submit -->
         <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-lg w-full hover:bg-indigo-700 transition-all">Login as User</button>
 
-        <!-- Forgot Password Link -->
+        <!-- Links -->
         <div class="mt-4 text-center text-gray-600">
           <a href="#" onclick="showForgotPassword()" class="hover:text-indigo-600">Forgot Password?</a>
         </div>
-
-        <!-- Don't Have an Account -->
         <div class="mt-2 text-center text-gray-600">
           <span>Don't have an account?</span>
           <a href="signup.html" class="text-indigo-600 hover:underline font-medium">Sign Up</a>
         </div>
       </form>
 
-      <!-- Forgot Password Form (Initially Hidden) -->
+      <!-- Forgot Password Section -->
       <div id="forgotPasswordForm" class="hidden mt-8">
         <h3 class="text-2xl font-semibold text-center text-indigo-600 mb-6">Reset Password</h3>
         <form id="forgotPasswordRequestForm">
-          <!-- Email Input for Password Reset -->
           <div class="mb-4">
             <label for="resetEmail" class="block text-lg text-gray-700">Enter your email</label>
             <input type="email" id="resetEmail" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required />
           </div>
-
-          <!-- Submit Button for Reset -->
           <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-lg w-full hover:bg-indigo-700 transition-all">Reset Password</button>
         </form>
-
-        <!-- Go Back to Login -->
         <div class="mt-4 text-center text-gray-600">
           <a href="#" onclick="showLogin()" class="hover:text-indigo-600">Back to Login</a>
         </div>
@@ -92,29 +85,38 @@
     // Toggle password visibility
     function togglePassword(inputId) {
       const input = document.getElementById(inputId);
-      const type = input.type === 'password' ? 'text' : 'password';
-      input.type = type;
+      input.type = input.type === 'password' ? 'text' : 'password';
     }
 
-    // User login form submission
+    // Handle login form submission
     document.getElementById('userLoginForm').addEventListener('submit', function(event) {
       event.preventDefault();
-      alert("Logging in as User...");
+
+      const email = document.getElementById('userEmail').value;
+      const password = document.getElementById('userPassword').value;
+
+      // You can add real validation here
+      if (email && password) {
+        // Simulate login success and redirect
+        window.location.href = "user-dashboard.html";
+      } else {
+        alert("Please enter valid login details.");
+      }
     });
 
-    // Show Forgot Password Form
+    // Show forgot password form
     function showForgotPassword() {
       document.getElementById('forgotPasswordForm').classList.remove('hidden');
       document.getElementById('userLoginForm').classList.add('hidden');
     }
 
-    // Show Login Form again
+    // Back to login form
     function showLogin() {
       document.getElementById('forgotPasswordForm').classList.add('hidden');
       document.getElementById('userLoginForm').classList.remove('hidden');
     }
 
-    // Handle Forgot Password Form Submission
+    // Handle password reset form
     document.getElementById('forgotPasswordRequestForm').addEventListener('submit', function(event) {
       event.preventDefault();
       alert("Password reset link sent to your email!");

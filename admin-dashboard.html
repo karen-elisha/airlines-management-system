@@ -11,7 +11,6 @@
       background-image: url('https://images.unsplash.com/photo-1600047507282-71247b5c2c9b');
       background-size: cover;
       background-position: center;
-      background-repeat: no-repeat;
     }
     .bg-overlay {
       background-color: rgba(0, 0, 0, 0.6);
@@ -19,61 +18,52 @@
     }
   </style>
 </head>
-<body class="text-white font-sans antialiased bg-dashboard">
+<body class="text-white font-sans bg-dashboard">
   <div class="min-h-screen flex">
     <!-- Sidebar -->
     <aside class="w-64 bg-black bg-opacity-70 p-6 hidden md:block">
-      <div class="text-3xl font-semibold text-indigo-400 mb-8">
-        <img src="https://img.icons8.com/ios-filled/50/ffffff/airport.png" class="w-10 inline-block mr-2" />
-        BOOKMYFLIGHT
+      <div class="text-3xl font-semibold text-indigo-400 mb-8 flex items-center space-x-2">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/airport.png" class="w-10" />
+        <span>BOOKMYFLIGHT</span>
       </div>
       <nav class="space-y-4">
-        <a href="#" class="block text-white hover:text-indigo-400" onclick="showSection('dashboard')">Dashboard</a>
-        <a href="#" class="block text-white hover:text-indigo-400" onclick="showSection('bookings')">Bookings</a>
-        <a href="#" class="block text-white hover:text-indigo-400" onclick="showSection('users')">Users</a>
-        <a href="#" class="block text-white hover:text-indigo-400" onclick="showSection('reports')">Reports</a>
-        <a href="index.html" class="block text-white hover:text-red-400">Back to Homepage</a>
+        <a href="#" class="block hover:text-indigo-400" onclick="showSection('dashboard')">Dashboard</a>
+        <a href="#" class="block hover:text-indigo-400" onclick="showSection('bookings')">Bookings</a>
+        <a href="#" class="block hover:text-indigo-400" onclick="showSection('users')">Users</a>
+        <a href="#" class="block hover:text-indigo-400" onclick="showSection('reports')">Reports</a>
+        <a href="index.html" class="block hover:text-red-400">Back to Homepage</a>
       </nav>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-8 bg-overlay relative">
+    <main class="flex-1 p-8 bg-overlay relative overflow-y-auto">
       <!-- Dashboard Section -->
-      <section id="dashboardSection" class="absolute top-8 right-8 left-8 p-6 overflow-auto hidden">
+      <section id="dashboardSection" class="transition-opacity duration-300">
         <h1 class="text-3xl font-bold text-indigo-300 mb-6">Dashboard Overview</h1>
-
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- Flight Status Chart -->
-          <div class="bg-white bg-opacity-10 p-4 rounded-lg shadow-lg col-span-1">
-            <h2 class="text-lg font-semibold text-white mb-2">Flight Status Overview</h2>
-            <div class="h-52 w-full">
-              <canvas id="flightStatusChart" class="w-full h-full"></canvas>
-            </div>
+          <div class="bg-white bg-opacity-10 p-4 rounded-lg shadow col-span-1">
+            <h2 class="text-lg font-semibold mb-2">Flight Status Overview</h2>
+            <canvas id="flightStatusChart" class="h-52 w-full"></canvas>
           </div>
-
-          <!-- Airlines Box -->
-          <div class="bg-white bg-opacity-10 p-4 rounded-lg shadow-lg col-span-2">
-            <h2 class="text-lg font-semibold text-white mb-4">Manage Airlines</h2>
-            <form id="airlineForm" class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input type="text" id="airlineName" placeholder="Airline Name" class="p-2 rounded text-black" required />
-              <input type="text" id="airlineCode" placeholder="Airline Code" class="p-2 rounded text-black" required />
-              <button type="submit" class="bg-indigo-600 px-4 py-2 rounded">Add Airline</button>
+          <div class="bg-white bg-opacity-10 p-4 rounded-lg shadow col-span-2">
+            <h2 class="text-lg font-semibold mb-4">Manage Airlines</h2>
+            <form id="airlineForm" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <input type="text" id="airlineName" placeholder="Airline Name" class="p-2 rounded text-black" required>
+              <input type="text" id="airlineCode" placeholder="Airline Code" class="p-2 rounded text-black" required>
+              <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded">Add Airline</button>
             </form>
-
-            <ul id="airlineList" class="text-white space-y-2 border border-white border-opacity-20 rounded p-4 bg-black bg-opacity-20 max-h-64 overflow-y-auto">
-              <li class="flex justify-between items-center">IndiGo (6E) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
-              <li class="flex justify-between items-center">Air India (AI) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
-              <li class="flex justify-between items-center">SpiceJet (SG) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
-              <li class="flex justify-between items-center">Vistara (UK) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
-              <li class="flex justify-between items-center">Akasa Air (QP) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
+            <ul id="airlineList" class="space-y-2 max-h-64 overflow-y-auto border p-4 bg-black bg-opacity-20 rounded">
+              <li class="flex justify-between">IndiGo (6E) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
+              <li class="flex justify-between">Air India (AI) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
+              <li class="flex justify-between">SpiceJet (SG) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
+              <li class="flex justify-between">Vistara (UK) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
+              <li class="flex justify-between">Akasa Air (QP) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
             </ul>
           </div>
         </div>
-
-        <!-- Footer Card -->
-        <div class="mt-10 bg-white bg-opacity-10 p-4 rounded-lg shadow-lg">
-          <h2 class="text-lg font-semibold text-white mb-2">Today's Highlights</h2>
-          <ul class="list-disc list-inside text-white">
+        <div class="mt-10 bg-white bg-opacity-10 p-4 rounded-lg shadow">
+          <h2 class="text-lg font-semibold mb-2">Today's Highlights</h2>
+          <ul class="list-disc list-inside">
             <li>20+ flights scheduled across major metro cities</li>
             <li>Weather conditions good for smooth operations</li>
           </ul>
@@ -81,11 +71,10 @@
       </section>
 
       <!-- Bookings Section -->
-      <section id="bookingsSection" class="absolute top-8 right-8 left-8 p-6 overflow-auto hidden">
+      <section id="bookingsSection" class="hidden transition-opacity duration-300">
         <h1 class="text-3xl font-bold text-indigo-300 mb-6">Bookings Overview</h1>
-        <div class="bg-white bg-opacity-10 p-4 rounded-lg shadow-lg">
-          <h2 class="text-lg font-semibold text-white mb-4">Current Bookings</h2>
-          <table class="min-w-full table-auto text-white">
+        <div class="bg-white bg-opacity-10 p-4 rounded-lg shadow">
+          <table class="min-w-full table-auto">
             <thead>
               <tr>
                 <th class="py-2 px-4 border-b">Booking ID</th>
@@ -98,122 +87,130 @@
               <tr>
                 <td class="py-2 px-4 border-b">BK12345</td>
                 <td class="py-2 px-4 border-b">Amit Sharma</td>
-                <td class="py-2 px-4 border-b">IndiGo 
-::contentReference[oaicite:0]{index=0}
- 
-<td class="py-2 px-4 border-b">IndiGo 6E 301</td>
-<td class="py-2 px-4 border-b">Confirmed</td>
-</tr>
-<tr>
-<td class="py-2 px-4 border-b">BK12346</td>
-<td class="py-2 px-4 border-b">Ravi Mehra</td>
-<td class="py-2 px-4 border-b">Air India AI 202</td>
-<td class="py-2 px-4 border-b">Pending</td>
-</tr>
-<tr>
-<td class="py-2 px-4 border-b">BK12347</td>
-<td class="py-2 px-4 border-b">Simran Kaur</td>
-<td class="py-2 px-4 border-b">Vistara UK 407</td>
-<td class="py-2 px-4 border-b">Confirmed</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
+                <td class="py-2 px-4 border-b">IndiGo 6E 301</td>
+                <td class="py-2 px-4 border-b">Confirmed</td>
+              </tr>
+              <tr>
+                <td class="py-2 px-4 border-b">BK12346</td>
+                <td class="py-2 px-4 border-b">Ravi Mehra</td>
+                <td class="py-2 px-4 border-b">Air India AI 202</td>
+                <td class="py-2 px-4 border-b">Pending</td>
+              </tr>
+              <tr>
+                <td class="py-2 px-4 border-b">BK12347</td>
+                <td class="py-2 px-4 border-b">Simran Kaur</td>
+                <td class="py-2 px-4 border-b">Vistara UK 407</td>
+                <td class="py-2 px-4 border-b">Confirmed</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-<!-- Users Section -->
-<section id="usersSection" class="absolute top-8 right-8 left-8 p-6 overflow-auto hidden">
-<h1 class="text-3xl font-bold text-indigo-300 mb-6">User Management</h1>
-<div class="bg-white bg-opacity-10 p-4 rounded-lg shadow-lg">
-<h2 class="text-lg font-semibold text-white mb-4">Registered Users</h2>
-<table class="min-w-full table-auto text-white">
-<thead>
-<tr>
-<th class="py-2 px-4 border-b">User ID</th>
-<th class="py-2 px-4 border-b">Name</th>
-<th class="py-2 px-4 border-b">Email</th>
-<th class="py-2 px-4 border-b">Role</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="py-2 px-4 border-b">U101</td>
-<td class="py-2 px-4 border-b">John Doe</td>
-<td class="py-2 px-4 border-b">johndoe@email.com</td>
-<td class="py-2 px-4 border-b">Admin</td>
-</tr>
-<tr>
-<td class="py-2 px-4 border-b">U102</td>
-<td class="py-2 px-4 border-b">Jane Smith</td>
-<td class="py-2 px-4 border-b">janesmith@email.com</td>
-<td class="py-2 px-4 border-b">User</td>
-</tr>
-<tr>
-<td class="py-2 px-4 border-b">U103</td>
-<td class="py-2 px-4 border-b">Michael Brown</td>
-<td class="py-2 px-4 border-b">michaelb@email.com</td>
-<td class="py-2 px-4 border-b">User</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
+      <!-- Users Section -->
+      <section id="usersSection" class="hidden transition-opacity duration-300">
+        <h1 class="text-3xl font-bold text-indigo-300 mb-6">User Management</h1>
+        <div class="bg-white bg-opacity-10 p-4 rounded-lg shadow">
+          <table class="min-w-full table-auto">
+            <thead>
+              <tr>
+                <th class="py-2 px-4 border-b">User ID</th>
+                <th class="py-2 px-4 border-b">Name</th>
+                <th class="py-2 px-4 border-b">Email</th>
+                <th class="py-2 px-4 border-b">Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="py-2 px-4 border-b">U101</td>
+                <td class="py-2 px-4 border-b">John Doe</td>
+                <td class="py-2 px-4 border-b">johndoe@email.com</td>
+                <td class="py-2 px-4 border-b">Admin</td>
+              </tr>
+              <tr>
+                <td class="py-2 px-4 border-b">U102</td>
+                <td class="py-2 px-4 border-b">Jane Smith</td>
+                <td class="py-2 px-4 border-b">janesmith@email.com</td>
+                <td class="py-2 px-4 border-b">User</td>
+              </tr>
+              <tr>
+                <td class="py-2 px-4 border-b">U103</td>
+                <td class="py-2 px-4 border-b">Michael Brown</td>
+                <td class="py-2 px-4 border-b">michaelb@email.com</td>
+                <td class="py-2 px-4 border-b">User</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-<!-- Reports Section -->
-<section id="reportsSection" class="absolute top-8 right-8 left-8 p-6 overflow-auto hidden">
-<h1 class="text-3xl font-bold text-indigo-300 mb-6">Reports Overview</h1>
-<div class="bg-white bg-opacity-10 p-4 rounded-lg shadow-lg">
-<h2 class="text-lg font-semibold text-white mb-4">Flight Performance</h2>
-<canvas id="performanceChart" class="w-full h-64"></canvas>
-</div>
-</section>
-</main>
-</div>
+      <!-- Reports Section -->
+      <section id="reportsSection" class="hidden transition-opacity duration-300">
+        <h1 class="text-3xl font-bold text-indigo-300 mb-6">Reports Overview</h1>
+        <div class="bg-white bg-opacity-10 p-4 rounded-lg shadow">
+          <h2 class="text-lg font-semibold mb-4">Flight Performance</h2>
+          <canvas id="performanceChart" class="h-64 w-full"></canvas>
+        </div>
+      </section>
+    </main>
+  </div>
 
-<!-- Scripts for Chart.js -->
-<script>
-// Dashboard flight status chart
-var ctx = document.getElementById('flightStatusChart').getContext('2d');
-var flightStatusChart = new Chart(ctx, {
-type: 'pie',
-data: {
-labels: ['On Time', 'Delayed', 'Cancelled'],
-datasets: [{
-label: 'Flight Status',
-data: [70, 20, 10],
-backgroundColor: ['#4CAF50', '#FFEB3B', '#F44336'],
-borderWidth: 1
-}]
-}
-});
+  <script>
+    // Show Dashboard by default
+    window.onload = () => showSection('dashboard');
 
-// Performance chart
-var ctx2 = document.getElementById('performanceChart').getContext('2d');
-var performanceChart = new Chart(ctx2, {
-type: 'line',
-data: {
-labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-datasets: [{
-label: 'Flights Performance',
-data: [75, 80, 85, 90, 95, 100],
-borderColor: '#2196F3',
-backgroundColor: 'rgba(33, 150, 243, 0.1)',
-borderWidth: 2,
-fill: true
-}]
-}
-});
+    function showSection(section) {
+      const sections = document.querySelectorAll('main section');
+      sections.forEach(sec => sec.classList.add('hidden'));
+      document.getElementById(`${section}Section`).classList.remove('hidden');
+    }
 
-// Function to show specific section
-function showSection(section) {
-// Hide all sections
-const sections = document.querySelectorAll('section');
-sections.forEach((section) => section.classList.add('hidden'));
+    // Chart.js Flight Status Pie
+    const flightStatusChart = new Chart(document.getElementById('flightStatusChart'), {
+      type: 'pie',
+      data: {
+        labels: ['On Time', 'Delayed', 'Cancelled'],
+        datasets: [{
+          data: [70, 20, 10],
+          backgroundColor: ['#4CAF50', '#FFEB3B', '#F44336'],
+        }]
+      }
+    });
 
-// Show the selected section
-const selectedSection = document.getElementById(section + 'Section');
-selectedSection.classList.remove('hidden');
-}
-</script>
+    // Chart.js Flight Performance Line
+    const performanceChart = new Chart(document.getElementById('performanceChart'), {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Flights Performance',
+          data: [75, 80, 85, 90, 95, 100],
+          borderColor: '#2196F3',
+          backgroundColor: 'rgba(33, 150, 243, 0.2)',
+          fill: true,
+          tension: 0.3
+        }]
+      }
+    });
+
+    // Remove Airline Function
+    function removeAirline(button) {
+      button.parentElement.remove();
+    }
+
+    // Add Airline Form Handler
+    document.getElementById('airlineForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('airlineName').value.trim();
+      const code = document.getElementById('airlineCode').value.trim();
+      if (name && code) {
+        const li = document.createElement('li');
+        li.className = "flex justify-between";
+        li.innerHTML = `${name} (${code}) <button onclick="removeAirline(this)" class="text-red-400">Delete</button>`;
+        document.getElementById('airlineList').appendChild(li);
+        this.reset();
+      }
+    });
+  </script>
 </body>
 </html>
