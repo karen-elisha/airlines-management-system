@@ -20,6 +20,7 @@
       <a href="#" class="block hover:text-indigo-300" onclick="showDashboard()">Dashboard</a>
       <a href="#" class="block hover:text-indigo-300" onclick="showBookings()">Bookings</a>
       <a href="#" class="block hover:text-indigo-300" onclick="showProfile()">Profile</a>
+      <a href="#" class="block hover:text-indigo-300" onclick="showTickets()">Tickets</a>
       <a href="index.html" class="block text-red-400 hover:text-red-300">Back to Homepage</a>
     </nav>
   </aside>
@@ -120,6 +121,48 @@
       </div>
     </section>
 
+    <!-- Tickets Section -->
+    <section id="ticketsSection" class="hidden">
+      <h1 class="text-3xl font-bold text-indigo-300 mb-6">Flight Search</h1>
+
+      <!-- Search Form -->
+      <form action="flight-details.html" method="GET" class="space-y-4">
+        <div>
+          <label for="from" class="block font-semibold">From</label>
+          <select id="from" name="from" class="w-full p-2 bg-gray-700 text-white rounded-lg" required>
+            <option>Delhi</option>
+            <option>Mumbai</option>
+            <option>Bangalore</option>
+            <option>Hyderabad</option>
+            <option>Chennai</option>
+            <option>Kolkata</option>
+            <option>Ahmedabad</option>
+            <option>Pune</option>
+            <option>Goa</option>
+            <option>Jaipur</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="to" class="block font-semibold">To</label>
+          <select id="to" name="to" class="w-full p-2 bg-gray-700 text-white rounded-lg" required>
+            <option>Delhi</option>
+            <option>Mumbai</option>
+            <option>Bangalore</option>
+            <option>Hyderabad</option>
+            <option>Chennai</option>
+            <option>Kolkata</option>
+            <option>Ahmedabad</option>
+            <option>Pune</option>
+            <option>Goa</option>
+            <option>Jaipur</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-500">Search Flights</button>
+      </form>
+    </section>
+
     <!-- Profile Section -->
     <section id="profileSection" class="hidden">
       <h1 class="text-3xl font-bold text-indigo-300 mb-6">User Profile</h1>
@@ -163,10 +206,16 @@
     document.getElementById('profileSection').classList.remove('hidden');
   }
 
+  function showTickets() {
+    hideAllSections();
+    document.getElementById('ticketsSection').classList.remove('hidden');
+  }
+
   function hideAllSections() {
     document.getElementById('dashboardSection').classList.add('hidden');
     document.getElementById('bookingsSection').classList.add('hidden');
     document.getElementById('profileSection').classList.add('hidden');
+    document.getElementById('ticketsSection').classList.add('hidden');
   }
 
   // Optional dynamic user data
@@ -180,3 +229,4 @@
 
 </body>
 </html>
+
