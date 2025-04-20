@@ -12,48 +12,82 @@
   <header class="bg-indigo-700 text-white p-5 shadow-md">
     <div class="container mx-auto flex justify-between items-center">
       <div class="flex items-center space-x-3">
-        <img src="logo.png" alt="BookMyFlight Logo" class="h-10 w-10 rounded-full shadow-md" />
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/airport.png" alt="BookMyFlight Logo" class="h-10 w-10" />
         <h1 class="text-2xl font-bold">BookMyFlight</h1>
       </div>
     </div>
   </header>
 
   <!-- Booking Form -->
-  <main class="max-w-xl mx-auto mt-12 bg-white p-8 rounded-lg shadow-lg">
+  <main class="max-w-4xl mx-auto mt-12 bg-white p-8 rounded-lg shadow-lg">
     <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Passenger Information</h2>
     <form onsubmit="event.preventDefault(); goToPayment();">
-      <!-- Name -->
-      <div class="mb-4">
-        <label for="name" class="block text-gray-700">Full Name</label>
-        <input type="text" id="name" name="name" class="w-full p-3 border border-gray-300 rounded-md" required>
+
+      <div id="passenger-container">
+        <!-- Passenger Template -->
+        <div class="passenger-form mb-8 p-6 rounded-md shadow-sm border border-gray-200 bg-gray-50">
+          <h3 class="text-lg font-semibold text-indigo-700 mb-4">Passenger 1</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-gray-700">Title</label>
+              <select class="w-full p-2 border border-gray-300 rounded" name="title[]" required>
+                <option value="Mr">Mr</option>
+                <option value="Mrs">Mrs</option>
+                <option value="Ms">Ms</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-700">First Name</label>
+              <input type="text" name="firstName[]" class="w-full p-2 border border-gray-300 rounded" required>
+            </div>
+            <div>
+              <label class="block text-gray-700">Last Name</label>
+              <input type="text" name="lastName[]" class="w-full p-2 border border-gray-300 rounded" required>
+            </div>
+            <div>
+              <label class="block text-gray-700">Mobile Number</label>
+              <input type="tel" name="mobile[]" class="w-full p-2 border border-gray-300 rounded" required>
+            </div>
+            <div>
+              <label class="block text-gray-700">Date of Birth</label>
+              <input type="date" name="dob[]" class="w-full p-2 border border-gray-300 rounded" required>
+            </div>
+            <div>
+              <label class="block text-gray-700">Gender</label>
+              <select name="gender[]" class="w-full p-2 border border-gray-300 rounded" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-700">Flight Class</label>
+              <select name="class[]" class="w-full p-2 border border-gray-300 rounded" required>
+                <option value="Economy">Economy</option>
+                <option value="Business">Business</option>
+                <option value="First">First Class</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-700">Seat Number</label>
+              <input type="text" name="seat[]" placeholder="e.g. 12A" class="w-full p-2 border border-gray-300 rounded" required>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Email -->
-      <div class="mb-4">
-        <label for="email" class="block text-gray-700">Email</label>
-        <input type="email" id="email" name="email" class="w-full p-3 border border-gray-300 rounded-md" required>
-      </div>
-
-      <!-- Phone -->
-      <div class="mb-4">
-        <label for="phone" class="block text-gray-700">Phone Number</label>
-        <input type="tel" id="phone" name="phone" class="w-full p-3 border border-gray-300 rounded-md" required>
-      </div>
-
-      <!-- Seat Selection -->
-      <div class="mb-6">
-        <label for="seat" class="block text-gray-700">Select Seat</label>
-        <select id="seat" name="seat" class="w-full p-3 border border-gray-300 rounded-md" required>
-          <option value="14A">14A (Window)</option>
-          <option value="14B">14B (Middle)</option>
-          <option value="14C">14C (Aisle)</option>
-          <option value="15A">15A (Window)</option>
-          <option value="15C">15C (Aisle)</option>
-        </select>
+      <!-- Add Passenger Button -->
+      <div class="text-right mb-6">
+        <button type="button" onclick="addPassenger()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md shadow">
+          + Add Passenger
+        </button>
       </div>
 
       <!-- Submit -->
-      <div class="text-center">
+      <div class="flex justify-between">
+        <button type="button" onclick="history.back()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-md">
+          Back
+        </button>
         <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-md shadow-md">
           Proceed to Payment
         </button>
@@ -66,8 +100,25 @@
     © 2025 BookMyFlight. All rights reserved.
   </footer>
 
+  <!-- JavaScript to Clone Form -->
   <script>
+    let passengerCount = 1;
+
+    function addPassenger() {
+      passengerCount++;
+      const container = document.getElementById("passenger-container");
+      const newPassenger = container.firstElementChild.cloneNode(true);
+      newPassenger.querySelector("h3").textContent = `Passenger ${passengerCount}`;
+
+      // Clear all input fields and reset selects
+      newPassenger.querySelectorAll("input").forEach(input => input.value = "");
+      newPassenger.querySelectorAll("select").forEach(select => select.selectedIndex = 0);
+
+      container.appendChild(newPassenger);
+    }
+
     function goToPayment() {
+      alert(`Proceeding to payment with ${passengerCount} passenger(s).`);
       window.location.href = "payment.html";
     }
   </script>
