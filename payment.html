@@ -147,7 +147,8 @@
     }
 
     function closeTicket() {
-      document.getElementById('ticket-page').classList.add('hidden');
+      // Redirect to dashboard after ticket view
+      window.location.href = "user-dashboard.html"; // Change this if your dashboard file has a different name/path
     }
   </script>
 </body>
