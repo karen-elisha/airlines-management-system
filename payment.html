@@ -6,10 +6,10 @@
   <title>Choose Payment Method</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-gradient-to-r from-gray-100 to-gray-300 font-sans">
 
   <!-- Header -->
-  <header class="bg-indigo-700 text-white p-5 shadow-md">
+  <header class="bg-gray-800 text-white p-5 shadow-md">
     <div class="container mx-auto flex items-center space-x-3">
       <img src="https://img.icons8.com/ios-filled/50/ffffff/airport.png" alt="BookMyFlight Logo" class="h-10 w-10  shadow-md" />
       <h1 class="text-2xl font-bold">BookMyFlight</h1>
@@ -21,23 +21,23 @@
     <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Select a Payment Method</h2>
     
     <div class="space-y-4">
-      <!-- UPI -->
-      <button class="w-full p-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+      <!-- UPI Option -->
+      <button onclick="showUPI()" class="w-full p-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition transform hover:scale-105">
         Pay via UPI
       </button>
 
-      <!-- Card -->
-      <button class="w-full p-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
+      <!-- Card Option -->
+      <button onclick="showCard()" class="w-full p-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition transform hover:scale-105">
         Pay with Credit/Debit Card
       </button>
 
-      <!-- Net Banking -->
-      <button class="w-full p-4 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition">
+      <!-- Net Banking Option -->
+      <button onclick="showNetBanking()" class="w-full p-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition transform hover:scale-105">
         Net Banking
       </button>
 
-      <!-- Wallets -->
-      <button class="w-full p-4 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition">
+      <!-- Wallets Option -->
+      <button onclick="showWallets()" class="w-full p-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition transform hover:scale-105">
         Pay using Wallets
       </button>
     </div>
@@ -50,5 +50,100 @@
     © 2025 BookMyFlight. All rights reserved.
   </footer>
 
+  <!-- UPI Payment Page (Hidden Initially) -->
+  <div id="upi-page" class="hidden fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
+    <div class="bg-white p-8 rounded-lg w-1/2 text-center">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4">Scan to Pay via UPI</h3>
+      <img src="https://storage.googleapis.com/dara-c1b52.appspot.com/daras_ai/media/a3202e58-17ef-11ee-9a70-8e93953183bb/cleaned_qr.png" alt="UPI QR" class="mx-auto mb-6" width="200"/>
+      <button onclick="processUPI()" class="w-full p-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Process Payment</button>
+      <button onclick="closeUPI()" class="w-full p-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 mt-4">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Card Payment Page (Hidden Initially) -->
+  <div id="card-page" class="hidden fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
+    <div class="bg-white p-8 rounded-lg w-1/2 text-center">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4">Enter Card Details</h3>
+      <input type="text" placeholder="Card Number" class="w-full p-3 mb-4 border border-gray-300 rounded-md" />
+      <input type="text" placeholder="Card Holder Name" class="w-full p-3 mb-4 border border-gray-300 rounded-md" />
+      <input type="text" placeholder="Expiry Date (MM/YY)" class="w-full p-3 mb-4 border border-gray-300 rounded-md" />
+      <input type="text" placeholder="CVV" class="w-full p-3 mb-6 border border-gray-300 rounded-md" />
+      <button class="w-full p-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Pay Now</button>
+      <button onclick="closeCard()" class="w-full p-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 mt-4">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Net Banking Page (Hidden Initially) -->
+  <div id="net-banking-page" class="hidden fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
+    <div class="bg-white p-8 rounded-lg w-1/2 text-center">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4">Select Your Bank</h3>
+      <select class="w-full p-3 mb-4 border border-gray-300 rounded-md">
+        <option>State Bank of India</option>
+        <option>ICICI Bank</option>
+        <option>HDFC Bank</option>
+        <option>Axis Bank</option>
+        <option>Punjab National Bank</option>
+      </select>
+      <button class="w-full p-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Proceed to Payment</button>
+      <button onclick="closeNetBanking()" class="w-full p-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 mt-4">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Wallets Page (Hidden Initially) -->
+  <div id="wallets-page" class="hidden fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
+    <div class="bg-white p-8 rounded-lg w-1/2 text-center">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4">Choose Your Wallet</h3>
+      <select class="w-full p-3 mb-4 border border-gray-300 rounded-md">
+        <option>Paytm</option>
+        <option>PhonePe</option>
+        <option>Google Pay</option>
+        <option>Amazon Pay</option>
+      </select>
+      <button class="w-full p-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Proceed to Payment</button>
+      <button onclick="closeWallets()" class="w-full p-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 mt-4">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    // Functions to show the pages based on selected option
+    function showUPI() {
+      document.getElementById('upi-page').classList.remove('hidden');
+    }
+
+    function showCard() {
+      document.getElementById('card-page').classList.remove('hidden');
+    }
+
+    function showNetBanking() {
+      document.getElementById('net-banking-page').classList.remove('hidden');
+    }
+
+    function showWallets() {
+      document.getElementById('wallets-page').classList.remove('hidden');
+    }
+
+    // Functions to close the pages
+    function closeUPI() {
+      document.getElementById('upi-page').classList.add('hidden');
+    }
+
+    function closeCard() {
+      document.getElementById('card-page').classList.add('hidden');
+    }
+
+    function closeNetBanking() {
+      document.getElementById('net-banking-page').classList.add('hidden');
+    }
+
+    function closeWallets() {
+      document.getElementById('wallets-page').classList.add('hidden');
+    }
+
+    // Simulate UPI payment processing
+    function processUPI() {
+      alert('Payment Processed Successfully via UPI!');
+      closeUPI();
+    }
+  </script>
 </body>
 </html>
