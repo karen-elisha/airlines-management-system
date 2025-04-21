@@ -55,9 +55,7 @@
               <div>
                 <label for="id" class="block mb-1">Select Flight:</label>
                 <select name="id" id="id" class="w-full p-2 rounded text-black">
-                  <option value="1">AI 202</option>
-                  <option value="2">6E 340</option>
-                  <option value="3">SG 505</option>
+                  <!-- Flight options will be dynamically added here -->
                 </select>
               </div>
               <div>
@@ -80,21 +78,9 @@
               <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded">Add Airline</button>
             </form>
             <ul id="airlineList" class="space-y-2 max-h-64 overflow-y-auto border p-4 bg-black bg-opacity-20 rounded">
-              <li class="flex justify-between">IndiGo (6E) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
-              <li class="flex justify-between">Air India (AI) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
-              <li class="flex justify-between">SpiceJet (SG) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
-              <li class="flex justify-between">Vistara (UK) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
-              <li class="flex justify-between">Akasa Air (QP) <button onclick="removeAirline(this)" class="text-red-400">Delete</button></li>
+              <!-- Airlines will be listed here -->
             </ul>
           </div>
-        </div>
-
-        <div class="mt-10 bg-white bg-opacity-10 p-4 rounded-lg shadow">
-          <h2 class="text-lg font-semibold mb-2">Today's Highlights</h2>
-          <ul class="list-disc list-inside">
-            <li>20+ flights scheduled across major metro cities</li>
-            <li>Weather conditions good for smooth operations</li>
-          </ul>
         </div>
       </section>
 
@@ -184,7 +170,10 @@
   </div>
 
   <script>
-    window.onload = () => showSection('dashboard');
+    window.onload = () => {
+      showSection('dashboard');
+      loadFlightData(); // Load dynamic flight data
+    };
 
     function showSection(section) {
       const sections = document.querySelectorAll('main section');
@@ -192,48 +181,18 @@
       document.getElementById(`${section}Section`).classList.remove('hidden');
     }
 
-    const flightStatusChart = new Chart(document.getElementById('flightStatusChart'), {
-      type: 'pie',
-      data: {
-        labels: ['On Time', 'Delayed', 'Cancelled'],
-        datasets: [{
-          data: [70, 20, 10],
-          backgroundColor: ['#4CAF50', '#FFEB3B', '#F44336'],
-        }]
-      }
-    });
-
-    const performanceChart = new Chart(document.getElementById('performanceChart'), {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{
-          label: 'Flights Performance',
-          data: [75, 80, 85, 90, 95, 100],
-          borderColor: '#2196F3',
-          backgroundColor: 'rgba(33, 150, 243, 0.2)',
-          fill: true,
-          tension: 0.3
-        }]
-      }
-    });
-
-    function removeAirline(button) {
-      button.parentElement.remove();
-    }
-
-    document.getElementById('airlineForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const name = document.getElementById('airlineName').value.trim();
-      const code = document.getElementById('airlineCode').value.trim();
-      if (name && code) {
-        const li = document.createElement('li');
-        li.className = "flex justify-between";
-        li.innerHTML = `${name} (${code}) <button onclick="removeAirline(this)" class="text-red-400">Delete</button>`;
-        document.getElementById('airlineList').appendChild(li);
-        this.reset();
-      }
-    });
-  </script>
-</body>
-</html>
+    function loadFlightData() {
+      // Fetch flight data from PHP script
+      fetch('fetch_flights.php')
+        .then(response => response.json())
+        .then(flights => {
+          const flightSelect = document.getElementById('id');
+          flights.forEach(flight => {
+            const option = document.createElement('option');
+            option.value = flight.id;
+        option.text = `${flight.flight_code} - ${flight.flight_name} (${flight.status})`;
+        flightSelect.appendChild(option);
+      });
+    })
+    .catch(error => console.error('Error loading flight data:', error));
+}

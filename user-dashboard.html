@@ -226,7 +226,34 @@
   };
   document.getElementById('profileUsername').textContent = loggedUser.username;
   document.getElementById('profileEmail').textContent = loggedUser.email;
+  
+function fetchFlights() {
+  fetch('get_flights.php')
+    .then(response => response.json())
+    .then(data => {
+      const tbody = document.querySelector("#dashboardSection tbody");
+      tbody.innerHTML = ""; // Clear previous rows
+
+      data.forEach(flight => {
+        const row = `
+          <tr class="border-b border-gray-700">
+            <td>${flight.flight_number}</td>
+            <td>${flight.origin}</td>
+            <td>${flight.destination}</td>
+            <td>${flight.departure_time}</td>
+            <td class="${flight.status === 'On Time' ? 'text-green-400' : 'text-yellow-300'}">${flight.status}</td>
+          </tr>`;
+        tbody.innerHTML += row;
+      });
+    });
+}
+
+// Initial call + periodic refresh every 30 seconds
+fetchFlights();
+setInterval(fetchFlights, 30000);
 </script>
+
+
 
 </body>
 </html>
