@@ -6,27 +6,23 @@
   <title>My Flights - BookMyFlight</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-700 text-white min-h-screen">
+<body class="bg-gray-700 text-white min-h-screen flex flex-col">
 
   <!-- Navbar -->
   <header class="bg-gray-900 p-4 flex justify-between items-center">
-    <div class="space-x-6 text-lg">
-      <a href="index.html" class="hover:text-indigo-300">Home</a>
-      <a href="flight.html" class="hover:text-indigo-300">Flights</a>
-      <a href="myflights.html" class="text-indigo-300 font-semibold">My Flights</a>
-    </div>
-    <button onclick="logout()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded">Logout</button>
+    <a href="user-dashboard.html" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Back To Dashboard</a>
   </header>
 
-  <!-- Page Heading -->
-  <section class="text-center mt-10 px-4">
-    <h1 class="text-3xl font-bold">My Booked Flights</h1>
-    <p class="mt-2 text-gray-200">Here are your upcoming travel plans!</p>
-  </section>
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col items-center justify-center px-4">
+    <!-- Page Heading -->
+    <section class="text-center mb-8">
+      <h1 class="text-3xl font-bold">My Booked Flights</h1>
+      <p class="mt-2 text-gray-200">Here are your upcoming travel plans!</p>
+    </section>
 
-  <!-- Flights Table -->
-  <section class="flex justify-center mt-10 px-4">
-    <div class="overflow-auto w-full max-w-5xl">
+    <!-- Flights Table -->
+    <section class="overflow-auto w-full max-w-5xl">
       <table class="w-full text-left bg-white text-gray-800 rounded-lg shadow-lg overflow-hidden">
         <thead class="bg-gray-200">
           <tr>
@@ -38,7 +34,6 @@
           </tr>
         </thead>
         <tbody id="myFlightList">
-          <!-- Example static data -->
           <tr class="border-t border-gray-300">
             <td class="p-4">IndiGo</td>
             <td class="p-4">Delhi → Bengaluru</td>
@@ -68,12 +63,12 @@
           </tr>
         </tbody>
       </table>
-    </div>
-  </section>
+    </section>
+  </main>
 
   <!-- Footer -->
-  <footer class="text-center p-6 mt-12 bg-gray-900 text-sm text-gray-300">
-    © 2025 BOOKMYFLIGHT | Fly with confidence ✈️
+  <footer class="text-center p-6 bg-gray-900 text-sm text-gray-300">
+    © 2025 BOOKMYFLIGHT | Fly with confidence ✈
   </footer>
 
   <!-- Script -->
@@ -82,10 +77,6 @@
       alert("You have been logged out.");
       window.location.href = "index.html";
     }
-
-    // You can later fetch real user bookings from localStorage or API
-    // Example: document.getElementById("myFlightList").innerHTML = generateUserBookings()
   </script>
 
 </body>
-</html>
