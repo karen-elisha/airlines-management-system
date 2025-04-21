@@ -1,8 +1,8 @@
 <?php
 $host = "localhost";
 $user = "root";
-$pass = "";
-$dbname = "flight_booking";
+$pass = "root";
+$dbname = "airlines_db";
 
 // DB connection
 $conn = new mysqli($host, $user, $pass, $dbname);
