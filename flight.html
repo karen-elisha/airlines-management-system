@@ -13,7 +13,7 @@
     <div class="space-x-6 text-lg">
       <a href="index.html" class="text-white hover:text-indigo-400 transition">Home</a>
       <a href="feedback.html" class="text-white hover:text-indigo-400 transition">Feedback</a>
-      <a href="index.html#explore-new-places" class="text-white hover:text-indigo-400 transition">About</a> <!-- Updated to go to 'index.html#explore-new-places' -->
+      <a href="index.html#explore-new-places" class="text-white hover:text-indigo-400 transition">About</a>
     </div>
     <button onclick="login()" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition">Login</button>
   </header>
@@ -35,6 +35,7 @@
             <th class="p-4">Arrival</th>
             <th class="p-4">Status</th>
             <th class="p-4">Fare</th>
+            <th class="p-4">Class</th>
             <th class="p-4">Buy</th>
           </tr>
         </thead>
@@ -47,7 +48,10 @@
               <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Not yet Departed</span>
             </td>
             <td class="p-4 font-semibold">$370</td>
-            <td class="p-4" id="buyOption">
+            <td class="p-4">
+              <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Economy, Business</span>
+            </td>
+            <td class="p-4">
               <button onclick="redirectToLogin()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition">
                 Buy Now
               </button>

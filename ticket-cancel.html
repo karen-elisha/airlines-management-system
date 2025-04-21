@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ticket Cancellation - BookMyFlight</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-gray-100 to-gray-300 font-sans min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-gray-800 text-white p-5 shadow-md">
+    <div class="container mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/airport.png" alt="BookMyFlight Logo" class="h-10 w-10" />
+        <h1 class="text-2xl font-bold">BookMyFlight</h1>
+      </div>
+      <a href="user-dashboard.html" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-sm">Back to Dashboard</a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col justify-center items-center p-6">
+    <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
+      <img src="https://img.icons8.com/ios-filled/50/fa314a/cancel.png" class="mx-auto mb-4" alt="Cancelled Icon" />
+      <h2 class="text-2xl font-bold text-red-600 mb-4">Ticket Cancellation</h2>
+
+      <p class="mb-6 text-gray-700">Enter your ticket number to confirm cancellation and check refund status.</p>
+
+      <input id="ticketNumberInput" type="text" placeholder="Enter Ticket Number" class="w-full px-4 py-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+
+      <button onclick="confirmCancellation()" class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition">Confirm Cancellation</button>
+
+      <div id="result" class="mt-6 text-lg text-green-600 font-semibold hidden">
+        ✅ Your ticket has been successfully cancelled and refund has been initiated.
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function confirmCancellation() {
+      const input = document.getElementById("ticketNumberInput").value;
+      const result = document.getElementById("result");
+
+      if (input.trim() !== "") {
+        result.classList.remove("hidden");
+      } else {
+        alert("Please enter a valid ticket number.");
+      }
+    }
+  </script>
+
+</body>
+</html>
