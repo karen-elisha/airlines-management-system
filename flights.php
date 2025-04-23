@@ -1,3 +1,11 @@
+<?php
+session_start();
+$flights = $_SESSION['flights'] ?? [];
+$from = $_SESSION['from'] ?? 'Unknown';
+$to = $_SESSION['to'] ?? 'Unknown';
+$tickets = $_SESSION['tickets'] ?? 1;
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +29,9 @@
   <!-- Page Title -->
   <section class="text-center mt-16">
     <h1 class="text-4xl font-bold">FLIGHTS FROM:</h1>
-    <h2 class="text-2xl font-light mt-2">Trerdence to Zhotrora</h2>
+    <h2 class="text-2xl font-light mt-2">
+      <?php echo htmlspecialchars($from . ' to ' . $to); ?>
+    </h2>
   </section>
 
   <!-- Flights Table -->
@@ -40,23 +50,31 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="border-t border-gray-300">
-            <td class="p-4">Aero Airways</td>
-            <td class="p-4">2025-04-25 22:14</td>
-            <td class="p-4">2025-04-25 23:58</td>
-            <td class="p-4">
-              <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Not yet Departed</span>
-            </td>
-            <td class="p-4 font-semibold">$370</td>
-            <td class="p-4">
-              <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Economy, Business</span>
-            </td>
-            <td class="p-4">
-              <button onclick="redirectToLogin()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition">
-                Buy Now
-              </button>
-            </td>
-          </tr>
+          <?php if (count($flights) === 0): ?>
+            <tr>
+              <td colspan="7" class="text-center p-6 text-red-500">No flights found.</td>
+            </tr>
+          <?php else: ?>
+            <?php foreach ($flights as $flight): ?>
+              <tr class="border-t border-gray-300">
+                <td class="p-4"><?php echo htmlspecialchars($flight['airline']); ?></td>
+                <td class="p-4"><?php echo htmlspecialchars($flight['departure_date'] . ' ' . $flight['departure_time']); ?></td>
+                <td class="p-4"><?php echo htmlspecialchars($flight['arrival_date'] . ' ' . $flight['arrival_time']); ?></td>
+                <td class="p-4">
+                  <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Not yet Departed</span>
+                </td>
+                <td class="p-4 font-semibold">₹<?php echo htmlspecialchars($flight['price'] * $tickets); ?></td>
+                <td class="p-4">
+                  <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Economy</span>
+                </td>
+                <td class="p-4">
+                  <button onclick="window.location.href='login.html'" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition">
+                    Buy Now
+                  </button>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php endif; ?>
         </tbody>
       </table>
     </div>
@@ -67,17 +85,11 @@
     © 2025 BOOKMYFLIGHT | All rights reserved.
   </footer>
 
-  <!-- Scripts -->
   <script>
     function login() {
-      const confirmLogin = confirm("Do you want to log in?");
-      if (confirmLogin) {
+      if (confirm("Do you want to log in?")) {
         window.location.href = "login.html";
       }
-    }
-
-    function redirectToLogin() {
-      window.location.href = "login.html";
     }
   </script>
 </body>

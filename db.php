@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
 $user = "root";
-$password = "root";
+$password = "";
 $dbname = "airlines_db";
 
 $conn = new mysqli($host, $user, $password, $dbname);

@@ -5,7 +5,7 @@ session_start();
 // Database credentials
 $servername = "localhost";
 $username = "root"; // Replace with your DB username
-$password = "root"; // Replace with your DB password
+$password = ""; // Replace with your DB password
 $dbname = "airlines_db"; // Replace with your database name
 
 // Create connection

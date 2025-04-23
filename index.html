@@ -54,63 +54,86 @@
     <div class="relative z-10 bg-white text-gray-900 p-8 rounded-2xl shadow-2xl w-full max-w-3xl">
       <h1 class="text-3xl md:text-4xl font-bold mb-2 text-center text-indigo-600 tracking-wide">SEARCH FLIGHTS</h1>
       <p class="text-center text-gray-500 mb-8">Book cheap domestic from top airlines in India!</p>
-
       <!-- Booking Form -->
-      <div class="space-y-6">
-        <div class="flex items-center gap-6 justify-center">
-          <label class="text-lg">
-            <input type="radio" name="trip" checked class="mr-2" /> One Way
-          </label>
-          <label class="text-lg">
-            <input type="radio" name="trip" class="mr-2" /> Round Trip
-          </label>
-        </div>
+      <!-- Replace your current <div class="space-y-6"> to </div> with this updated form block -->
 
-        <div class="flex flex-col md:flex-row gap-6">
-          <select id="from" class="w-full p-4 border border-gray-300 rounded-lg shadow-lg">
-            <option value="">From</option>
-            <option>Delhi</option>
-            <option>Mumbai</option>
-            <option>Bangalore</option>
-            <option>Hyderabad</option>
-            <option>Chennai</option>
-            <option>Kolkata</option>
-            <option>Ahmedabad</option>
-            <option>Pune</option>
-            <option>Goa</option>
-            <option>Jaipur</option>
-          </select>
+<form action="search-flights.php" method="POST" class="space-y-6" onsubmit="return validateForm()">
+  <div class="flex items-center gap-6 justify-center">
+    <label class="text-lg">
+      <input type="radio" name="trip" value="oneway" checked class="mr-2" onchange="toggleReturnDate()" /> One Way
+    </label>
+    <label class="text-lg">
+      <input type="radio" name="trip" value="roundtrip" class="mr-2" onchange="toggleReturnDate()" /> Round Trip
+    </label>
+  </div>
 
-          <select id="to" class="w-full p-4 border border-gray-300 rounded-lg shadow-lg">
-            <option value="">To</option>
-            <option>Delhi</option>
-            <option>Mumbai</option>
-            <option>Bangalore</option>
-            <option>Hyderabad</option>
-            <option>Chennai</option>
-            <option>Kolkata</option>
-            <option>Ahmedabad</option>
-            <option>Pune</option>
-            <option>Goa</option>
-            <option>Jaipur</option>
-          </select>
+  <div class="flex flex-col md:flex-row gap-6">
+    <select name="from" id="from" class="w-full p-4 border border-gray-300 rounded-lg shadow-lg" required>
+      <option value="">From</option>
+      <option>Delhi</option>
+      <option>Mumbai</option>
+      <option>Bangalore</option>
+      <option>Hyderabad</option>
+      <option>Chennai</option>
+      <option>Kolkata</option>
+      <option>Ahmedabad</option>
+      <option>Pune</option>
+      <option>Goa</option>
+      <option>Jaipur</option>
+    </select>
 
-          <button onclick="swapLocations()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg mt-6 md:mt-0 flex items-center gap-2">
-            <span>Swap</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 17l6-6-6-6M20 7l-6 6 6 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
+    <select name="to" id="to" class="w-full p-4 border border-gray-300 rounded-lg shadow-lg" required>
+      <option value="">To</option>
+      <option>Delhi</option>
+      <option>Mumbai</option>
+      <option>Bangalore</option>
+      <option>Hyderabad</option>
+      <option>Chennai</option>
+      <option>Kolkata</option>
+      <option>Ahmedabad</option>
+      <option>Pune</option>
+      <option>Goa</option>
+      <option>Jaipur</option>
+    </select>
 
-        <div class="flex flex-col md:flex-row gap-6 mt-6">
-          <input type="date" class="w-full p-4 border border-gray-300 rounded-lg shadow-lg" />
-          <input type="date" class="w-full p-4 border border-gray-300 rounded-lg shadow-lg" />
-        </div>
+    <button type="button" onclick="swapLocations()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg mt-6 md:mt-0 flex items-center gap-2">
+      <span>Swap</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 17l6-6-6-6M20 7l-6 6 6 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
 
-        <div class="flex items-center justify-between mt-4 flex-wrap gap-4">
-          <label class="text-lg font-medium">Tickets:</label>
-          <input type="number" value="1" min="1" class="p-4 border border-gray-300 rounded-lg w-24 shadow-lg" />
-          <button onclick="searchFlights()" class="bg-indigo-600 text-white px-8 py-3 rounded-lg">Search</button>
-        </div>
+  <div class="flex flex-col md:flex-row gap-6 mt-6">
+    <input type="date" name="departure_date" class="w-full p-4 border border-gray-300 rounded-lg shadow-lg" required />
+    <input type="date" name="return_date" id="returnDate" class="w-full p-4 border border-gray-300 rounded-lg shadow-lg" disabled />
+  </div>
+
+  <div class="flex items-center justify-between mt-4 flex-wrap gap-4">
+    <label class="text-lg font-medium">Tickets:</label>
+    <input type="number" name="tickets" value="1" min="1" class="p-4 border border-gray-300 rounded-lg w-24 shadow-lg" required />
+    <button type="submit" class="bg-indigo-600 text-white px-8 py-3 rounded-lg">Search</button>
+  </div>
+</form>
+
+<!-- Add this to your script block -->
+
+<script>
+  function toggleReturnDate() {
+    const isRoundTrip = document.querySelector('input[name="trip"]:checked').value === 'roundtrip';
+    const returnDateInput = document.getElementById("returnDate");
+    returnDateInput.disabled = !isRoundTrip;
+    if (!isRoundTrip) returnDateInput.value = '';
+  }
+
+  function validateForm() {
+    const from = document.getElementById("from").value;
+    const to = document.getElementById("to").value;
+    if (from === to) {
+      alert("Please select different cities for 'From' and 'To'.");
+      return false;
+    }
+    return true;
+  }
+</script>
       </div>
     </div>
   </main>
