@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Airline Contacts | BookMyFlight</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --dark: #1e293b;
+      --light: #f8fafc;
+    }
+    body {
+      background-color: #f1f5f9;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .navbar {
+      background: var(--dark);
+      padding: 1rem 2rem;
+    }
+    .navbar-brand {
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .nav-link {
+      color: white;
+      transition: all 0.2s;
+    }
+    .nav-link:hover {
+      color: #93c5fd;
+    }
+    .card {
+      border: none;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    .table th {
+      background: var(--dark);
+      color: white;
+      font-weight: 500;
+    }
+    .table td {
+      vertical-align: middle;
+    }
+    .contact-link {
+      color: var(--primary);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .contact-link:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+    }
+    h1 {
+      font-weight: 600;
+      color: var(--dark);
+    }
+    .logo {
+      height: 32px;
+      width: 32px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-plane-departure logo"></i>
+        <span>BookMyFlight</span>
+      </a>
+      <div class="d-flex">
+        <a class="nav-link" href="index.php">
+          <i class="fas fa-home mr-1"></i> Home
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container my-5">
+    <div class="card p-4 p-md-5 mb-4">
+      <h1 class="text-center mb-4">
+        <i class="fas fa-phone-alt mr-2"></i> Airline Contact Information
+      </h1>
+      
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Airline</th>
+              <th scope="col">Website</th>
+              <th scope="col">Customer Care</th>
+              <th scope="col">Contact</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>IndiGo</td>
+              <td><a href="https://www.goindigo.in" class="contact-link" target="_blank">goindigo.in</a></td>
+              <td>0124-6173838</td>
+              <td><a href="https://www.goindigo.in/support.html" class="contact-link" target="_blank">Support <i class="fas fa-external-link-alt fa-xs"></i></a></td>
+            </tr>
+            <tr>
+              <th scope="row">2</th>
+              <td>Air India</td>
+              <td><a href="https://www.airindia.com" class="contact-link" target="_blank">airindia.com</a></td>
+              <td>1860-233-1407</td>
+              <td><a href="https://www.airindia.com/contact-us.htm" class="contact-link" target="_blank">Contact <i class="fas fa-external-link-alt fa-xs"></i></a></td>
+            </tr>
+            <tr>
+              <th scope="row">3</th>
+              <td>SpiceJet</td>
+              <td><a href="https://www.spicejet.com" class="contact-link" target="_blank">spicejet.com</a></td>
+              <td>0124-4983410</td>
+              <td><a href="https://www.spicejet.com/ContactUs.aspx" class="contact-link" target="_blank">Form <i class="fas fa-external-link-alt fa-xs"></i></a></td>
+            </tr>
+            <tr>
+              <th scope="row">4</th>
+              <td>Vistara</td>
+              <td><a href="https://www.airvistara.com" class="contact-link" target="_blank">airvistara.com</a></td>
+              <td>9289228888</td>
+              <td><a href="https://www.airvistara.com/in/en/contact-us" class="contact-link" target="_blank">Contact <i class="fas fa-external-link-alt fa-xs"></i></a></td>
+            </tr>
+            <tr>
+              <th scope="row">5</th>
+              <td>AirAsia India</td>
+              <td><a href="https://www.airasia.co.in" class="contact-link" target="_blank">airasia.co.in</a></td>
+              <td>080-46662222</td>
+              <td><a href="https://www.airasia.co.in/contact-us" class="contact-link" target="_blank">Support <i class="fas fa-external-link-alt fa-xs"></i></a></td>
+            </tr>
+            <tr>
+              <th scope="row">6</th>
+              <td>Akasa Air</td>
+              <td><a href="https://www.akasaair.com" class="contact-link" target="_blank">akasaair.com</a></td>
+              <td>9606112131</td>
+              <td><a href="https://www.akasaair.com/contact-us" class="contact-link" target="_blank">Contact <i class="fas fa-external-link-alt fa-xs"></i></a></td>
+            </tr>
+            <tr>
+              <th scope="row">7</th>
+              <td>Alliance Air</td>
+              <td><a href="https://www.allianceair.in" class="contact-link" target="_blank">allianceair.in</a></td>
+              <td>1800-103-0553</td>
+              <td><a href="https://www.allianceair.in/contact-us.aspx" class="contact-link" target="_blank">Form <i class="fas fa-external-link-alt fa-xs"></i></a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container text-center">
+      <p class="mb-0">© 2023 BookMyFlight. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

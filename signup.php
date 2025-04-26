@@ -1,3 +1,75 @@
+<?php
+session_start();
+
+// Check if user is already logged in
+/*if(isset($_SESSION['user_id'])) {
+    header("Location: user-dashboard.php");
+    exit();
+}*/
+
+// Include database connection
+require_once 'db_connect.php';
+
+$error = '';
+$success = '';
+
+// Process signup form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get form data
+    $full_name = trim($_POST['name']);
+    $email = trim($_POST['email']);
+    $phone = trim($_POST['phone']);
+    $password = $_POST['password'];
+    $terms = isset($_POST['terms']) ? true : false;
+    
+    // Validate input
+    if (empty($full_name) || empty($email) || empty($phone) || empty($password)) {
+        $error = "Please fill out all required fields";
+    } elseif (strlen($full_name) < 3) {
+        $error = "Name must be at least 3 characters";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Please enter a valid email address";
+    } elseif (!preg_match("/^[0-9]{10,15}$/", $phone)) {
+        $error = "Please enter a valid phone number (10-15 digits)";
+    } elseif (strlen($password) < 6 || !preg_match("/[0-9]/", $password)) {
+        $error = "Password must be at least 6 characters and contain at least 1 number";
+    } elseif (!$terms) {
+        $error = "You must agree to the terms and conditions";
+    } else {
+        // Check if email already exists
+        $stmt = $mysqli->prepare("SELECT user_id FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->store_result();
+        
+        if ($stmt->num_rows > 0) {
+            $error = "This email is already registered";
+        } else {
+            // Hash the password
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            
+            // Insert new user
+            $insert_stmt = $mysqli->prepare("INSERT INTO users (full_name, email, phone, password) VALUES (?, ?, ?, ?)");
+            $insert_stmt->bind_param("ssss", $full_name, $email, $phone, $hashed_password);
+            
+            if ($insert_stmt->execute()) {
+                $success = "Account created successfully! You can now log in.";
+                // Redirect to login after 2 seconds
+                header("Refresh: 2; URL=login.php");
+            } else {
+                $error = "Something went wrong. Please try again later.";
+            }
+            
+            $insert_stmt->close();
+        }
+        
+        $stmt->close();
+    }
+}
+
+$mysqli->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -88,8 +160,8 @@
         </div>
         <div class="hidden md:block">
           <div class="ml-10 flex items-baseline space-x-4">
-            <a href="#" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-primary-800">Home</a>
-            <a href="login-user.html" class="px-3 py-2 rounded-md text-sm font-medium bg-primary-600 hover:bg-primary-700">Login</a>
+            <a href="index.php" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-primary-800">Home</a>
+            <a href="login.php" class="px-3 py-2 rounded-md text-sm font-medium bg-primary-600 hover:bg-primary-700">Login</a>
           </div>
         </div>
       </div>
@@ -126,41 +198,49 @@
             <h2 class="text-2xl font-bold text-white">Create Your Account</h2>
           </div>
           
-          <form id="signupForm" action="signup.php" method="POST" class="p-6 space-y-6">
+          <?php if(!empty($error)): ?>
+            <div class="mt-4 mx-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <span class="block sm:inline"><?php echo $error; ?></span>
+            </div>
+          <?php endif; ?>
+          
+          <?php if(!empty($success)): ?>
+            <div class="mt-4 mx-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative" role="alert">
+              <span class="block sm:inline"><?php echo $success; ?></span>
+            </div>
+          <?php endif; ?>
+          
+          <form id="signupForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" class="p-6 space-y-6">
             <div>
               <label for="name" class="block text-sm font-medium text-secondary-700 mb-1">Full Name</label>
               <div class="relative">
-                <input type="text" id="name" name="name" class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition" placeholder="John Doe" />
+                <input type="text" id="name" name="name" class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition" placeholder="John Doe" required />
                 <i class="fas fa-user absolute right-3 top-3.5 text-secondary-400"></i>
               </div>
-              <div id="name-error" class="error-message hidden">Name must be at least 3 characters</div>
             </div>
 
             <div>
               <label for="email" class="block text-sm font-medium text-secondary-700 mb-1">Email Address</label>
               <div class="relative">
-                <input type="email" id="email" name="email" class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition" placeholder="john@example.com" />
+                <input type="email" id="email" name="email" class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition" placeholder="john@example.com" required />
                 <i class="fas fa-envelope absolute right-3 top-3.5 text-secondary-400"></i>
               </div>
-              <div id="email-error" class="error-message hidden">Please enter a valid email</div>
             </div>
 
             <div>
               <label for="phone" class="block text-sm font-medium text-secondary-700 mb-1">Phone Number</label>
               <div class="relative">
-                <input type="tel" id="phone" name="phone" class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition" placeholder="1234567890" />
+                <input type="tel" id="phone" name="phone" class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition" placeholder="1234567890" required />
                 <i class="fas fa-phone absolute right-3 top-3.5 text-secondary-400"></i>
               </div>
-              <div id="phone-error" class="error-message hidden">Please enter a valid phone number (10-15 digits)</div>
             </div>
 
             <div>
               <label for="password" class="block text-sm font-medium text-secondary-700 mb-1">Password</label>
               <div class="relative">
-                <input type="password" id="password" name="password" class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition pr-10" placeholder="••••••••" />
+                <input type="password" id="password" name="password" class="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition pr-10" placeholder="••••••••" required />
                 <i id="togglePassword" class="password-toggle fas fa-eye-slash" onclick="togglePasswordVisibility()"></i>
               </div>
-              <div id="password-error" class="error-message hidden">Password must be at least 6 characters</div>
               <div class="mt-2 text-xs text-secondary-500">
                 <p>Password must contain:</p>
                 <ul class="list-disc list-inside">
@@ -176,7 +256,6 @@
                 I agree to the <a href="#" class="text-primary-600 hover:underline">Terms of Service</a> and <a href="#" class="text-primary-600 hover:underline">Privacy Policy</a>
               </label>
             </div>
-            <div id="terms-error" class="error-message hidden">You must agree to the terms</div>
 
             <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center">
               <span id="submit-text">Create Account</span>
@@ -188,7 +267,7 @@
           
           <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200">
             <p class="text-center text-sm text-secondary-600">
-              Already have an account? <a href="login-user.html" class="font-medium text-primary-600 hover:underline">Sign in</a>
+              Already have an account? <a href="login.php" class="font-medium text-primary-600 hover:underline">Sign in</a>
             </p>
           </div>
         </div>
@@ -200,135 +279,33 @@
     // Form validation
     document.addEventListener('DOMContentLoaded', function() {
       const form = document.getElementById('signupForm');
-      const nameInput = document.getElementById('name');
-      const emailInput = document.getElementById('email');
-      const phoneInput = document.getElementById('phone');
       const passwordInput = document.getElementById('password');
-      const termsCheckbox = document.getElementById('terms');
       
-      // Real-time validation
-      nameInput.addEventListener('input', validateName);
-      emailInput.addEventListener('input', validateEmail);
-      phoneInput.addEventListener('input', validatePhone);
-      passwordInput.addEventListener('input', validatePassword);
-      termsCheckbox.addEventListener('change', validateTerms);
-      
-      // Form submission
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
+      // Password requirements validation
+      passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        const lengthElement = document.getElementById('length-requirement');
+        const numberElement = document.getElementById('number-requirement');
         
-        if (validateForm()) {
-          // Show loading state
+        // Validate length
+        const hasLength = password.length >= 6;
+        lengthElement.classList.toggle('text-secondary-400', !hasLength);
+        lengthElement.classList.toggle('text-green-500', hasLength);
+        
+        // Validate number
+        const hasNumber = /\d/.test(password);
+        numberElement.classList.toggle('text-secondary-400', !hasNumber);
+        numberElement.classList.toggle('text-green-500', hasNumber);
+      });
+      
+      // Show loading spinner on form submit
+      form.addEventListener('submit', function() {
+        if (this.checkValidity()) {
           document.getElementById('submit-text').classList.add('hidden');
           document.getElementById('submit-spinner').classList.remove('hidden');
-          
-          // Simulate form submission (replace with actual AJAX call)
-          setTimeout(() => {
-            alert('Account created successfully! Redirecting to dashboard...');
-            form.reset();
-            document.getElementById('submit-text').classList.remove('hidden');
-            document.getElementById('submit-spinner').classList.add('hidden');
-          }, 1500);
         }
       });
     });
-    
-    function validateName() {
-      const name = document.getElementById('name').value.trim();
-      const errorElement = document.getElementById('name-error');
-      
-      if (name.length < 3) {
-        nameInput.classList.add('input-error');
-        errorElement.classList.remove('hidden');
-        return false;
-      } else {
-        nameInput.classList.remove('input-error');
-        errorElement.classList.add('hidden');
-        return true;
-      }
-    }
-    
-    function validateEmail() {
-      const email = document.getElementById('email').value.trim();
-      const errorElement = document.getElementById('email-error');
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      
-      if (!emailPattern.test(email)) {
-        emailInput.classList.add('input-error');
-        errorElement.classList.remove('hidden');
-        return false;
-      } else {
-        emailInput.classList.remove('input-error');
-        errorElement.classList.add('hidden');
-        return true;
-      }
-    }
-    
-    function validatePhone() {
-      const phone = document.getElementById('phone').value.trim();
-      const errorElement = document.getElementById('phone-error');
-      const phonePattern = /^[0-9]{10,15}$/;
-      
-      if (!phonePattern.test(phone)) {
-        phoneInput.classList.add('input-error');
-        errorElement.classList.remove('hidden');
-        return false;
-      } else {
-        phoneInput.classList.remove('input-error');
-        errorElement.classList.add('hidden');
-        return true;
-      }
-    }
-    
-    function validatePassword() {
-      const password = document.getElementById('password').value;
-      const errorElement = document.getElementById('password-error');
-      const lengthElement = document.getElementById('length-requirement');
-      const numberElement = document.getElementById('number-requirement');
-      
-      // Validate length
-      const hasLength = password.length >= 6;
-      lengthElement.classList.toggle('text-secondary-400', !hasLength);
-      lengthElement.classList.toggle('text-green-500', hasLength);
-      
-      // Validate number
-      const hasNumber = /\d/.test(password);
-      numberElement.classList.toggle('text-secondary-400', !hasNumber);
-      numberElement.classList.toggle('text-green-500', hasNumber);
-      
-      if (password.length < 6) {
-        passwordInput.classList.add('input-error');
-        errorElement.classList.remove('hidden');
-        return false;
-      } else {
-        passwordInput.classList.remove('input-error');
-        errorElement.classList.add('hidden');
-        return true;
-      }
-    }
-    
-    function validateTerms() {
-      const termsChecked = document.getElementById('terms').checked;
-      const errorElement = document.getElementById('terms-error');
-      
-      if (!termsChecked) {
-        errorElement.classList.remove('hidden');
-        return false;
-      } else {
-        errorElement.classList.add('hidden');
-        return true;
-      }
-    }
-    
-    function validateForm() {
-      const isNameValid = validateName();
-      const isEmailValid = validateEmail();
-      const isPhoneValid = validatePhone();
-      const isPasswordValid = validatePassword();
-      const isTermsValid = validateTerms();
-      
-      return isNameValid && isEmailValid && isPhoneValid && isPasswordValid && isTermsValid;
-    }
     
     function togglePasswordVisibility() {
       const passwordInput = document.getElementById('password');

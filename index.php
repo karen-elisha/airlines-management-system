@@ -1,3 +1,34 @@
+<?php
+// Start session for user management
+session_start();
+
+// Database connection - make sure db_connect.php uses MySQLi
+require_once 'db_connect.php';
+
+// Fetch airports for dropdowns
+$query = "SELECT city, airport_code FROM airports ORDER BY city";
+
+// Execute query
+$result = $mysqli->query($query);
+
+// Check for errors
+if (!$result) {
+    die("Database error: " . $mysqli->error);
+}
+
+// Fetch results
+$airports = [];
+while ($row = $result->fetch_assoc()) {
+    $airports[] = $row;
+}
+
+// Free result set
+$result->free();
+
+// Set current date as minimum date for departure
+$today = date('Y-m-d');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,13 +67,15 @@
       <a href="feedback.html" class="hover:text-indigo-300 transition">Feedback</a>
       <a href="#destinations" class="hover:text-indigo-300 transition">Destinations</a>
       <div class="relative">
-        <button onclick="toggleDropdown()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md flex items-center">
-          <i class="fas fa-user-circle mr-2"></i> Login
-        </button>
-        <div id="loginDropdown" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-xl hidden">
-          <a href="login-user.html" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-user mr-2"></i>User Login</a>
-          <a href="login-admin.html" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-lock mr-2"></i>Admin Login</a>
-        </div>
+        
+          <button onclick="toggleDropdown()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md flex items-center">
+            <i class="fas fa-user-circle mr-2"></i> Login
+          </button>
+          <div id="loginDropdown" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-xl hidden">
+            <a href="login-user.php" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-user mr-2"></i>User Login</a>
+            <a href="login-admin.php" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-lock mr-2"></i>Admin Login</a>
+          </div>
+       
       </div>
     </nav>
     <button class="md:hidden text-2xl" onclick="toggleMobileMenu()">
@@ -52,12 +85,18 @@
   <!-- Mobile Menu -->
   <div id="mobileMenu" class="hidden md:hidden bg-indigo-800 px-6 py-4">
     <div class="flex flex-col space-y-4">
-      <a href="airline-details.html" class="text-white hover:text-indigo-300">Airlines</a>
-      <a href="feedback.html" class="text-white hover:text-indigo-300">Feedback</a>
+      <a href="airline-details.php" class="text-white hover:text-indigo-300">Airlines</a>
+      <a href="feedback.php" class="text-white hover:text-indigo-300">Feedback</a>
       <a href="#destinations" class="text-white hover:text-indigo-300">Destinations</a>
       <div class="pt-2 border-t border-indigo-700">
-        <a href="login-user.html" class="block py-2 text-white hover:text-indigo-300"><i class="fas fa-user mr-2"></i>User Login</a>
-        <a href="login-admin.html" class="block py-2 text-white hover:text-indigo-300"><i class="fas fa-lock mr-2"></i>Admin Login</a>
+        <?php if(isset($_SESSION['user_id'])): ?>
+          <a href="profile.php" class="block py-2 text-white hover:text-indigo-300"><i class="fas fa-id-card mr-2"></i>My Profile</a>
+          <a href="my-bookings.php" class="block py-2 text-white hover:text-indigo-300"><i class="fas fa-ticket-alt mr-2"></i>My Bookings</a>
+          <a href="logout.php" class="block py-2 text-white hover:text-indigo-300"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+        <?php else: ?>
+          <a href="login-user.php" class="block py-2 text-white hover:text-indigo-300"><i class="fas fa-user mr-2"></i>User Login</a>
+          <a href="login-admin.php" class="block py-2 text-white hover:text-indigo-300"><i class="fas fa-lock mr-2"></i>Admin Login</a>
+        <?php endif; ?>
       </div>
     </div>
   </div>
@@ -89,11 +128,9 @@
             <label class="block text-gray-700 mb-1">From</label>
             <select name="from" id="from" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
               <option value="">Select City</option>
-              <option>Delhi (DEL)</option>
-              <option>Mumbai (BOM)</option>
-              <option>Bangalore (BLR)</option>
-              <option>Hyderabad (HYD)</option>
-              <option>Chennai (MAA)</option>
+              <?php foreach($airports as $airport): ?>
+                <option value="<?php echo $airport['airport_code']; ?>"><?php echo $airport['city'] . ' (' . $airport['airport_code'] . ')'; ?></option>
+              <?php endforeach; ?>
             </select>
           </div>
 
@@ -105,11 +142,9 @@
             <label class="block text-gray-700 mb-1">To</label>
             <select name="to" id="to" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
               <option value="">Select City</option>
-              <option>Delhi (DEL)</option>
-              <option>Mumbai (BOM)</option>
-              <option>Bangalore (BLR)</option>
-              <option>Hyderabad (HYD)</option>
-              <option>Chennai (MAA)</option>
+              <?php foreach($airports as $airport): ?>
+                <option value="<?php echo $airport['airport_code']; ?>"><?php echo $airport['city'] . ' (' . $airport['airport_code'] . ')'; ?></option>
+              <?php endforeach; ?>
             </select>
           </div>
         </div>
@@ -117,11 +152,11 @@
         <div class="flex flex-col md:flex-row gap-4">
           <div class="flex-1">
             <label class="block text-gray-700 mb-1">Departure</label>
-            <input type="date" name="departure_date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+            <input type="date" name="departure_date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" min="<?php echo $today; ?>" required>
           </div>
           <div class="flex-1">
             <label class="block text-gray-700 mb-1">Return</label>
-            <input type="date" name="return_date" id="returnDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-100" disabled>
+            <input type="date" name="return_date" id="returnDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-100" min="<?php echo $today; ?>" disabled>
           </div>
         </div>
 
@@ -132,7 +167,7 @@
               <button type="button" onclick="adjustPassengers(-1)" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">
                 <i class="fas fa-minus"></i>
               </button>
-              <input type="number" name="tickets" value="1" min="1" class="w-16 text-center border-0 focus:ring-0">
+              <input type="number" name="tickets" value="1" min="1" max="9" class="w-16 text-center border-0 focus:ring-0">
               <button type="button" onclick="adjustPassengers(1)" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">
                 <i class="fas fa-plus"></i>
               </button>
@@ -312,19 +347,19 @@
       <div>
         <h4 class="font-semibold mb-4">Quick Links</h4>
         <ul class="space-y-2">
-          <li><a href="#" class="text-indigo-200 hover:text-white">Home</a></li>
-          <li><a href="airline-details.html" class="text-indigo-200 hover:text-white">Airlines</a></li>
-          <li><a href="feedback.html" class="text-indigo-200 hover:text-white">Feedback</a></li>
+          <li><a href="index.php" class="text-indigo-200 hover:text-white">Home</a></li>
+          <li><a href="airline-details.php" class="text-indigo-200 hover:text-white">Airlines</a></li>
+          <li><a href="feedback.php" class="text-indigo-200 hover:text-white">Feedback</a></li>
           <li><a href="#destinations" class="text-indigo-200 hover:text-white">Destinations</a></li>
         </ul>
       </div>
       <div>
         <h4 class="font-semibold mb-4">Support</h4>
         <ul class="space-y-2">
-          <li><a href="#" class="text-indigo-200 hover:text-white">Help Center</a></li>
-          <li><a href="#" class="text-indigo-200 hover:text-white">Contact Us</a></li>
-          <li><a href="#" class="text-indigo-200 hover:text-white">Privacy Policy</a></li>
-          <li><a href="#" class="text-indigo-200 hover:text-white">Terms of Service</a></li>
+          <li><a href="help.php" class="text-indigo-200 hover:text-white">Help Center</a></li>
+          <li><a href="contact.php" class="text-indigo-200 hover:text-white">Contact Us</a></li>
+          <li><a href="privacy.php" class="text-indigo-200 hover:text-white">Privacy Policy</a></li>
+          <li><a href="terms.php" class="text-indigo-200 hover:text-white">Terms of Service</a></li>
         </ul>
       </div>
       <div>
@@ -337,12 +372,12 @@
         </div>
         <div class="mt-4">
           <p class="text-indigo-200">Subscribe to our newsletter</p>
-          <div class="flex mt-2">
-            <input type="email" placeholder="Your email" class="px-3 py-2 rounded-l text-gray-800 w-full">
-            <button class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-r">
+          <form action="subscribe.php" method="POST" class="flex mt-2">
+            <input type="email" name="email" placeholder="Your email" class="px-3 py-2 rounded-l text-gray-800 w-full" required>
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-r">
               <i class="fas fa-paper-plane"></i>
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </div>
