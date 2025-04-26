@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flight Ticket | BOOKMYFLIGHT</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .ticket-card {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-900 font-sans text-gray-100 flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-gray-800/90 py-4 shadow-lg">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fas fa-plane-departure text-indigo-400 text-2xl"></i>
+        <h1 class="text-xl font-bold text-indigo-400">BOOKMYFLIGHT</h1>
+      </div>
+      <nav class="flex space-x-4">
+        <a href="index.html" class="hover:text-indigo-300 transition">Home</a>
+        <a href="feedback.html" class="hover:text-indigo-300 transition">Feedback</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto px-4 py-8 flex items-center justify-center">
+    <div class="ticket-card rounded-xl shadow-2xl p-8 w-full max-w-2xl">
+      <div class="text-center mb-8">
+        <h2 class="text-2xl font-bold text-indigo-300">Your Flight Ticket</h2>
+        <div class="w-20 h-1 bg-indigo-500 mx-auto mt-3"></div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6 mb-8">
+        <div class="space-y-1">
+          <p class="text-sm text-indigo-300">Passenger</p>
+          <p class="text-lg font-medium">John Doe</p>
+        </div>
+        <div class="space-y-1">
+          <p class="text-sm text-indigo-300">Flight</p>
+          <p class="text-lg font-medium">AA203 - Aero Airways</p>
+        </div>
+        <div class="space-y-1">
+          <p class="text-sm text-indigo-300">From</p>
+          <p class="text-lg font-medium">Trerdence (TRD)</p>
+        </div>
+        <div class="space-y-1">
+          <p class="text-sm text-indigo-300">To</p>
+          <p class="text-lg font-medium">Zhotrora (ZTR)</p>
+        </div>
+        <div class="space-y-1">
+          <p class="text-sm text-indigo-300">Departure</p>
+          <p class="text-lg font-medium">25 Apr 2025, 22:14</p>
+        </div>
+        <div class="space-y-1">
+          <p class="text-sm text-indigo-300">Arrival</p>
+          <p class="text-lg font-medium">25 Apr 2025, 23:58</p>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center border-t border-gray-700 pt-6">
+        <div class="space-y-1">
+          <p class="text-sm text-indigo-300">Total Fare</p>
+          <p class="text-2xl font-bold">$370</p>
+        </div>
+        <button onclick="goToBookingForm()" 
+          class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg transition-all hover:shadow-lg">
+          Confirm Booking
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800/90 py-4 text-center text-sm">
+    <p>© 2025 BOOKMYFLIGHT. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function goToBookingForm() {
+      window.location.href = "booking-forms.html";
+    }
+  </script>
+</body>
+</html>

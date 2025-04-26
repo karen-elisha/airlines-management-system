@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Airlines Dashboard | BOOKMYFLIGHT</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    .sidebar-link.active {
+      @apply text-indigo-400 bg-gray-700;
+    }
+    .status-on-time { @apply text-green-400; }
+    .status-delayed { @apply text-yellow-300; }
+    .status-cancelled { @apply text-red-400; }
+    .card-hover { @apply transition-transform duration-300 hover:scale-[1.02]; }
+    
+    /* Added styles for dropdowns */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 0.5rem;
+      z-index: 50;
+    }
+    .dropdown-menu.show {
+      display: block;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white font-sans antialiased">
+
+<div class="min-h-screen flex">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-800 p-6 hidden md:block border-r border-gray-700">
+    <div class="text-2xl font-bold text-indigo-400 mb-8 flex items-center">
+      <i class="fa-solid fa-plane-departure mr-3"></i>BOOKMYFLIGHT
+    </div>
+    <nav class="space-y-2">
+      <a href="#" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-700" onclick="showSection('dashboard')">
+        <i class="fas fa-chart-line mr-3 w-5 text-center"></i> Dashboard
+      </a>
+      <a href="#" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-700" onclick="showSection('bookings')">
+        <i class="fas fa-suitcase-rolling mr-3 w-5 text-center"></i> Bookings
+      </a>
+      <a href="#" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-700" onclick="showSection('tickets')">
+        <i class="fas fa-ticket-alt mr-3 w-5 text-center"></i> Tickets
+      </a>
+      <a href="#" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-700" onclick="showSection('profile')">
+        <i class="fas fa-user-circle mr-3 w-5 text-center"></i> Profile
+      </a>
+      <a href="myflight.html" class="flex items-center p-3 rounded-lg hover:bg-gray-700">
+        <i class="fas fa-plane mr-3 w-5 text-center"></i> My Flights
+      </a>
+      <a href="index.html" class="flex items-center p-3 rounded-lg text-red-400 hover:bg-gray-700 mt-8">
+        <i class="fas fa-sign-out-alt mr-3 w-5 text-center"></i> Back to Home
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-6 overflow-y-auto bg-gray-950">
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8">
+      <h1 class="text-2xl font-bold text-indigo-300" id="pageTitle">Dashboard</h1>
+      <div class="flex items-center space-x-4">
+        <!-- Notification Icon and Dropdown -->
+        <div class="relative">
+          <i class="fas fa-bell text-gray-400 hover:text-white cursor-pointer" id="notificationIcon"></i>
+          <span class="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500"></span>
+          
+          <!-- Notification Dropdown -->
+          <div id="notificationDropdown" class="dropdown-menu bg-gray-800 rounded-lg shadow-lg w-72">
+            <div class="p-3 border-b border-gray-700">
+              <div class="flex justify-between items-center">
+                <h3 class="font-medium">Notifications</h3>
+                <span class="text-xs bg-red-500 text-white px-2 py-1 rounded-full">3 new</span>
+              </div>
+            </div>
+            <div class="divide-y divide-gray-700 max-h-80 overflow-y-auto">
+              <div class="p-3 hover:bg-gray-700">
+                <p class="text-sm font-medium">Flight status update</p>
+                <p class="text-xs text-gray-400">Your flight AI 202 is scheduled to depart on time.</p>
+                <p class="text-xs text-gray-500 mt-1">10 min ago</p>
+              </div>
+              <div class="p-3 hover:bg-gray-700">
+                <p class="text-sm font-medium">Special offer</p>
+                <p class="text-xs text-gray-400">Get 15% off on your next international booking!</p>
+                <p class="text-xs text-gray-500 mt-1">2 hours ago</p>
+              </div>
+              <div class="p-3 hover:bg-gray-700">
+                <p class="text-sm font-medium">Check-in reminder</p>
+                <p class="text-xs text-gray-400">Web check-in is now open for your flight to Chennai.</p>
+                <p class="text-xs text-gray-500 mt-1">Yesterday</p>
+              </div>
+            </div>
+            <div class="p-2 border-t border-gray-700 text-center">
+              <a href="#" class="text-xs text-indigo-400 hover:text-indigo-300">View all notifications</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Profile Icon and Dropdown -->
+        <div class="relative">
+          <div class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center cursor-pointer" id="profileIcon">
+            <span id="userInitial">R</span>
+          </div>
+          
+          <!-- Profile Dropdown -->
+          <div id="profileDropdown" class="dropdown-menu bg-gray-800 rounded-lg shadow-lg w-64">
+            <div class="p-3 border-b border-gray-700">
+              <h3 class="font-medium">Rahul Sharma</h3>
+              <p class="text-xs text-gray-400">rahul.sharma@example.com</p>
+            </div>
+            <div class="py-1">
+              <a href="#" onclick="showSection('profile'); closeAllDropdowns();" class="block px-4 py-2 text-sm hover:bg-gray-700">
+                <i class="fas fa-user-circle mr-2"></i> My Profile
+              </a>
+              <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">
+                <i class="fas fa-cog mr-2"></i> Settings
+              </a>
+              <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">
+                <i class="fas fa-question-circle mr-2"></i> Help & Support
+              </a>
+            </div>
+            <div class="border-t border-gray-700 py-1">
+              <a href="index.html" class="block px-4 py-2 text-sm text-red-400 hover:bg-gray-700">
+                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="section-content">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg card-hover">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-gray-400">Total Flights</p>
+              <p class="text-3xl font-bold text-green-400">178</p>
+            </div>
+            <i class="fas fa-plane text-green-400 text-xl"></i>
+          </div>
+          <p class="text-sm text-gray-400 mt-2">+12% from yesterday</p>
+        </div>
+        
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg card-hover">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-gray-400">Active Bookings</p>
+              <p class="text-3xl font-bold text-yellow-300">84</p>
+            </div>
+            <i class="fas fa-suitcase text-yellow-300 text-xl"></i>
+          </div>
+          <p class="text-sm text-gray-400 mt-2">5 new today</p>
+        </div>
+        
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg card-hover">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-gray-400">On-Time Rate</p>
+              <p class="text-3xl font-bold text-blue-400">91%</p>
+            </div>
+            <i class="fas fa-clock text-blue-400 text-xl"></i>
+          </div>
+          <p class="text-sm text-gray-400 mt-2">Industry avg: 85%</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg lg:col-span-2">
+          <h2 class="text-xl font-semibold mb-4">Flight Performance</h2>
+          <canvas id="performanceChart" height="250"></canvas>
+        </div>
+        
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+          <h2 class="text-xl font-semibold mb-4">Top Routes</h2>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <span class="bg-indigo-600 p-2 rounded-lg mr-3">
+                  <i class="fas fa-route text-sm"></i>
+                </span>
+                <div>
+                  <p class="font-medium">Delhi → Mumbai</p>
+                  <p class="text-sm text-gray-400">45 flights daily</p>
+                </div>
+              </div>
+              <span class="text-green-400 text-sm">+8%</span>
+            </div>
+            <!-- Repeat for other routes -->
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold">Live Flight Schedule</h2>
+          <button class="text-sm text-indigo-400 hover:text-indigo-300">
+            <i class="fas fa-sync-alt mr-1"></i> Refresh
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="text-indigo-400 border-b border-gray-600">
+              <tr>
+                <th class="text-left py-3 px-4">Flight</th>
+                <th class="text-left py-3 px-4">Route</th>
+                <th class="text-left py-3 px-4">Departure</th>
+                <th class="text-left py-3 px-4">Arrival</th>
+                <th class="text-left py-3 px-4">Status</th>
+              </tr>
+            </thead>
+            <tbody class="text-white divide-y divide-gray-700">
+              <tr class="hover:bg-gray-700">
+                <td class="py-3 px-4 font-medium">AI 202</td>
+                <td class="py-3 px-4">DEL → BOM</td>
+                <td class="py-3 px-4">09:30 AM</td>
+                <td class="py-3 px-4">11:45 AM</td>
+                <td class="py-3 px-4 status-on-time">On Time</td>
+              </tr>
+              <tr class="hover:bg-gray-700">
+                <td class="py-3 px-4 font-medium">6E 340</td>
+                <td class="py-3 px-4">BLR → MAA</td>
+                <td class="py-3 px-4">10:10 AM</td>
+                <td class="py-3 px-4">11:20 AM</td>
+                <td class="py-3 px-4 status-delayed">Delayed</td>
+              </tr>
+              <tr class="hover:bg-gray-700">
+                <td class="py-3 px-4 font-medium">SG 505</td>
+                <td class="py-3 px-4">HYD → CCU</td>
+                <td class="py-3 px-4">11:00 AM</td>
+                <td class="py-3 px-4">01:15 PM</td>
+                <td class="py-3 px-4 status-on-time">On Time</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bookings Section -->
+    <section id="bookings" class="section-content hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+          <h2 class="text-xl font-semibold mb-4">Upcoming Trips</h2>
+          <div class="space-y-4">
+            <div class="border-l-4 border-indigo-500 pl-4 py-2">
+              <div class="flex justify-between">
+                <h3 class="font-medium">Hyderabad to Chennai</h3>
+                <span class="text-sm bg-indigo-900 text-indigo-300 px-2 py-1 rounded">Confirmed</span>
+              </div>
+              <p class="text-sm text-gray-400">SG 112 • Apr 25, 2025</p>
+              <p class="text-sm mt-1">Departure: 08:15 AM</p>
+            </div>
+            <!-- Repeat for other trips -->
+          </div>
+        </div>
+        
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+          <h2 class="text-xl font-semibold mb-4">Booking History</h2>
+          <div class="space-y-4">
+            <div class="border-l-4 border-gray-600 pl-4 py-2">
+              <div class="flex justify-between">
+                <h3 class="font-medium">Delhi to Bangalore</h3>
+                <span class="text-sm bg-gray-700 text-gray-300 px-2 py-1 rounded">Completed</span>
+              </div>
+              <p class="text-sm text-gray-400">AI 101 • Feb 15, 2025</p>
+            </div>
+            <!-- Repeat for other history -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tickets Section -->
+    <!-- Tickets Section -->
+<section id="tickets" class="section-content hidden">
+  <div class="max-w-2xl mx-auto bg-gray-800 p-6 rounded-xl shadow-lg">
+    <h2 class="text-xl font-semibold mb-6 text-center">Search Flights</h2>
+    <form class="space-y-4" action="flight-details.html" method="GET">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">From</label>
+          <select name="from" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+            <option selected disabled>Select city</option>
+            <option>Delhi (DEL)</option>
+            <option>Mumbai (BOM)</option>
+            <option>Bangalore (BLR)</option>
+            <option>Hyderabad (HYD)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">To</label>
+          <select name="to" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+            <option selected disabled>Select city</option>
+            <option>Delhi (DEL)</option>
+            <option>Mumbai (BOM)</option>
+            <option>Bangalore (BLR)</option>
+            <option>Hyderabad (HYD)</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Departure</label>
+          <input type="date" name="departure" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Travelers</label>
+          <select name="travelers" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+            <option>1 Adult</option>
+            <option>2 Adults</option>
+            <option>Family (2+2)</option>
+          </select>
+        </div>
+      </div>
+      
+      <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-lg font-medium transition-colors">
+        Search Flights <i class="fas fa-search ml-2"></i>
+      </button>
+    </form>
+  </div>
+</section>
+
+    <!-- Profile Section -->
+<section id="profile" class="section-content hidden">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-gray-800 p-6 rounded-xl shadow-lg">
+      <h2 class="text-xl font-semibold mb-6">Profile Information</h2>
+      <!-- Profile form - initially hidden -->
+      <form id="profileEditForm" class="hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Full Name</label>
+            <input type="text" id="fullName" value="Rahul Sharma" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Email</label>
+            <input type="email" id="email" value="rahul.sharma@example.com" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Phone</label>
+            <input type="tel" id="phone" value="+91 9876543210" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Member Since</label>
+            <p class="p-3 bg-gray-700 rounded-lg">January 2023</p>
+          </div>
+        </div>
+        
+        <div class="flex justify-end space-x-3">
+          <button type="button" onclick="cancelEditProfile()" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors">
+            Cancel
+          </button>
+          <button type="button" onclick="saveProfile()" class="bg-indigo-600 hover:bg-indigo-500 text-white py-2 px-4 rounded-lg transition-colors">
+            Save Changes
+          </button>
+        </div>
+      </form>
+      
+      <!-- Profile display - initially visible -->
+      <div id="profileDisplay" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-medium mb-1">Full Name</label>
+          <p class="p-3 bg-gray-700 rounded-lg">Rahul Sharma</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <p class="p-3 bg-gray-700 rounded-lg">rahul.sharma@example.com</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Phone</label>
+          <p class="p-3 bg-gray-700 rounded-lg">+91 9876543210</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Member Since</label>
+          <p class="p-3 bg-gray-700 rounded-lg">January 2023</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="space-y-6">
+      <div class="bg-indigo-900 p-6 rounded-xl shadow-lg">
+        <h2 class="text-lg font-semibold mb-3">Loyalty Status</h2>
+        <div class="flex items-center">
+          <div class="mr-4">
+            <div class="h-16 w-16 rounded-full bg-indigo-700 flex items-center justify-center text-2xl font-bold">G</div>
+          </div>
+          <div>
+            <p class="font-medium">Gold Member</p>
+            <p class="text-sm text-indigo-300">3,200 points</p>
+            <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
+              <div class="bg-yellow-400 h-2 rounded-full" style="width: 65%"></div>
+            </div>
+            <p class="text-xs mt-1">1,800 points to Platinum</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+        <h2 class="text-lg font-semibold mb-3">Quick Actions</h2>
+        <button onclick="editProfile()" class="w-full mb-2 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg transition-colors">
+          Edit Profile
+        </button>
+        <button onclick="showPasswordModal()" class="w-full mb-2 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg transition-colors">
+          Change Password
+        </button>
+        <button onclick="showDeleteConfirmation()" class="w-full bg-red-800 hover:bg-red-700 text-white py-2 rounded-lg transition-colors">
+          Delete Account
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Password Change Modal -->
+  <div id="passwordModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-gray-800 p-6 rounded-xl shadow-xl w-full max-w-md">
+      <h2 class="text-xl font-semibold mb-4">Change Password</h2>
+      <form id="passwordForm">
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-1">Current Password</label>
+          <input type="password" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-1">New Password</label>
+          <input type="password" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+        </div>
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-1">Confirm New Password</label>
+          <input type="password" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button type="button" onclick="closePasswordModal()" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors">
+            Cancel
+          </button>
+          <button type="button" onclick="changePassword()" class="bg-indigo-600 hover:bg-indigo-500 text-white py-2 px-4 rounded-lg transition-colors">
+            Update Password
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Delete Account Confirmation Modal -->
+  <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-gray-800 p-6 rounded-xl shadow-xl w-full max-w-md">
+      <h2 class="text-xl font-semibold mb-2 text-red-400">Delete Account</h2>
+      <p class="mb-6 text-gray-300">Are you sure you want to delete your account? This action cannot be undone.</p>
+      <div class="flex justify-end space-x-3">
+        <button onclick="closeDeleteModal()" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors">
+          Cancel
+        </button>
+        <button onclick="deleteAccount()" class="bg-red-600 hover:bg-red-500 text-white py-2 px-4 rounded-lg transition-colors">
+          Delete Permanently
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Initialize chart
+  const ctx = document.getElementById('performanceChart').getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [{
+        label: 'On-Time Performance',
+        data: [85, 82, 90, 88, 93, 91],
+        borderColor: '#818cf8',
+        backgroundColor: 'rgba(129, 140, 248, 0.1)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: false,
+          min: 75,
+          max: 100
+        }
+      }
+    }
+  });
+
+  // Section switching
+  function showSection(sectionId) {
+    document.querySelectorAll('.section-content').forEach(section => {
+      section.classList.add('hidden');
+    });
+    document.getElementById(sectionId).classList.remove('hidden');
+    
+    // Update page title
+    const titles = {
+      'dashboard': 'Dashboard Overview',
+      'bookings': 'My Bookings',
+      'tickets': 'Book Tickets',
+      'profile': 'My Profile'
+    };
+    document.getElementById('pageTitle').textContent = titles[sectionId];
+    
+    // Update active nav link
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+      link.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+  }
+
+  // Simulate user data
+  document.getElementById('userInitial').textContent = 'R';
+  
+  // Profile Functions
+  function editProfile() {
+    document.getElementById('profileDisplay').classList.add('hidden');
+    document.getElementById('profileEditForm').classList.remove('hidden');
+  }
+
+  function cancelEditProfile() {
+    document.getElementById('profileEditForm').classList.add('hidden');
+    document.getElementById('profileDisplay').classList.remove('hidden');
+  }
+
+  function saveProfile() {
+    // Get values from form
+    const fullName = document.getElementById('fullName').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    
+    // Update display (in a real app, you'd save to database here)
+    const displayElements = document.getElementById('profileDisplay').querySelectorAll('p');
+    displayElements[0].textContent = fullName;
+    displayElements[1].textContent = email;
+    displayElements[2].textContent = phone;
+    
+    // Show success message
+    // Show success message
+    alert('Profile updated successfully!');
+    
+    // Switch back to display view
+    cancelEditProfile();
+  }
+
+  // Password Modal Functions
+  function showPasswordModal() {
+    document.getElementById('passwordModal').classList.remove('hidden');
+  }
+
+  function closePasswordModal() {
+    document.getElementById('passwordModal').classList.add('hidden');
+    document.getElementById('passwordForm').reset();
+  }
+
+  function changePassword() {
+    // In a real app, you'd validate and submit the password change here
+    alert('Password changed successfully!');
+    closePasswordModal();
+  }
+
+  // Delete Account Modal Functions
+  function showDeleteConfirmation() {
+    document.getElementById('deleteModal').classList.remove('hidden');
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+  }
+
+  function deleteAccount() {
+    // In a real app, you would handle account deletion here
+    alert('Account has been deleted. Redirecting to homepage...');
+    closeDeleteModal();
+    // Redirect to home page after brief delay
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 1500);
+  }
+  
+  // New dropdown functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    // Profile dropdown toggle
+    const profileIcon = document.getElementById('profileIcon');
+    const profileDropdown = document.getElementById('profileDropdown');
+    
+    profileIcon.addEventListener('click', function(e) {
+      e.stopPropagation();
+      closeAllDropdowns();
+      profileDropdown.classList.toggle('show');
+    });
+    
+    // Notification dropdown toggle
+    const notificationIcon = document.getElementById('notificationIcon');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    
+    notificationIcon.addEventListener('click', function(e) {
+      e.stopPropagation();
+      closeAllDropdowns();
+      notificationDropdown.classList.toggle('show');
+    });
+    
+    // Close dropdowns when clicking elsewhere
+    document.addEventListener('click', function() {
+      closeAllDropdowns();
+    });
+    
+    // Prevent dropdown close when clicking inside dropdown
+    const dropdowns = document.querySelectorAll('.dropdown-menu');
+    dropdowns.forEach(dropdown => {
+      dropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    });
+  });
+  
+  // Function to close all dropdowns
+  function closeAllDropdowns() {
+    const dropdowns = document.querySelectorAll('.dropdown-menu');
+    dropdowns.forEach(dropdown => {
+      dropdown.classList.remove('show');
+    });
+  }
+</script>
+</body>
+</html>

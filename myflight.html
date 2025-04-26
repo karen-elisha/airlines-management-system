@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Bookings | BookMyFlight</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .flight-row:hover {
+      background-color: #f3f4f6;
+      transform: translateY(-2px);
+      transition: all 0.2s ease;
+    }
+    .status-confirmed {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+    .status-pending {
+      background-color: #fef9c3;
+      color: #854d0e;
+    }
+    .status-cancelled {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
+
+  <!-- Navigation Bar -->
+  <header class="bg-indigo-900 text-white shadow-lg">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <i class="fas fa-plane-departure text-2xl"></i>
+        <h1 class="text-xl font-bold">BookMyFlight</h1>
+      </div>
+      <nav class="hidden md:flex space-x-6">
+        <a href="user-dashboard.html" class="hover:text-indigo-200"><i class="fas fa-home mr-1"></i> Dashboard</a>
+        <a href="#" class="text-indigo-300 font-medium"><i class="fas fa-ticket-alt mr-1"></i> My Bookings</a>
+     
+      </nav>
+      <a href="user-dashboard.html" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md transition-colors">
+        <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 container mx-auto px-4 py-8">
+    <!-- Page Header -->
+    <div class="text-center mb-10">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Your Flight Bookings</h1>
+      <p class="mt-3 text-gray-600 max-w-2xl mx-auto">
+        View and manage your upcoming flights. You can cancel bookings up to 24 hours before departure.
+      </p>
+    </div>
+
+    <!-- Bookings Table -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <!-- Table Header -->
+      <div class="grid grid-cols-12 bg-gray-800 text-white p-4 font-medium">
+        <div class="col-span-3 md:col-span-2">Airline</div>
+        <div class="col-span-4 md:col-span-3">Route</div>
+        <div class="col-span-3 md:col-span-2">Date & Time</div>
+        <div class="hidden md:block md:col-span-1">Fare</div>
+        <div class="hidden md:block md:col-span-2">Status</div>
+
+      </div>
+
+      <!-- Flight Items -->
+      <div id="flightList">
+        <!-- Flight 1 -->
+        <div class="grid grid-cols-12 items-center p-4 border-b flight-row">
+          <div class="col-span-3 md:col-span-2 flex items-center">
+            <img src="https://logo.clearbit.com/goindigo.in" alt="IndiGo" class="h-8 mr-3">
+            <span class="hidden md:inline">IndiGo</span>
+          </div>
+          <div class="col-span-4 md:col-span-3">
+            <div class="font-medium">DEL → BLR</div>
+            <div class="text-sm text-gray-500">Delhi to Bengaluru</div>
+          </div>
+          <div class="col-span-3 md:col-span-2">
+            <div>24 Apr 2025</div>
+            <div class="text-sm text-gray-500">10:30 AM</div>
+          </div>
+          <div class="hidden md:block md:col-span-1 font-semibold">₹3,499</div>
+          <div class="hidden md:block md:col-span-2">
+            <span class="status-confirmed px-3 py-1 rounded-full text-xs font-medium">Confirmed</span>
+          </div>
+        </div>
+
+        <!-- Flight 2 -->
+        <div class="grid grid-cols-12 items-center p-4 border-b flight-row">
+          <div class="col-span-3 md:col-span-2 flex items-center">
+            <img src="https://logo.clearbit.com/airindia.in" alt="Air India" class="h-8 mr-3">
+            <span class="hidden md:inline">Air India</span>
+          </div>
+          <div class="col-span-4 md:col-span-3">
+            <div class="font-medium">BOM → CCU</div>
+            <div class="text-sm text-gray-500">Mumbai to Kolkata</div>
+          </div>
+          <div class="col-span-3 md:col-span-2">
+            <div>02 May 2025</div>
+            <div class="text-sm text-gray-500">2:15 PM</div>
+          </div>
+          <div class="hidden md:block md:col-span-1 font-semibold">₹4,200</div>
+          <div class="hidden md:block md:col-span-2">
+            <span class="status-pending px-3 py-1 rounded-full text-xs font-medium">Pending</span>
+          </div>
+        </div>
+
+        <!-- Flight 3 -->
+        <div class="grid grid-cols-12 items-center p-4 flight-row">
+          <div class="col-span-3 md:col-span-2 flex items-center">
+            <img src="https://logo.clearbit.com/airvistara.com" alt="Vistara" class="h-8 mr-3">
+            <span class="hidden md:inline">Vistara</span>
+          </div>
+          <div class="col-span-4 md:col-span-3">
+            <div class="font-medium">HYD → MAA</div>
+            <div class="text-sm text-gray-500">Hyderabad to Chennai</div>
+          </div>
+          <div class="col-span-3 md:col-span-2">
+            <div>10 May 2025</div>
+            <div class="text-sm text-gray-500">6:45 AM</div>
+          </div>
+          <div class="hidden md:block md:col-span-1 font-semibold">₹2,750</div>
+          <div class="hidden md:block md:col-span-2">
+            <span class="status-confirmed px-3 py-1 rounded-full text-xs font-medium">Confirmed</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State (hidden by default) -->
+      <div id="emptyState" class="hidden p-12 text-center">
+        <i class="fas fa-plane-slash text-4xl text-gray-300 mb-4"></i>
+        <h3 class="text-xl font-medium text-gray-700">No Bookings Found</h3>
+        <p class="text-gray-500 mt-2">You haven't booked any flights yet. Start your journey with us!</p>
+        <a href="#" class="mt-4 inline-block bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700">
+          Book a Flight
+        </a>
+      </div>
+    </div>
+
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-8">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-4 md:mb-0">
+          <div class="flex items-center space-x-2">
+            <i class="fas fa-plane-departure text-2xl text-indigo-400"></i>
+            <span class="text-xl font-bold text-white">BookMyFlight</span>
+          </div>
+          <p class="mt-2 text-sm">Travel with comfort, book with confidence.</p>
+        </div>
+        <div class="flex space-x-6">
+          <a href="#" class="hover:text-white"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="hover:text-white"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="hover:text-white"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-6 pt-6 text-sm text-center">
+        <p>© 2025 BookMyFlight. All rights reserved. | <a href="#" class="hover:text-white">Privacy Policy</a> | <a href="#" class="hover:text-white">Terms of Service</a></p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

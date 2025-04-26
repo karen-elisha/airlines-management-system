@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ticket Cancellation | BookMyFlight</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    .card-shadow {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    .input-focus {
+      transition: all 0.3s ease;
+    }
+    .input-focus:focus {
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="bg-indigo-600 p-2 rounded-lg">
+          <i class="fas fa-plane-departure text-white text-xl"></i>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-800">BookMyFlight</h1>
+      </div>
+      <nav class="flex items-center space-x-4">
+        <a href="user-dashboard.html" class="text-gray-600 hover:text-indigo-600 flex items-center">
+          <i class="fas fa-chevron-left mr-2"></i> Back to Dashboard
+        </a>
+        <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+          <span class="text-gray-700 font-medium">JS</span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md mx-auto">
+      <div class="bg-white rounded-xl card-shadow overflow-hidden">
+        <!-- Card Header -->
+        <div class="bg-red-50 px-6 py-4 border-b border-red-100">
+          <div class="flex items-center justify-center">
+            <div class="bg-red-100 p-3 rounded-full">
+              <i class="fas fa-times-circle text-red-600 text-2xl"></i>
+            </div>
+          </div>
+          <h2 class="mt-3 text-center text-2xl font-bold text-gray-900">Cancel Your Flight</h2>
+          <p class="mt-1 text-center text-gray-600">Enter your booking details to proceed with cancellation</p>
+        </div>
+
+        <!-- Card Body -->
+        <div class="px-6 py-8">
+          <form id="cancellationForm" class="space-y-6">
+            <div>
+              <label for="ticketNumber" class="block text-sm font-medium text-gray-700 mb-1">Ticket Number</label>
+              <div class="relative">
+                <input 
+                  type="text" 
+                  id="ticketNumber" 
+                  name="ticketNumber" 
+                  placeholder="e.g. BMF-2023-5X8D" 
+                  class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500"
+                  required
+                >
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                  <i class="fas fa-ticket-alt text-gray-400"></i>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Registered Email</label>
+              <div class="relative">
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  placeholder="your@email.com" 
+                  class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500"
+                  required
+                >
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                  <i class="fas fa-envelope text-gray-400"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-start">
+              <div class="flex items-center h-5">
+                <input 
+                  id="terms" 
+                  name="terms" 
+                  type="checkbox" 
+                  class="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                  required
+                >
+              </div>
+              <div class="ml-3 text-sm">
+                <label for="terms" class="font-medium text-gray-700">I understand the cancellation policy</label>
+                <p class="text-gray-500">Cancellation fees may apply based on your fare type.</p>
+              </div>
+            </div>
+
+            <div>
+              <button 
+                type="submit" 
+                class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+              >
+                <i class="fas fa-exclamation-circle mr-2"></i> Confirm Cancellation
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Cancellation Policy -->
+      <div class="mt-6 bg-white p-6 rounded-xl card-shadow">
+        <h3 class="text-lg font-medium text-gray-900 mb-3 flex items-center">
+          <i class="fas fa-info-circle text-indigo-600 mr-2"></i> Cancellation Policy
+        </h3>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-500 mt-1 mr-2 flex-shrink-0"></i>
+            <span>Full refund if cancelled within 24 hours of booking</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-500 mt-1 mr-2 flex-shrink-0"></i>
+            <span>75% refund if cancelled 7+ days before departure</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-500 mt-1 mr-2 flex-shrink-0"></i>
+            <span>50% refund if cancelled 3-7 days before departure</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-times-circle text-red-500 mt-1 mr-2 flex-shrink-0"></i>
+            <span>No refund for cancellations within 48 hours of departure</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 text-center">
+      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+        <i class="fas fa-check text-green-600 text-xl"></i>
+      </div>
+      <h3 class="mt-3 text-lg font-medium text-gray-900">Cancellation Successful!</h3>
+      <div class="mt-2 text-sm text-gray-500">
+        <p>Your ticket <span id="confirmedTicketNumber" class="font-bold"></span> has been cancelled.</p>
+        <p class="mt-2">Refund of <span class="font-bold text-green-600">₹4,250</span> will be processed within 7-10 business days.</p>
+      </div>
+      <div class="mt-5">
+        <button 
+          type="button" 
+          onclick="closeModal()"
+          class="inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm transition-colors"
+        >
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('cancellationForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const ticketNumber = document.getElementById('ticketNumber').value;
+      const email = document.getElementById('email').value;
+      
+      // In a real app, you would validate and send to server here
+      if (ticketNumber && email) {
+        document.getElementById('confirmedTicketNumber').textContent = ticketNumber;
+        document.getElementById('successModal').classList.remove('hidden');
+      }
+    });
+
+    function closeModal() {
+      document.getElementById('successModal').classList.add('hidden');
+      window.location.href = 'user-dashboard.html';
+    }
+  </script>
+</body>
+</html>

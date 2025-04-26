@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | BOOKMYFLIGHT</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .sidebar { background: rgba(0, 0, 0, 0.85); }
+    .main-content { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); }
+    .card { background: rgba(255, 255, 255, 0.08); transition: all 0.3s ease; }
+    .card:hover { background: rgba(255, 255, 255, 0.12); }
+    .nav-item { transition: color 0.2s ease; }
+    .nav-item:hover { color: #818cf8; }
+    .active { display: block; opacity: 1; }
+    .table-row:hover { background: rgba(255, 255, 255, 0.05); }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex">
+
+  <!-- Sidebar -->
+  <aside class="sidebar w-64 p-6 hidden md:block">
+    <div class="flex items-center mb-8">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/airplane-mode-on.png" class="w-8 mr-3">
+      <h1 class="text-xl font-bold text-indigo-400">BOOKMYFLIGHT</h1>
+    </div>
+    
+    <nav class="space-y-3">
+      <a href="#" class="block nav-item py-2" onclick="showSection('dashboard')">📊 Dashboard</a>
+      <a href="#" class="block nav-item py-2" onclick="showSection('bookings')">✈️ Bookings</a>
+      <a href="#" class="block nav-item py-2" onclick="showSection('users')">👥 Users</a>
+      <a href="#" class="block nav-item py-2" onclick="showSection('reports')">📈 Reports</a>
+      <a href="index.html" class="block nav-item py-2 text-red-400 mt-8">← Back to Home</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content flex-1 p-6 overflow-y-auto">
+    <header class="flex justify-between items-center mb-8">
+      <h2 id="sectionTitle" class="text-2xl font-bold text-indigo-300">Dashboard Overview</h2>
+      <div class="flex items-center space-x-4">
+        <span class="text-sm text-gray-400">Last updated: <span id="currentTime"></span></span>
+        <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition">Logout</button>
+      </div>
+    </header>
+
+    <!-- Dashboard Section -->
+    <section id="dashboardSection" class="active">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <!-- Flight Status Card -->
+        <div class="card p-5 rounded-xl">
+          <h3 class="text-lg font-semibold mb-4 flex items-center">
+            <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+            Flight Status
+          </h3>
+          <canvas id="flightStatusChart" height="200"></canvas>
+          <form class="mt-4 space-y-3">
+            <select class="w-full p-2 rounded bg-gray-800 border border-gray-700">
+              <option>Select Flight</option>
+              <option>AI 202 (DEL-BOM)</option>
+              <option>6E 340 (BLR-DEL)</option>
+              <option>SG 505 (HYD-MAA)</option>
+            </select>
+            <select class="w-full p-2 rounded bg-gray-800 border border-gray-700">
+              <option>On Time</option>
+              <option>Delayed</option>
+              <option>Cancelled</option>
+            </select>
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 py-2 rounded transition">Update Status</button>
+          </form>
+        </div>
+
+        <!-- Airlines Management Card -->
+        <div class="card p-5 rounded-xl lg:col-span-2">
+          <h3 class="text-lg font-semibold mb-4">✈️ Manage Airlines</h3>
+          <form id="airlineForm" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+            <input type="text" placeholder="Airline Name" class="p-2 rounded bg-gray-800 border border-gray-700" required>
+            <input type="text" placeholder="IATA Code" class="p-2 rounded bg-gray-800 border border-gray-700" required>
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 py-2 rounded transition">Add Airline</button>
+          </form>
+          <div class="max-h-60 overflow-y-auto">
+            <table class="w-full">
+              <tbody id="airlineList">
+                <tr class="table-row border-b border-gray-800">
+                  <td class="p-3">IndiGo (6E)</td>
+                  <td class="p-3 text-right"><button onclick="removeItem(this)" class="text-red-400 hover:text-red-300">Remove</button></td>
+                </tr>
+                <tr class="table-row border-b border-gray-800">
+                  <td class="p-3">Air India (AI)</td>
+                  <td class="p-3 text-right"><button onclick="removeItem(this)" class="text-red-400 hover:text-red-300">Remove</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-5 rounded-xl">
+        <h3 class="text-lg font-semibold mb-3">📌 Today's Highlights</h3>
+        <ul class="space-y-2">
+          <li class="flex items-center"><span class="w-2 h-2 bg-indigo-400 rounded-full mr-2"></span> 24 flights scheduled today</li>
+          <li class="flex items-center"><span class="w-2 h-2 bg-indigo-400 rounded-full mr-2"></span> 3 international departures</li>
+          <li class="flex items-center"><span class="w-2 h-2 bg-indigo-400 rounded-full mr-2"></span> 92% on-time performance</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Bookings Section -->
+    <section id="bookingsSection" class="hidden">
+      <div class="card p-5 rounded-xl overflow-x-auto">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold">✈️ Recent Bookings</h3>
+          <input type="text" placeholder="Search bookings..." class="p-2 rounded bg-gray-800 border border-gray-700 w-64">
+        </div>
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-gray-800 text-left">
+              <th class="p-3">Booking ID</th>
+              <th class="p-3">Customer</th>
+              <th class="p-3">Flight</th>
+              <th class="p-3">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="table-row border-b border-gray-800">
+              <td class="p-3">BK1001</td>
+              <td class="p-3">Rahul Sharma</td>
+              <td class="p-3">AI 202 (DEL-BOM)</td>
+              <td class="p-3"><span class="px-2 py-1 bg-green-900 text-green-300 rounded text-xs">Confirmed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Users Section -->
+    <section id="usersSection" class="hidden">
+      <div class="card p-5 rounded-xl overflow-x-auto">
+        <h3 class="text-lg font-semibold mb-4">👥 User Management</h3>
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-gray-800 text-left">
+              <th class="p-3">User ID</th>
+              <th class="p-3">Name</th>
+              <th class="p-3">Email</th>
+              <th class="p-3">Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="table-row border-b border-gray-800">
+              <td class="p-3">AD1001</td>
+              <td class="p-3">Admin User</td>
+              <td class="p-3">admin@bookmyflight.com</td>
+              <td class="p-3"><span class="px-2 py-1 bg-indigo-900 text-indigo-300 rounded text-xs">Admin</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Reports Section -->
+    <section id="reportsSection" class="hidden">
+      <div class="card p-5 rounded-xl">
+        <h3 class="text-lg font-semibold mb-4">📈 Monthly Performance</h3>
+        <canvas id="performanceChart" height="300"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Initialize charts and time
+    const initDashboard = () => {
+      // Update current time
+      const updateTime = () => {
+        document.getElementById('currentTime').textContent = new Date().toLocaleString();
+      };
+      updateTime();
+      setInterval(updateTime, 60000);
+
+      // Flight Status Chart
+      new Chart(document.getElementById('flightStatusChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['On Time', 'Delayed', 'Cancelled'],
+          datasets: [{
+            data: [85, 10, 5],
+            backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+            borderWidth: 0
+          }]
+        },
+        options: { cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+      });
+
+      // Performance Chart
+      new Chart(document.getElementById('performanceChart'), {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Bookings',
+            data: [1200, 1900, 1700, 2100, 2400, 2800],
+            borderColor: '#818cf8',
+            backgroundColor: 'rgba(129, 140, 248, 0.1)',
+            fill: true,
+            tension: 0.3,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    };
+
+    // Show selected section
+    const showSection = (section) => {
+      document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById(`${section}Section`).classList.remove('hidden');
+      document.getElementById('sectionTitle').textContent = 
+        section.charAt(0).toUpperCase() + section.slice(1) + (section === 'dashboard' ? ' Overview' : '');
+    };
+
+    // Remove item from list
+    const removeItem = (element) => {
+      if (confirm('Are you sure you want to remove this item?')) {
+        element.closest('tr').remove();
+      }
+    };
+
+    // Handle airline form submission
+    document.getElementById('airlineForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const [name, code] = e.target.elements;
+      if (name.value && code.value) {
+        const row = document.createElement('tr');
+        row.className = 'table-row border-b border-gray-800';
+        row.innerHTML = `
+          <td class="p-3">${name.value} (${code.value})</td>
+          <td class="p-3 text-right"><button onclick="removeItem(this)" class="text-red-400 hover:text-red-300">Remove</button></td>
+        `;
+        document.getElementById('airlineList').appendChild(row);
+        name.value = '';
+        code.value = '';
+      }
+    });
+
+    // Logout function
+    const logout = () => {
+      if (confirm('Are you sure you want to logout?')) {
+        window.location.href = 'index.html';
+      }
+    };
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', initDashboard);
+  </script>
+</body>
+</html>
