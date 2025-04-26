@@ -17,15 +17,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     switch ($action) {
         case 'update_profile':
-            updateProfile($conn, $user_id);
+            updateProfile($mysqli, $user_id);
             break;
             
         case 'change_password':
-            changePassword($conn, $user_id);
+            changePassword($mysqli, $user_id);
             break;
             
         case 'delete_account':
-            deleteAccount($conn, $user_id);
+            deleteAccount($mysqli, $user_id);
             break;
             
         default:
@@ -34,24 +34,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 } else {
     // GET request - fetch user profile data
     try {
-        $stmt = $conn->prepare("SELECT user_id, full_name, email, phone, member_since, loyalty_status, loyalty_points 
-                               FROM users WHERE user_id = :user_id");
-        $stmt->bindParam(':user_id', $user_id);
+        $stmt = $mysqli->prepare("SELECT user_id, full_name, email, phone, member_since, loyalty_tier, loyalty_points 
+                               FROM users WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
         $stmt->execute();
         
-        if ($stmt->rowCount() == 1) {
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows == 1) {
+            $user = $result->fetch_assoc();
             echo json_encode(['success' => true, 'user' => $user]);
         } else {
             echo json_encode(['success' => false, 'message' => 'User not found']);
         }
-    } catch(PDOException $e) {
+    } catch(Exception $e) {
         echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
     }
 }
 
 // Function to update user profile
-function updateProfile($conn, $user_id) {
+function updateProfile($mysqli, $user_id) {
     // Get form data
     $full_name = filter_input(INPUT_POST, 'fullName', FILTER_SANITIZE_STRING);
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
@@ -65,25 +67,21 @@ function updateProfile($conn, $user_id) {
     
     try {
         // Check if email is already used by another user
-        $stmt = $conn->prepare("SELECT user_id FROM users WHERE email = :email AND user_id != :user_id");
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':user_id', $user_id);
+        $stmt = $mysqli->prepare("SELECT user_id FROM users WHERE email = ? AND user_id != ?");
+        $stmt->bind_param("si", $email, $user_id);
         $stmt->execute();
+        $result = $stmt->get_result();
         
-        if ($stmt->rowCount() > 0) {
+        if ($result->num_rows > 0) {
             echo json_encode(['success' => false, 'message' => 'Email already registered']);
             return;
         }
         
         // Update user profile
-        $stmt = $conn->prepare("UPDATE users SET full_name = :full_name, email = :email, phone = :phone 
-                               WHERE user_id = :user_id");
+        $stmt = $mysqli->prepare("UPDATE users SET full_name = ?, email = ?, phone = ? 
+                               WHERE user_id = ?");
         
-        $stmt->bindParam(':full_name', $full_name);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':phone', $phone);
-        $stmt->bindParam(':user_id', $user_id);
-        
+        $stmt->bind_param("sssi", $full_name, $email, $phone, $user_id);
         $stmt->execute();
         
         // Update session data
@@ -91,13 +89,13 @@ function updateProfile($conn, $user_id) {
         $_SESSION['user_email'] = $email;
         
         echo json_encode(['success' => true, 'message' => 'Profile updated successfully']);
-    } catch(PDOException $e) {
+    } catch(Exception $e) {
         echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
     }
 }
 
 // Function to change password
-function changePassword($conn, $user_id) {
+function changePassword($mysqli, $user_id) {
     // Get form data
     $current_password = $_POST['currentPassword'] ?? '';
     $new_password = $_POST['newPassword'] ?? '';
@@ -121,12 +119,13 @@ function changePassword($conn, $user_id) {
     
     try {
         // Get current password hash
-        $stmt = $conn->prepare("SELECT password FROM users WHERE user_id = :user_id");
-        $stmt->bindParam(':user_id', $user_id);
+        $stmt = $mysqli->prepare("SELECT password FROM users WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
         $stmt->execute();
+        $result = $stmt->get_result();
         
-        if ($stmt->rowCount() == 1) {
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result->num_rows == 1) {
+            $user = $result->fetch_assoc();
             
             // Verify current password
             if (password_verify($current_password, $user['password'])) {
@@ -134,9 +133,8 @@ function changePassword($conn, $user_id) {
                 $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
                 
                 // Update password
-                $stmt = $conn->prepare("UPDATE users SET password = :password WHERE user_id = :user_id");
-                $stmt->bindParam(':password', $hashed_password);
-                $stmt->bindParam(':user_id', $user_id);
+                $stmt = $mysqli->prepare("UPDATE users SET password = ? WHERE user_id = ?");
+                $stmt->bind_param("si", $hashed_password, $user_id);
                 $stmt->execute();
                 
                 echo json_encode(['success' => true, 'message' => 'Password changed successfully']);
@@ -146,39 +144,40 @@ function changePassword($conn, $user_id) {
         } else {
             echo json_encode(['success' => false, 'message' => 'User not found']);
         }
-    } catch(PDOException $e) {
+    } catch(Exception $e) {
         echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
     }
 }
 
 // Function to delete account
-function deleteAccount($conn, $user_id) {
+function deleteAccount($mysqli, $user_id) {
     try {
         // First check if user has active bookings
-        $stmt = $conn->prepare("SELECT booking_id FROM bookings 
-                               WHERE user_id = :user_id AND status = 'Confirmed'");
-        $stmt->bindParam(':user_id', $user_id);
+        $stmt = $mysqli->prepare("SELECT booking_id FROM bookings 
+                               WHERE user_id = ? AND status = 'Confirmed'");
+        $stmt->bind_param("i", $user_id);
         $stmt->execute();
+        $result = $stmt->get_result();
         
-        if ($stmt->rowCount() > 0) {
+        if ($result->num_rows > 0) {
             echo json_encode(['success' => false, 'message' => 'Cannot delete account with active bookings']);
             return;
         }
         
         // Delete user account
-        $stmt = $conn->prepare("DELETE FROM users WHERE user_id = :user_id");
-        $stmt->bindParam(':user_id', $user_id);
+        $stmt = $mysqli->prepare("DELETE FROM users WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
         $stmt->execute();
         
         // Destroy session
         session_destroy();
         
-        echo json_encode(['success' => true, 'message' => 'Account deleted successfully', 'redirect' => 'index.html']);
-    } catch(PDOException $e) {
+        echo json_encode(['success' => true, 'message' => 'Account deleted successfully', 'redirect' => 'index.php']);
+    } catch(Exception $e) {
         echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
     }
 }
 
 // Close connection
-$conn = null;
+$mysqli->close();
 ?>

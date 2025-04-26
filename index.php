@@ -72,8 +72,8 @@ $today = date('Y-m-d');
             <i class="fas fa-user-circle mr-2"></i> Login
           </button>
           <div id="loginDropdown" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-xl hidden">
-            <a href="login-user.php" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-user mr-2"></i>User Login</a>
-            <a href="login-admin.php" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-lock mr-2"></i>Admin Login</a>
+            <a href="login-user.html" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-user mr-2"></i>User Login</a>
+            <a href="login-admin.html" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-lock mr-2"></i>Admin Login</a>
           </div>
        
       </div>
