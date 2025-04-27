@@ -111,71 +111,88 @@ $today = date('Y-m-d');
       </h1>
       <p class="text-center text-gray-600 mb-8">Compare prices across 50+ airlines for the best deals</p>
       
-      <form action="search-flights.php" method="POST" class="space-y-6" onsubmit="return validateForm()">
-        <div class="flex justify-center space-x-6">
-          <label class="inline-flex items-center">
-            <input type="radio" name="trip" value="oneway" checked class="h-5 w-5 text-indigo-600" onchange="toggleReturnDate()">
-            <span class="ml-2 text-gray-700">One Way</span>
-          </label>
-          <label class="inline-flex items-center">
-            <input type="radio" name="trip" value="roundtrip" class="h-5 w-5 text-indigo-600" onchange="toggleReturnDate()">
-            <span class="ml-2 text-gray-700">Round Trip</span>
-          </label>
-        </div>
+      <!-- Update the form action to search-flights.php -->
+<form action="search_flights.php" method="POST" class="space-y-6" onsubmit="return validateForm()">
+  <div class="flex justify-center space-x-6">
+    <label class="inline-flex items-center">
+      <input type="radio" name="trip" value="oneway" checked class="h-5 w-5 text-indigo-600" onchange="toggleReturnDate()">
+      <span class="ml-2 text-gray-700">One Way</span>
+    </label>
+    <label class="inline-flex items-center">
+      <input type="radio" name="trip" value="roundtrip" class="h-5 w-5 text-indigo-600" onchange="toggleReturnDate()">
+      <span class="ml-2 text-gray-700">Round Trip</span>
+    </label>
+  </div>
 
-        <div class="flex flex-col md:flex-row gap-4 items-end">
-          <div class="flex-1">
-            <label class="block text-gray-700 mb-1">From</label>
-            <select name="from" id="from" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
-              <option value="">Select City</option>
-              <?php foreach($airports as $airport): ?>
-                <option value="<?php echo $airport['airport_code']; ?>"><?php echo $airport['city'] . ' (' . $airport['airport_code'] . ')'; ?></option>
-              <?php endforeach; ?>
+  <div class="flex flex-col md:flex-row gap-4 items-end">
+    <div class="flex-1">
+      <label class="block text-gray-700 mb-1">From</label>
+      <select name="from" id="from" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+        <option value="">Select City</option>
+        <?php foreach($airports as $airport): ?>
+          <option value="<?php echo $airport['airport_code']; ?>"><?php echo $airport['city'] . ' (' . $airport['airport_code'] . ')'; ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <button type="button" onclick="swapLocations()" class="swap-btn bg-indigo-600 text-white p-3 rounded-lg transition duration-200 hover:bg-indigo-700">
+      <i class="fas fa-exchange-alt"></i>
+    </button>
+
+    <div class="flex-1">
+      <label class="block text-gray-700 mb-1">To</label>
+      <select name="to" id="to" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+        <option value="">Select City</option>
+        <?php foreach($airports as $airport): ?>
+          <option value="<?php echo $airport['airport_code']; ?>"><?php echo $airport['city'] . ' (' . $airport['airport_code'] . ')'; ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex flex-col md:flex-row gap-4">
+    <div class="flex-1">
+      <label class="block text-gray-700 mb-1">Departure</label>
+      <input type="date" name="departure_date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" min="<?php echo $today; ?>" required>
+    </div>
+    <div class="flex-1">
+      <label class="block text-gray-700 mb-1">Return</label>
+      <input type="date" name="return_date" id="returnDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-100" min="<?php echo $today; ?>" disabled>
+    </div>
+  </div>
+
+  <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="flex-1">
+      <label class="block text-gray-700 mb-1">Passengers</label>
+      <div class="flex items-center border border-gray-300 rounded-lg p-1">
+        <button type="button" onclick="adjustPassengers(-1)" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">
+          <i class="fas fa-minus"></i>
+        </button>
+        <input type="number" name="tickets" value="1" min="1" max="9" class="w-16 text-center border-0 focus:ring-0">
+        <button type="button" onclick="adjustPassengers(1)" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+    </div>
+    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200 w-full md:w-auto">
+      <i class="fas fa-search mr-2"></i> Search Flights
+    </button>
+  </div>
+</form>
+
+<!-- Add error message display if there's a validation error -->
+<?php if(isset($_SESSION['error_message'])): ?>
+  <div class="mt-4 p-3 bg-red-100 text-red-700 rounded-md">
+    <?php 
+      echo $_SESSION['error_message']; 
+      unset($_SESSION['error_message']); // Clear message after displaying
+    ?>
+  </div>
+<?php endif; ?>
             </select>
           </div>
-          <button type="button" onclick="swapLocations()" class="swap-btn bg-indigo-600 text-white p-3 rounded-lg transition duration-200 hover:bg-indigo-700">
-  <i class="fas fa-exchange-alt"></i>
-</button>
-
-          <div class="flex-1">
-            <label class="block text-gray-700 mb-1">To</label>
-            <select name="to" id="to" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
-              <option value="">Select City</option>
-              <?php foreach($airports as $airport): ?>
-                <option value="<?php echo $airport['airport_code']; ?>"><?php echo $airport['city'] . ' (' . $airport['airport_code'] . ')'; ?></option>
-              <?php endforeach; ?>
-            </select>
-          </div>
         </div>
 
-        <div class="flex flex-col md:flex-row gap-4">
-          <div class="flex-1">
-            <label class="block text-gray-700 mb-1">Departure</label>
-            <input type="date" name="departure_date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" min="<?php echo $today; ?>" required>
-          </div>
-          <div class="flex-1">
-            <label class="block text-gray-700 mb-1">Return</label>
-            <input type="date" name="return_date" id="returnDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-100" min="<?php echo $today; ?>" disabled>
-          </div>
-        </div>
-
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div class="flex-1">
-            <label class="block text-gray-700 mb-1">Passengers</label>
-            <div class="flex items-center border border-gray-300 rounded-lg p-1">
-              <button type="button" onclick="adjustPassengers(-1)" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">
-                <i class="fas fa-minus"></i>
-              </button>
-              <input type="number" name="tickets" value="1" min="1" max="9" class="w-16 text-center border-0 focus:ring-0">
-              <button type="button" onclick="adjustPassengers(1)" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">
-                <i class="fas fa-plus"></i>
-              </button>
-            </div>
-          </div>
-          <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200 w-full md:w-auto">
-            <i class="fas fa-search mr-2"></i> Search Flights
-          </button>
-        </div>
+        
       </form>
     </div>
   </div>
@@ -413,32 +430,42 @@ $today = date('Y-m-d');
   }
 
   // Validate form before submission
-  function validateForm() {
-    const from = document.getElementById('from').value;
-    const to = document.getElementById('to').value;
-    
-    if (!from || !to) {
-      alert('Please select both departure and arrival cities.');
-      return false;
-    }
-    
-    if (from === to) {
-      alert('Departure and arrival cities cannot be the same.');
-      return false;
-    }
-    
-    return true;
+// Validate form before submission
+function validateForm() {
+  const from = document.getElementById('from').value;
+  const to = document.getElementById('to').value;
+  
+  if (!from || !to) {
+    alert('Please select both departure and arrival cities.');
+    return false;
   }
+  
+  if (from === to) {
+    alert('Departure and arrival cities cannot be the same. Please select different cities.');
+    return false;
+  }
+  
+  return true;
+}
 
   // Swap locations
-  function swapLocations() {
-    const from = document.getElementById('from');
-    const to = document.getElementById('to');
-    const temp = from.value;
-    from.value = to.value;
-    to.value = temp;
-  }
-
+// Swap locations
+function swapLocations() {
+    const fromSelect = document.getElementById('from');
+    const toSelect = document.getElementById('to');
+    const tempValue = fromSelect.value;
+    const tempText = fromSelect.options[fromSelect.selectedIndex].text;
+    
+    // Swap values
+    fromSelect.value = toSelect.value;
+    toSelect.value = tempValue;
+    
+    // Update the displayed text if the value doesn't exist in options
+    if (fromSelect.value !== toSelect.value) {
+        fromSelect.options[fromSelect.selectedIndex].text = toSelect.options[toSelect.selectedIndex].text;
+        toSelect.options[toSelect.selectedIndex].text = tempText;
+    }
+}
   // Adjust passenger count
   function adjustPassengers(change) {
     const input = document.querySelector('input[name="tickets"]');

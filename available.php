@@ -5,43 +5,58 @@ session_start();
 // Database connection
 require_once 'db_connect.php';
 
-// Get flight parameters from URL or form submission
+// Get flight parameters from URL (coming from search-flights.php)
 $origin = isset($_GET['from']) ? $_GET['from'] : '';
 $destination = isset($_GET['to']) ? $_GET['to'] : '';
 $departure_date = isset($_GET['departure_date']) ? $_GET['departure_date'] : '';
+$return_date = isset($_GET['return_date']) ? $_GET['return_date'] : '';
+$tickets = isset($_GET['tickets']) ? (int)$_GET['tickets'] : 1;
 
-// If no parameters are provided, use default values for demo
+// If no parameters are provided and we have search data in session, use those
+if ((empty($origin) || empty($destination)) && isset($_SESSION['flight_search'])) {
+    $origin = $_SESSION['flight_search']['from'];
+    $destination = $_SESSION['flight_search']['to'];
+    $departure_date = $_SESSION['flight_search']['departure_date'];
+    $return_date = $_SESSION['flight_search']['return_date'];
+    $tickets = $_SESSION['flight_search']['tickets'];
+}
+
+// If still no parameters are provided, use default values for demo
 if (empty($origin) && empty($destination)) {
     $origin = 'DEL'; // Delhi
     $destination = 'BOM'; // Mumbai
     $departure_date = date('Y-m-d', strtotime('+1 day')); // Tomorrow
+    $tickets = 1;
 }
 
 // Format date for display
 $display_date = date('d F Y', strtotime($departure_date));
 
-// Fetch flight data from database
+// Fetch flight data from database - Include ticket count in query
 $flights_query = "
     SELECT 
         a.airline_name,
-        a.airline_code,
+        a.airline_id,
         f.flight_number,
         f.departure_time,
         f.arrival_time,
-        f.price,
-        f.status,
-        TIMEDIFF(f.arrival_time, f.departure_time) as duration
+        f.base_price,
+        f.flight_status,
+        TIMEDIFF(f.arrival_time, f.departure_time) as duration,
+        f.available_seats
     FROM flights f
     JOIN airlines a ON f.airline_id = a.airline_id
-    JOIN airports o ON f.origin_airport_id = o.airport_id
-    JOIN airports d ON f.destination_airport_id = d.airport_id
+    JOIN airports o ON f.origin_airport = o.airport_id
+    JOIN airports d ON f.destination_airport = d.airport_id
     WHERE o.airport_code = '$origin' 
     AND d.airport_code = '$destination'
     AND DATE(f.departure_time) = '$departure_date'
+    AND f.available_seats >= $tickets
     ORDER BY f.departure_time
 ";
 
-$flights_result = mysqli_query($conn, $flights_query);
+$flights_result = mysqli_query($mysqli, $flights_query);
+
 
 // If database query fails or no results, use demo data
 $flights = [];
@@ -54,7 +69,7 @@ if ($flights_result && mysqli_num_rows($flights_result) > 0) {
     $flights = [
         [
             'airline_name' => 'IndiGo',
-            'airline_code' => '6E',
+            'airline_id' => '6E',
             'flight_number' => '205',
             'departure_time' => '06:20:00',
             'arrival_time' => '08:45:00',
@@ -64,7 +79,7 @@ if ($flights_result && mysqli_num_rows($flights_result) > 0) {
         ],
         [
             'airline_name' => 'Air India',
-            'airline_code' => 'AI',
+            'airline_id' => 'AI',
             'flight_number' => '864',
             'departure_time' => '09:10:00',
             'arrival_time' => '11:30:00',
@@ -74,7 +89,7 @@ if ($flights_result && mysqli_num_rows($flights_result) > 0) {
         ],
         [
             'airline_name' => 'Vistara',
-            'airline_code' => 'UK',
+            'airline_id' => 'UK',
             'flight_number' => '945',
             'departure_time' => '13:30:00',
             'arrival_time' => '15:50:00',
@@ -84,7 +99,7 @@ if ($flights_result && mysqli_num_rows($flights_result) > 0) {
         ],
         [
             'airline_name' => 'SpiceJet',
-            'airline_code' => 'SG',
+            'airline_id' => 'SG',
             'flight_number' => '721',
             'departure_time' => '18:00:00',
             'arrival_time' => '20:15:00',
@@ -137,9 +152,7 @@ function getStatusClass($status) {
         <a href="feedback.php" class="hover:text-indigo-400 transition">Feedback</a>
         <?php if(isset($_SESSION['user_id'])): ?>
           <div class="relative">
-            <button onclick="toggleDropdown()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition flex items-center">
-              <i class="fas fa-user-circle mr-2"></i> <?php echo $_SESSION['username']; ?>
-            </button>
+            
             <div id="loginDropdown" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-xl hidden z-50">
               <a href="profile.php" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-id-card mr-2"></i>My Profile</a>
               <a href="my-bookings.php" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-ticket-alt mr-2"></i>My Bookings</a>
@@ -181,7 +194,7 @@ function getStatusClass($status) {
             <tr class="flight-row border-b border-gray-200">
               <td class="p-4 font-medium">
                 <?php echo $flight['airline_name']; ?><br>
-                <span class="text-sm text-gray-500"><?php echo $flight['airline_code'] . '-' . $flight['flight_number']; ?></span>
+                <span class="text-sm text-gray-500"><?php echo $flight['airline_id'] . '-' . $flight['flight_number']; ?></span>
               </td>
               <td class="p-4">
                 <span class="font-medium"><?php echo substr($flight['departure_time'], 0, 5); ?></span><br>
@@ -197,7 +210,7 @@ function getStatusClass($status) {
               </td>
               <td class="p-4 font-semibold">₹<?php echo number_format($flight['price']); ?></td>
               <td class="p-4">
-                <button onclick="bookFlight('<?php echo $flight['airline_code'] . '-' . $flight['flight_number']; ?>')" 
+                <button onclick="bookFlight('<?php echo $flight['airline_id'] . '-' . $flight['flight_number']; ?>')" 
                   class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded text-sm transition">
                   Book Now
                 </button>
