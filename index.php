@@ -133,10 +133,9 @@ $today = date('Y-m-d');
               <?php endforeach; ?>
             </select>
           </div>
-
-          <button type="button" onclick="swapLocations()" class="swap-btn bg-indigo-600 text-white p-3 rounded-lg transition duration-200">
-            <i class="fas fa-exchange-alt"></i>
-          </button>
+          <button type="button" onclick="swapLocations()" class="swap-btn bg-indigo-600 text-white p-3 rounded-lg transition duration-200 hover:bg-indigo-700">
+  <i class="fas fa-exchange-alt"></i>
+</button>
 
           <div class="flex-1">
             <label class="block text-gray-700 mb-1">To</label>

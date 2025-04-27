@@ -246,8 +246,8 @@ if (isset($mysqli)) {
 
 <div class="min-h-screen flex">
   <!-- Sidebar -->
-  <aside class="w-64 bg-gray-800 p-6 hidden md:block border-r border-gray-700">
-    <div class="text-2xl font-bold text-indigo-400 mb-8 flex items-center">
+  <aside class="w-64 bg-gray-800 p-4 hidden md:block border-r border-gray-700">
+    <div class="text-2xl font-bold text-indigo-400 mb-4 flex items-center">
       <i class="fa-solid fa-plane-departure mr-3"></i>BOOKMYFLIGHT
     </div>
     <nav class="space-y-2">
@@ -404,92 +404,97 @@ if (isset($mysqli)) {
           <p class="text-sm text-gray-400 mt-2">Industry avg: 85%</p>
         </div>
       </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  <!-- Flight Status Overview (Left) -->
+  <div class="bg-gray-800 p-6 rounded-2xl shadow-lg">
+    <h2 class="text-2xl font-semibold mb-4 text-white">Flight Status Overview</h2>
+    <div class="flex justify-center">
+      <div class="w-full max-w-xs mx-auto h-64">
+        <canvas id="flightPieChart"></canvas>
+      </div>
+    </div>
+  </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div class="bg-gray-800 p-6 rounded-xl shadow-lg lg:col-span-2">
-          <h2 class="text-xl font-semibold mb-4">Flight Performance</h2>
-          <canvas id="performanceChart" height="250"></canvas>
-        </div>
-        
-        <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
-          <h2 class="text-xl font-semibold mb-4">Top Routes</h2>
-          <div class="space-y-4">
-            <?php
-            // In a real app, these would come from database
-            $top_routes = [
-                ['route' => 'Delhi → Mumbai', 'flights' => 45, 'change' => '+8%'],
-                ['route' => 'Bangalore → Hyderabad', 'flights' => 32, 'change' => '+5%'],
-                ['route' => 'Mumbai → Chennai', 'flights' => 27, 'change' => '-2%']
-            ];
-            
-            foreach ($top_routes as $route):
-            ?>
-            <div class="flex justify-between items-center">
-              <div class="flex items-center">
-                <span class="bg-indigo-600 p-2 rounded-lg mr-3">
-                  <i class="fas fa-route text-sm"></i>
-                </span>
-                <div>
-                  <p class="font-medium"><?php echo htmlspecialchars($route['route']); ?></p>
-                  <p class="text-sm text-gray-400"><?php echo $route['flights']; ?> flights daily</p>
-                </div>
-              </div>
-              <span class="<?php echo strpos($route['change'], '+') !== false ? 'text-green-400' : 'text-red-400'; ?> text-sm">
-                <?php echo htmlspecialchars($route['change']); ?>
-              </span>
-            </div>
-            <?php endforeach; ?>
+  <!-- Top Routes (Right) -->
+  <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+    <h2 class="text-xl font-semibold mb-4">Top Routes</h2>
+    <div class="space-y-4">
+      <?php
+      // In a real app, these would come from database
+      $top_routes = [
+          ['route' => 'Delhi → Mumbai', 'flights' => 45, 'change' => '+8%'],
+          ['route' => 'Bangalore → Hyderabad', 'flights' => 32, 'change' => '+5%'],
+          ['route' => 'Mumbai → Chennai', 'flights' => 27, 'change' => '-2%']
+      ];
+      
+      foreach ($top_routes as $route):
+      ?>
+      <div class="flex justify-between items-center">
+        <div class="flex items-center">
+          <span class="bg-indigo-600 p-2 rounded-lg mr-3">
+            <i class="fas fa-route text-sm"></i>
+          </span>
+          <div>
+            <p class="font-medium"><?php echo htmlspecialchars($route['route']); ?></p>
+            <p class="text-sm text-gray-400"><?php echo $route['flights']; ?> flights daily</p>
           </div>
         </div>
+        <span class="<?php echo strpos($route['change'], '+') !== false ? 'text-green-400' : 'text-red-400'; ?> text-sm">
+          <?php echo htmlspecialchars($route['change']); ?>
+        </span>
       </div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</div>
 
-      <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold">Live Flight Schedule</h2>
-          <button class="text-sm text-indigo-400 hover:text-indigo-300" onclick="window.location.reload()">
-            <i class="fas fa-sync-alt mr-1"></i> Refresh
-          </button>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead class="text-indigo-400 border-b border-gray-600">
-              <tr>
-                <th class="text-left py-3 px-4">Flight</th>
-                <th class="text-left py-3 px-4">Route</th>
-                <th class="text-left py-3 px-4">Departure</th>
-                <th class="text-left py-3 px-4">Arrival</th>
-                <th class="text-left py-3 px-4">Status</th>
-              </tr>
-            </thead>
-            <tbody class="text-white divide-y divide-gray-700">
-              <?php if (count($live_flights) > 0): ?>
-                <?php foreach ($live_flights as $flight): ?>
-                  <tr class="hover:bg-gray-700">
-                    <td class="py-3 px-4 font-medium"><?php echo htmlspecialchars($flight['flight_number']); ?></td>
-                    <td class="py-3 px-4"><?php echo htmlspecialchars($flight['origin_code']) . " → " . htmlspecialchars($flight['dest_code']); ?></td>
-                    <td class="py-3 px-4"><?php echo formatTime($flight['departure_time']); ?></td>
-                    <td class="py-3 px-4"><?php echo formatTime($flight['arrival_time']); ?></td>
-                    <td class="py-3 px-4 <?php 
-                      if ($flight['flight_status'] == 'Scheduled' || $flight['flight_status'] == 'Departed' || $flight['flight_status'] == 'Arrived') {
-                        echo 'status-on-time';
-                      } elseif ($flight['flight_status'] == 'Delayed') {
-                        echo 'status-delayed';
-                      } else {
-                        echo 'status-cancelled';
-                      }
-                    ?>"><?php echo htmlspecialchars($flight['flight_status']); ?></td>
-                  </tr>
-                <?php endforeach; ?>
-              <?php else: ?>
-                <tr>
-                  <td colspan="5" class="py-3 px-4 text-center">No flights scheduled in the next 12 hours</td>
-                </tr>
-              <?php endif; ?>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+<!-- Live Flight Schedule (Below) -->
+<div class="bg-gray-800 p-6 rounded-xl shadow-lg mt-6">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-semibold">Live Flight Schedule</h2>
+    <button class="text-sm text-indigo-400 hover:text-indigo-300" onclick="window.location.reload()">
+      <i class="fas fa-sync-alt mr-1"></i> Refresh
+    </button>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="text-indigo-400 border-b border-gray-600">
+        <tr>
+          <th class="text-left py-3 px-4">Flight</th>
+          <th class="text-left py-3 px-4">Route</th>
+          <th class="text-left py-3 px-4">Departure</th>
+          <th class="text-left py-3 px-4">Arrival</th>
+          <th class="text-left py-3 px-4">Status</th>
+        </tr>
+      </thead>
+      <tbody class="text-white divide-y divide-gray-700">
+        <?php if (count($live_flights) > 0): ?>
+          <?php foreach ($live_flights as $flight): ?>
+            <tr class="hover:bg-gray-700">
+              <td class="py-3 px-4 font-medium"><?php echo htmlspecialchars($flight['flight_number']); ?></td>
+              <td class="py-3 px-4"><?php echo htmlspecialchars($flight['origin_code']) . " → " . htmlspecialchars($flight['dest_code']); ?></td>
+              <td class="py-3 px-4"><?php echo formatTime($flight['departure_time']); ?></td>
+              <td class="py-3 px-4"><?php echo formatTime($flight['arrival_time']); ?></td>
+              <td class="py-3 px-4 <?php 
+                if ($flight['flight_status'] == 'Scheduled' || $flight['flight_status'] == 'Departed' || $flight['flight_status'] == 'Arrived') {
+                  echo 'status-on-time';
+                } elseif ($flight['flight_status'] == 'Delayed') {
+                  echo 'status-delayed';
+                } else {
+                  echo 'status-cancelled';
+                }
+              ?>"><?php echo htmlspecialchars($flight['flight_status']); ?></td>
+            </tr>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <tr>
+            <td colspan="5" class="py-3 px-4 text-center">No flights scheduled in the next 12 hours</td>
+          </tr>
+        <?php endif; ?>
+      </tbody>
+    </table>
+  </div>
+</div>
 
     <!-- Bookings Section -->
     <section id="bookings" class="section-content hidden">
@@ -729,9 +734,52 @@ if (isset($mysqli)) {
 </section>
 
 <!-- JavaScript for the dashboard functionality -->
+ <!-- JavaScript -->
 <script>
+  const ctx = document.getElementById('flightPieChart').getContext('2d');
+
+  const flightData = {
+    onTime: 2,
+    delayed: 2,
+    cancelled: 1
+  };
+
+  const flightChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['On Time', 'Delayed', 'Cancelled'],
+      datasets: [{
+        label: 'Flight Status',
+        data: [flightData.onTime, flightData.delayed, flightData.cancelled],
+        backgroundColor: [
+          'rgb(34, 197, 94)',    // Green
+          'rgb(253, 224, 71)',    // Yellow
+          'rgb(239, 68, 68)'      // Red
+        ],
+        borderColor: 'rgb(31, 41, 55)',
+        borderWidth: 2,
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { 
+            color: 'white',
+            font: {
+              size: 12
+            }
+          }
+        }
+      }
+    }
+  });
+  
 // Chart initialization
-document.addEventListener('DOMContentLoaded', function() {
+/*document.addEventListener('DOMContentLoaded', function() {
   // Initialize the performance chart
   const ctx = document.getElementById('performanceChart').getContext('2d');
   const chart = new Chart(ctx, {
@@ -777,7 +825,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
     }
-  });
+  });*/
   
   // Handle dropdowns
   document.getElementById('notificationIcon').addEventListener('click', function(e) {
@@ -796,7 +844,6 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('click', function() {
     closeAllDropdowns();
   });
-});
 
 // Function to show selected section
 function showSection(sectionId) {
