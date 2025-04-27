@@ -240,6 +240,9 @@ if (isset($mysqli)) {
     .dropdown-menu.show {
       display: block;
     }
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-white font-sans antialiased">
@@ -261,8 +264,8 @@ if (isset($mysqli)) {
         <i class="fas fa-ticket-alt mr-3 w-5 text-center"></i> Tickets
       </a>
       <a href="#" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-700" onclick="showSection('profile')">
-        <i class="fas fa-user-circle mr-3 w-5 text-center"></i> Profile
-      </a>
+  <i class="fas fa-user-circle mr-3 w-5 text-center"></i> Profile
+</a>
       <a href="myflight.html" class="flex items-center p-3 rounded-lg hover:bg-gray-700">
         <i class="fas fa-plane mr-3 w-5 text-center"></i> My Flights
       </a>
@@ -364,6 +367,7 @@ if (isset($mysqli)) {
 
     <!-- Dashboard Section -->
     <section id="dashboard" class="section-content">
+    
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <?php
         // Get stats from database (in a real app, these would be retrieved)
@@ -495,9 +499,13 @@ if (isset($mysqli)) {
     </table>
   </div>
 </div>
+        
+      <!-- Dashboard content remains the same as before -->
+      <!-- ... -->
+    </section>
 
     <!-- Bookings Section -->
-    <section id="bookings" class="section-content hidden">
+      <section id="bookings" class="section-content hidden">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
           <h2 class="text-xl font-semibold mb-4">Upcoming Trips</h2>
@@ -550,9 +558,12 @@ if (isset($mysqli)) {
         </div>
       </div>
     </section>
+      <!-- ... -->
+
 
     <!-- Tickets Section -->
     <section id="tickets" class="section-content hidden">
+    
       <div class="max-w-2xl mx-auto bg-gray-800 p-6 rounded-xl shadow-lg">
         <h2 class="text-xl font-semibold mb-6 text-center">Search Flights</h2>
         <form class="space-y-4" action="flight-search.php" method="GET">
@@ -602,6 +613,9 @@ if (isset($mysqli)) {
           </button>
         </form>
       </div>
+    
+ <!-- Tickets content remains the same as before -->
+      <!-- ... -->
     </section>
 
     <!-- Profile Section -->
@@ -609,290 +623,248 @@ if (isset($mysqli)) {
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 bg-gray-800 p-6 rounded-xl shadow-lg">
           <h2 class="text-xl font-semibold mb-6">Profile Information</h2>
+          
           <!-- Profile form - initially hidden -->
           <form id="profileEditForm" class="hidden" action="update-profile.php" method="POST">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-  <div>
-    <label class="block text-sm font-medium mb-1">Full Name</label>
-    <input type="text" name="full_name" value="<?php echo htmlspecialchars($user['full_name']); ?>" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" required>
-  </div>
-  <div>
-    <label class="block text-sm font-medium mb-1">Email</label>
-    <input type="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" required>
-  </div>
-</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label class="block text-sm font-medium mb-1">Full Name</label>
+                <input type="text" name="full_name" value="<?php echo htmlspecialchars($user['full_name']); ?>" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Email</label>
+                <input type="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" required>
+              </div>
+            </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-  <div>
-    <label class="block text-sm font-medium mb-1">Phone</label>
-    <input type="tel" name="phone" value="<?php echo htmlspecialchars($user['phone']); ?>" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" required>
-  </div>
-  <div>
-    <label class="block text-sm font-medium mb-1">Password</label>
-    <input type="password" name="password" placeholder="Leave blank to keep current" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-  </div>
-</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label class="block text-sm font-medium mb-1">Phone</label>
+                <input type="tel" name="phone" value="<?php echo htmlspecialchars($user['phone']); ?>" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Password</label>
+                <input type="password" name="password" placeholder="Leave blank to keep current" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+              </div>
+            </div>
 
-<div class="flex justify-end space-x-3">
-  <button type="button" onclick="toggleProfileEdit()" class="px-4 py-2 text-gray-400 bg-gray-700 hover:bg-gray-600 rounded-lg">Cancel</button>
-  <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg">Save Changes</button>
-</div>
-</form>
+            <div class="flex justify-end space-x-3">
+              <button type="button" onclick="toggleProfileEdit()" class="px-4 py-2 text-gray-400 bg-gray-700 hover:bg-gray-600 rounded-lg">Cancel</button>
+              <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg">Save Changes</button>
+            </div>
+          </form>
 
-<!-- Profile view - initially visible -->
-<div id="profileView">
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-    <div>
-      <p class="text-gray-400 text-sm">Full Name</p>
-      <p class="font-medium"><?php echo htmlspecialchars($user['full_name']); ?></p>
-    </div>
-    <div>
-      <p class="text-gray-400 text-sm">Email</p>
-      <p class="font-medium"><?php echo htmlspecialchars($user['email']); ?></p>
-    </div>
-    <div>
-      <p class="text-gray-400 text-sm">Phone</p>
-      <p class="font-medium"><?php echo htmlspecialchars($user['phone']); ?></p>
-    </div>
-    <div>
-      <p class="text-gray-400 text-sm">Member Since</p>
-      <p class="font-medium"><?php echo formatDate($user['member_since']); ?></p>
-    </div>
-  </div>
-  
-  <button onclick="toggleProfileEdit()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg">
-    <i class="fas fa-edit mr-2"></i> Edit Profile
-  </button>
-</div>
-</div>
+          <!-- Profile view - initially visible -->
+          <div id="profileView">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <p class="text-gray-400 text-sm">Full Name</p>
+                <p class="font-medium"><?php echo htmlspecialchars($user['full_name']); ?></p>
+              </div>
+              <div>
+                <p class="text-gray-400 text-sm">Email</p>
+                <p class="font-medium"><?php echo htmlspecialchars($user['email']); ?></p>
+              </div>
+              <div>
+                <p class="text-gray-400 text-sm">Phone</p>
+                <p class="font-medium"><?php echo htmlspecialchars($user['phone']); ?></p>
+              </div>
+              <div>
+                <p class="text-gray-400 text-sm">Member Since</p>
+                <p class="font-medium"><?php echo formatDate($user['member_since']); ?></p>
+              </div>
+            </div>
+            
+            <button onclick="toggleProfileEdit()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg">
+              <i class="fas fa-edit mr-2"></i> Edit Profile
+            </button>
+          </div>
+        </div>
 
-<div class="bg-gray-800 p-6 rounded-xl shadow-lg">
-  <h2 class="text-xl font-semibold mb-4">Loyalty Program</h2>
-  <div class="flex items-center mb-4">
-    <div class="h-16 w-16 rounded-full bg-gradient-to-br <?php 
-      if ($user['loyalty_tier'] == 'Bronze') echo 'from-amber-700 to-amber-500';
-      elseif ($user['loyalty_tier'] == 'Silver') echo 'from-gray-300 to-gray-100';
-      elseif ($user['loyalty_tier'] == 'Gold') echo 'from-yellow-500 to-yellow-300';
-      else echo 'from-purple-600 to-purple-400';
-    ?> flex items-center justify-center mr-4">
-      <i class="fas <?php 
-        if ($user['loyalty_tier'] == 'Bronze') echo 'fa-award';
-        elseif ($user['loyalty_tier'] == 'Silver') echo 'fa-medal';
-        elseif ($user['loyalty_tier'] == 'Gold') echo 'fa-trophy';
-        else echo 'fa-crown';
-      ?> text-2xl text-white"></i>
-    </div>
-    <div>
-      <h3 class="font-medium text-lg"><?php echo htmlspecialchars($user['loyalty_tier']); ?> Member</h3>
-      <p class="text-sm text-gray-400"><?php echo number_format($user['loyalty_points']); ?> points</p>
-    </div>
-  </div>
-  
-  <?php if ($user['loyalty_tier'] != 'Platinum'): ?>
-  <div class="mb-4">
-    <div class="flex justify-between text-sm mb-1">
-      <span><?php echo number_format($user['loyalty_points']); ?> points</span>
-      <span>Next tier: <?php echo htmlspecialchars($next_tier); ?></span>
-    </div>
-    <div class="w-full bg-gray-700 rounded-full h-2.5">
-      <div class="bg-indigo-600 h-2.5 rounded-full" style="width: <?php echo $progress_percentage; ?>%"></div>
-    </div>
-    <p class="text-sm text-gray-400 mt-2">
-      <?php echo number_format($points_to_next_tier); ?> more points needed to reach <?php echo htmlspecialchars($next_tier); ?>
-    </p>
-  </div>
-  <?php endif; ?>
-  
-  <h3 class="font-medium mb-2 mt-6">Benefits</h3>
-  <ul class="space-y-2 text-sm">
-    <?php if ($user['loyalty_tier'] == 'Bronze' || $user['loyalty_tier'] == 'Silver' || $user['loyalty_tier'] == 'Gold' || $user['loyalty_tier'] == 'Platinum'): ?>
-    <li class="flex items-center">
-      <i class="fas fa-check text-green-400 mr-2"></i> Priority check-in
-    </li>
-    <?php endif; ?>
-    
-    <?php if ($user['loyalty_tier'] == 'Silver' || $user['loyalty_tier'] == 'Gold' || $user['loyalty_tier'] == 'Platinum'): ?>
-    <li class="flex items-center">
-      <i class="fas fa-check text-green-400 mr-2"></i> Free seat selection
-    </li>
-    <?php endif; ?>
-    
-    <?php if ($user['loyalty_tier'] == 'Gold' || $user['loyalty_tier'] == 'Platinum'): ?>
-    <li class="flex items-center">
-      <i class="fas fa-check text-green-400 mr-2"></i> Lounge access
-    </li>
-    <?php endif; ?>
-    
-    <?php if ($user['loyalty_tier'] == 'Platinum'): ?>
-    <li class="flex items-center">
-      <i class="fas fa-check text-green-400 mr-2"></i> Complimentary upgrades
-    </li>
-    <?php endif; ?>
-  </ul>
-</div>
-</div>
-</section>
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+          <h2 class="text-xl font-semibold mb-4">Loyalty Program</h2>
+          <div class="flex items-center mb-4">
+            <div class="h-16 w-16 rounded-full bg-gradient-to-br <?php 
+              if ($user['loyalty_tier'] == 'Bronze') echo 'from-amber-700 to-amber-500';
+              elseif ($user['loyalty_tier'] == 'Silver') echo 'from-gray-300 to-gray-100';
+              elseif ($user['loyalty_tier'] == 'Gold') echo 'from-yellow-500 to-yellow-300';
+              else echo 'from-purple-600 to-purple-400';
+            ?> flex items-center justify-center mr-4">
+              <i class="fas <?php 
+                if ($user['loyalty_tier'] == 'Bronze') echo 'fa-award';
+                elseif ($user['loyalty_tier'] == 'Silver') echo 'fa-medal';
+                elseif ($user['loyalty_tier'] == 'Gold') echo 'fa-trophy';
+                else echo 'fa-crown';
+              ?> text-2xl text-white"></i>
+            </div>
+            <div>
+              <h3 class="font-medium text-lg"><?php echo htmlspecialchars($user['loyalty_tier']); ?> Member</h3>
+              <p class="text-sm text-gray-400"><?php echo number_format($user['loyalty_points']); ?> points</p>
+            </div>
+          </div>
+          
+          <?php if ($user['loyalty_tier'] != 'Platinum'): ?>
+          <div class="mb-4">
+            <div class="flex justify-between text-sm mb-1">
+              <span><?php echo number_format($user['loyalty_points']); ?> points</span>
+              <span>Next tier: <?php echo htmlspecialchars($next_tier); ?></span>
+            </div>
+            <div class="w-full bg-gray-700 rounded-full h-2.5">
+              <div class="bg-indigo-600 h-2.5 rounded-full" style="width: <?php echo $progress_percentage; ?>%"></div>
+            </div>
+            <p class="text-sm text-gray-400 mt-2">
+              <?php echo number_format($points_to_next_tier); ?> more points needed to reach <?php echo htmlspecialchars($next_tier); ?>
+            </p>
+          </div>
+          <?php endif; ?>
+          
+          <h3 class="font-medium mb-2 mt-6">Benefits</h3>
+          <ul class="space-y-2 text-sm">
+            <?php if ($user['loyalty_tier'] == 'Bronze' || $user['loyalty_tier'] == 'Silver' || $user['loyalty_tier'] == 'Gold' || $user['loyalty_tier'] == 'Platinum'): ?>
+            <li class="flex items-center">
+              <i class="fas fa-check text-green-400 mr-2"></i> Priority check-in
+            </li>
+            <?php endif; ?>
+            
+            <?php if ($user['loyalty_tier'] == 'Silver' || $user['loyalty_tier'] == 'Gold' || $user['loyalty_tier'] == 'Platinum'): ?>
+            <li class="flex items-center">
+              <i class="fas fa-check text-green-400 mr-2"></i> Free seat selection
+            </li>
+            <?php endif; ?>
+            
+            <?php if ($user['loyalty_tier'] == 'Gold' || $user['loyalty_tier'] == 'Platinum'): ?>
+            <li class="flex items-center">
+              <i class="fas fa-check text-green-400 mr-2"></i> Lounge access
+            </li>
+            <?php endif; ?>
+            
+            <?php if ($user['loyalty_tier'] == 'Platinum'): ?>
+            <li class="flex items-center">
+              <i class="fas fa-check text-green-400 mr-2"></i> Complimentary upgrades
+            </li>
+            <?php endif; ?>
+          </ul>
+        </div>
+      </div>
+    </section>
 
-<!-- JavaScript for the dashboard functionality -->
- <!-- JavaScript -->
-<script>
-  const ctx = document.getElementById('flightPieChart').getContext('2d');
-
-  const flightData = {
-    onTime: 2,
-    delayed: 2,
-    cancelled: 1
-  };
-
-  const flightChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-      labels: ['On Time', 'Delayed', 'Cancelled'],
-      datasets: [{
-        label: 'Flight Status',
-        data: [flightData.onTime, flightData.delayed, flightData.cancelled],
-        backgroundColor: [
-          'rgb(34, 197, 94)',    // Green
-          'rgb(253, 224, 71)',    // Yellow
-          'rgb(239, 68, 68)'      // Red
-        ],
-        borderColor: 'rgb(31, 41, 55)',
-        borderWidth: 2,
-        hoverOffset: 8
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: { 
-            color: 'white',
-            font: {
-              size: 12
+    <!-- JavaScript -->
+    <script>
+      // Initialize charts
+      const ctx = document.getElementById('flightPieChart').getContext('2d');
+      const flightChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['On Time', 'Delayed', 'Cancelled'],
+          datasets: [{
+            label: 'Flight Status',
+            data: [2, 2, 1],
+            backgroundColor: [
+              'rgb(34, 197, 94)',    // Green
+              'rgb(253, 224, 71)',    // Yellow
+              'rgb(239, 68, 68)'      // Red
+            ],
+            borderColor: 'rgb(31, 41, 55)',
+            borderWidth: 2,
+            hoverOffset: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { 
+                color: 'white',
+                font: {
+                  size: 12
+                }
+              }
             }
           }
         }
-      }
-    }
-  });
-  
-// Chart initialization
-/*document.addEventListener('DOMContentLoaded', function() {
-  // Initialize the performance chart
-  const ctx = document.getElementById('performanceChart').getContext('2d');
-  const chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-      datasets: [{
-        label: 'Flight Bookings',
-        data: [65, 78, 72, 85, 82, 90],
-        borderColor: 'rgba(99, 102, 241, 1)',
-        backgroundColor: 'rgba(99, 102, 241, 0.1)',
-        tension: 0.3,
-        fill: true
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          labels: {
-            color: 'rgba(255, 255, 255, 0.8)'
-          }
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          grid: {
-            color: 'rgba(255, 255, 255, 0.1)'
-          },
-          ticks: {
-            color: 'rgba(255, 255, 255, 0.7)'
-          }
-        },
-        x: {
-          grid: {
-            color: 'rgba(255, 255, 255, 0.1)'
-          },
-          ticks: {
-            color: 'rgba(255, 255, 255, 0.7)'
-          }
-        }
-      }
-    }
-  });*/
-  
-  // Handle dropdowns
-  document.getElementById('notificationIcon').addEventListener('click', function(e) {
-    e.stopPropagation();
-    document.getElementById('notificationDropdown').classList.toggle('show');
-    document.getElementById('profileDropdown').classList.remove('show');
-  });
-  
-  document.getElementById('profileIcon').addEventListener('click', function(e) {
-    e.stopPropagation();
-    document.getElementById('profileDropdown').classList.toggle('show');
-    document.getElementById('notificationDropdown').classList.remove('show');
-  });
-  
-  // Close dropdowns when clicking elsewhere
-  document.addEventListener('click', function() {
-    closeAllDropdowns();
-  });
+      });
 
-// Function to show selected section
+      // Handle dropdowns
+      document.getElementById('notificationIcon').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('notificationDropdown').classList.toggle('show');
+        document.getElementById('profileDropdown').classList.remove('show');
+      });
+      
+      document.getElementById('profileIcon').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('profileDropdown').classList.toggle('show');
+        document.getElementById('notificationDropdown').classList.remove('show');
+      });
+      
+      // Close dropdowns when clicking elsewhere
+      document.addEventListener('click', function() {
+        closeAllDropdowns();
+      });
+
+      // Function to show selected section
+    // Function to show selected section
 function showSection(sectionId) {
   // Hide all sections
+   console.log('Showing section:', sectionId);
+  console.log('Section element:', document.getElementById(sectionId));
   document.querySelectorAll('.section-content').forEach(function(section) {
     section.classList.add('hidden');
   });
   
   // Show selected section
-  document.getElementById(sectionId).classList.remove('hidden');
+  const section = document.getElementById(sectionId);
+  if (section) {
+    section.classList.remove('hidden');
+  } else {
+    console.error('Section not found:', sectionId);
+  }
   
   // Update page title
-  document.getElementById('pageTitle').textContent = sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+  document.getElementById('pageTitle').textContent = 
+    sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
   
-  // Update active sidebar link
+  // Update active sidebar link - fix this part
   document.querySelectorAll('.sidebar-link').forEach(function(link) {
     link.classList.remove('active');
-  });
-  
-  // Add active class to clicked link
-  document.querySelectorAll('.sidebar-link').forEach(function(link) {
-    if (link.getAttribute('onclick') && link.getAttribute('onclick').includes(sectionId)) {
+    const onclickValue = link.getAttribute('onclick');
+    if (onclickValue && onclickValue.includes(`showSection('${sectionId}')`)) {
       link.classList.add('active');
     }
   });
-}
-
-// Function to toggle profile edit form
-function toggleProfileEdit() {
-  const form = document.getElementById('profileEditForm');
-  const view = document.getElementById('profileView');
   
-  if (form.classList.contains('hidden')) {
-    form.classList.remove('hidden');
-    view.classList.add('hidden');
-  } else {
-    form.classList.add('hidden');
-    view.classList.remove('hidden');
-  }
+  // Close any open dropdowns
+  closeAllDropdowns();
 }
 
-// Function to close all dropdowns
-function closeAllDropdowns() {
-  document.querySelectorAll('.dropdown-menu').forEach(function(dropdown) {
-    dropdown.classList.remove('show');
+      // Function to toggle profile edit form
+      function toggleProfileEdit() {
+        const profileView = document.getElementById('profileView');
+        const profileEditForm = document.getElementById('profileEditForm');
+        
+        if (profileView && profileEditForm) {
+          profileView.classList.toggle('hidden');
+          profileEditForm.classList.toggle('hidden');
+        }
+      }
+      // Ensure all sections are properly initialized
+document.addEventListener('DOMContentLoaded', function() {
+  // Make dashboard active by default
+  showSection('dashboard');
+  
+  // Add direct click handlers to sidebar links as a backup
+  document.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const section = this.getAttribute('onclick').match(/showSection\('([^']+)'\)/)[1];
+      showSection(section);
+    });
   });
-}
-</script>
-</main>
+});
+    </script>
+  </main>
 </div>
 </body>
 </html>
