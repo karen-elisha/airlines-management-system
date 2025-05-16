@@ -561,62 +561,90 @@ if (isset($mysqli)) {
       <!-- ... -->
 
 
-    <!-- Tickets Section -->
-    <section id="tickets" class="section-content hidden">
-    
-      <div class="max-w-2xl mx-auto bg-gray-800 p-6 rounded-xl shadow-lg">
-        <h2 class="text-xl font-semibold mb-6 text-center">Search Flights</h2>
-        <form class="space-y-4" action="flight-search.php" method="GET">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">From</label>
-              <select name="from" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" required>
-                <option value="" selected disabled>Select city</option>
-                <?php foreach ($airports as $airport): ?>
-                  <option value="<?php echo htmlspecialchars($airport['airport_id']); ?>">
-                    <?php echo htmlspecialchars($airport['city']) . " (" . htmlspecialchars($airport['airport_id']) . ")"; ?>
-                  </option>
-                <?php endforeach; ?>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">To</label>
-              <select name="to" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" required>
-                <option value="" selected disabled>Select city</option>
-                <?php foreach ($airports as $airport): ?>
-                  <option value="<?php echo htmlspecialchars($airport['airport_id']); ?>">
-                    <?php echo htmlspecialchars($airport['city']) . " (" . htmlspecialchars($airport['airport_id']) . ")"; ?>
-                  </option>
-                <?php endforeach; ?>
-              </select>
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">Departure</label>
-              <input type="date" name="departure" min="<?php echo date('Y-m-d'); ?>" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" required>
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Travelers</label>
-              <select name="travelers" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                <option value="1">1 Adult</option>
-                <option value="2">2 Adults</option>
-                <option value="3">3 Adults</option>
-                <option value="4">Family (2+2)</option>
-              </select>
-            </div>
-          </div>
-          
-          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-lg font-medium transition-colors">
-            Search Flights <i class="fas fa-search ml-2"></i>
-          </button>
-        </form>
+<!-- Tickets Section -->
+<section id="tickets" class="section-content hidden">
+  <div class="max-w-2xl mx-auto bg-gray-800 p-6 rounded-xl shadow-lg">
+    <h2 class="text-xl font-semibold mb-6 text-center text-white">Search Flights</h2>
+<form action="search_flight.php" method="POST" class="space-y-6" onsubmit="return validateForm()">
+      <!-- Trip Type -->
+      <div class="flex justify-center space-x-6 text-white">
+        <label class="inline-flex items-center">
+          <input type="radio" name="trip" value="oneway" checked class="h-4 w-4 text-indigo-500" onchange="toggleReturnDate()">
+          <span class="ml-2">One Way</span>
+        </label>
+        <label class="inline-flex items-center">
+          <input type="radio" name="trip" value="roundtrip" class="h-4 w-4 text-indigo-500" onchange="toggleReturnDate()">
+          <span class="ml-2">Round Trip</span>
+        </label>
       </div>
-    
- <!-- Tickets content remains the same as before -->
-      <!-- ... -->
-    </section>
+
+      <!-- From and To -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1 text-white">From</label>
+          <select name="from" id="from" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-indigo-500" required>
+            <option value="" selected disabled>Select city</option>
+            <?php foreach ($airports as $airport): ?>
+              <option value="<?php echo htmlspecialchars($airport['airport_id']); ?>">
+                <?php echo htmlspecialchars($airport['city']) . " (" . htmlspecialchars($airport['airport_id']) . ")"; ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+
+        <div class="flex items-end justify-between space-x-2">
+          <select name="to" id="to" class="flex-1 p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-indigo-500 focus:ring-indigo-500" required>
+            <option value="" selected disabled>Select city</option>
+            <?php foreach ($airports as $airport): ?>
+              <option value="<?php echo htmlspecialchars($airport['airport_id']); ?>">
+                <?php echo htmlspecialchars($airport['city']) . " (" . htmlspecialchars($airport['airport_id']) . ")"; ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+          <!-- Swap Button -->
+          <button type="button" onclick="swapLocations()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-500">
+            <i class="fas fa-exchange-alt"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Departure and Return -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1 text-white">Departure</label>
+          <input type="date" name="departure" min="<?php echo date('Y-m-d'); ?>" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:ring-indigo-500" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1 text-white">Return</label>
+          <input type="date" name="return_date" id="returnDate" min="<?php echo date('Y-m-d'); ?>" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:ring-indigo-500" disabled>
+        </div>
+      </div>
+
+      <!-- Passengers -->
+      <div>
+        <label class="block text-sm font-medium mb-1 text-white">Passengers</label>
+        <div class="flex items-center border border-gray-600 rounded-lg p-1 bg-gray-700">
+          <button type="button" onclick="adjustPassengers(-1)" class="px-3 py-1 text-white hover:bg-gray-600 rounded">
+            <i class="fas fa-minus"></i>
+          </button>
+          <input type="number" name="travelers" id="travelers" value="1" min="1" max="9" class="w-16 text-center bg-gray-700 text-white border-0 focus:ring-0 text-sm">
+          <button type="button" onclick="adjustPassengers(1)" class="px-3 py-1 text-white hover:bg-gray-600 rounded">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex justify-center">
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white py-3 px-6 rounded-lg font-medium transition-colors">
+          Search Flights <i class="fas fa-search ml-2"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+ 
 
     <!-- Profile Section -->
     <section id="profile" class="section-content hidden">
@@ -743,6 +771,7 @@ if (isset($mysqli)) {
               <i class="fas fa-check text-green-400 mr-2"></i> Complimentary upgrades
             </li>
             <?php endif; ?>
+            
           </ul>
         </div>
       </div>
@@ -863,6 +892,39 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+function toggleReturnDate() {
+  const returnDate = document.getElementById('returnDate');
+  const roundTrip = document.querySelector('input[name="trip"][value="roundtrip"]').checked;
+  returnDate.disabled = !roundTrip;
+  returnDate.classList.toggle('bg-gray-600', !roundTrip);
+}
+
+function swapLocations() {
+  const from = document.getElementById('from');
+  const to = document.getElementById('to');
+  const temp = from.value;
+  from.value = to.value;
+  to.value = temp;
+}
+
+function adjustPassengers(change) {
+  const input = document.getElementById('travelers');
+  let value = parseInt(input.value);
+  value = isNaN(value) ? 1 : value + change;
+  if (value >= 1 && value <= 9) {
+    input.value = value;
+  }
+}
+
+function validateForm() {
+  const from = document.getElementById('from').value;
+  const to = document.getElementById('to').value;
+  if (from === to) {
+    alert("Departure and destination cannot be the same.");
+    return false;
+  }
+  return true;
+}
     </script>
   </main>
 </div>

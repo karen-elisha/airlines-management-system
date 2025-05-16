@@ -29,11 +29,6 @@ if (empty($origin) && empty($destination)) {
     $tickets = 1;
 }
 
-// Check if departure_date is empty or invalid, set to tomorrow if it is
-if (empty($departure_date) || !strtotime($departure_date)) {
-    $departure_date = date('Y-m-d', strtotime('+1 day')); // Tomorrow
-}
-
 // Format date for display
 $display_date = date('d F Y', strtotime($departure_date));
 
@@ -65,18 +60,14 @@ $flights_query = "
     JOIN airlines a ON f.airline_id = a.airline_id
     JOIN airports o ON f.origin_airport = o.airport_id
     JOIN airports d ON f.destination_airport = d.airport_id
-    WHERE o.airport_code = ? 
-    AND d.airport_code = ?
-    AND DATE(f.departure_time) = ?
-    AND f.available_seats >= ?
+    WHERE o.airport_code = '$origin' 
+    AND d.airport_code = '$destination'
+    AND DATE(f.departure_time) = '$departure_date'
+    AND f.available_seats >= $tickets
     ORDER BY f.departure_time
 ";
 
-// Prepare and execute the query using prepared statements
-$stmt = mysqli_prepare($mysqli, $flights_query);
-mysqli_stmt_bind_param($stmt, 'sssi', $origin, $destination, $departure_date, $tickets);
-mysqli_stmt_execute($stmt);
-$flights_result = mysqli_stmt_get_result($stmt);
+$flights_result = mysqli_query($mysqli, $flights_query);
 
 // If database query fails or no results, use demo data
 $flights = [];
@@ -346,32 +337,13 @@ function getStatusClass($status) {
       dropdown.classList.toggle('hidden');
     }
 
-    // Book flight action
+    // Book flight action - MODIFIED to always redirect to login page
     function bookFlight(flightId, airlineName, airlineId, flightNumber, departureDate, passengers, basePrice) {
-      <?php if(isset($_SESSION['user_id'])): ?>
-        // Store flight details to browser's localStorage
-        const flightDetails = {
-          flight_id: flightId,
-          airline_name: airlineName,
-          airline_id: airlineId,
-          flight_number: flightNumber,
-          origin: '<?php echo $origin; ?>',
-          destination: '<?php echo $destination; ?>',
-          departure_date: departureDate,
-          passengers: passengers,
-          base_price: basePrice,
-          total_price: basePrice * passengers
-        };
-        
-        // Store data in localStorage
-        localStorage.setItem('flightDetails', JSON.stringify(flightDetails));
-        
-        // Redirect to payment page
-        window.location.href = 'booking-forms.php';
-      <?php else: ?>
-        alert('Please login to book a flight');
-        window.location.href = `login.php?redirect=available.php?from=<?php echo $origin; ?>&to=<?php echo $destination; ?>&departure_date=<?php echo $departure_date; ?>`;
-      <?php endif; ?>
+      // Create the redirect URL with the current flight search parameters
+      const redirectUrl = 'login.php?redirect=available.php?from=<?php echo $origin; ?>&to=<?php echo $destination; ?>&departure_date=<?php echo $departure_date; ?>&tickets=<?php echo $tickets; ?>';
+      
+      // Redirect to login page
+      window.location.href = redirectUrl;
     }
 
     // Close dropdown when clicking outside
