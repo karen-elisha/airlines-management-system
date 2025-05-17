@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 17, 2025 at 02:38 PM
+-- Generation Time: May 17, 2025 at 03:41 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -125,7 +125,25 @@ CREATE TABLE `bookings` (
 --
 
 INSERT INTO `bookings` (`booking_id`, `booking_reference`, `user_id`, `flight_id`, `booking_date`, `travel_date`, `num_passengers`, `total_amount`, `contact_email`, `contact_phone`, `booking_status`, `payment_status`, `payment_method`, `created_at`, `updated_at`) VALUES
-(1, 'BK-6828826CBB4A5', 5, 1002, '2025-05-17 14:34:52', '2025-05-20', 1, 5369.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+(1, 'BK-6828826CBB4A5', 5, 1002, '2025-05-17 14:34:52', '2025-05-20', 1, 5369.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(2, 'BK-6828840541211', 5, 1002, '2025-05-17 14:41:41', '2025-05-20', 1, 5369.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(3, 'BK-682884366150F', 5, 1002, '2025-05-17 14:42:30', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(4, 'BK-6828851F17E88', 5, 1002, '2025-05-17 14:46:23', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(5, 'BK-68288535D8E82', 5, 1002, '2025-05-17 14:46:45', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(6, 'BK-682885660283A', 5, 1002, '2025-05-17 14:47:34', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(7, 'BK-6828857E01EE9', 5, 1002, '2025-05-17 14:47:58', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(8, 'BK-682885CBB90FF', 5, 1002, '2025-05-17 14:49:15', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(9, 'BK-682886D663E37', 5, 1002, '2025-05-17 14:53:42', '2025-05-21', 1, 5369.00, 'chezanand@gmail.com', '9886026336', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(10, 'BK-682887660CB21', 5, 1001, '2025-05-17 14:56:06', '2025-05-19', 1, 4719.00, 'suresh@gmail.com', '7013631447', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(11, 'BK-68288792784B6', 5, 1001, '2025-05-17 14:56:50', '2025-05-19', 1, 4719.00, 'suresh@gmail.com', '7013631447', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(12, 'BK-68288AEA9B403', 5, 1001, '2025-05-17 15:11:06', '2025-05-23', 1, 4719.00, 'karenelisha0204@gmail.com', '7013631447', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(13, 'BK-68288BBD23F8F', 5, 1001, '2025-05-17 15:14:37', '2025-05-23', 1, 4719.00, 'karenelisha0204@gmail.com', '7013631447', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(14, 'BK-68288CB62F8CC', 5, 1001, '2025-05-17 15:18:46', '2025-05-23', 1, 4719.00, 'robert@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(15, 'BK-68288D6BA268E', 5, 1001, '2025-05-17 15:21:47', '2025-05-23', 1, 4719.00, 'robert@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(16, 'BK-68288DDEADE53', 5, 1001, '2025-05-17 15:23:42', '2025-05-23', 1, 4719.00, 'tom@gmail.com', '9849973543', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(17, 'BK-68288E312F7FF', 5, 1001, '2025-05-17 15:25:05', '2025-05-23', 1, 4719.00, 'tom@gmail.com', '9849973543', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(18, 'BK-68288E730C5A4', 5, 1001, '2025-05-17 15:26:11', '2025-05-23', 1, 4719.00, 'sony@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(19, 'BK-6828902E5BF02', 5, 1001, '2025-05-17 15:33:34', '2025-05-23', 1, 4719.00, 'sony@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-17 19:07:42');
 
 -- --------------------------------------------------------
 
@@ -232,7 +250,25 @@ CREATE TABLE `passengers` (
 --
 
 INSERT INTO `passengers` (`passenger_id`, `booking_id`, `first_name`, `last_name`, `gender`, `age`, `seat_number`) VALUES
-(1, 1, 'Harry ', 'Potter', 'male', 19, '12A');
+(1, 1, 'Harry ', 'Potter', 'male', 19, '12A'),
+(2, 2, 'Harry ', 'Potter', 'male', 19, '12A'),
+(3, 3, 'Karen', 'Chezhiyan', 'female', 24, '12A,Window'),
+(4, 4, 'Karen', 'Elisha', 'female', 19, '12A'),
+(5, 5, 'Karen', 'Elisha', 'female', 19, '12A'),
+(6, 6, 'Karen', 'Elisha', 'female', 19, '12A'),
+(7, 7, 'Karen', 'Elisha', 'female', 19, '12A'),
+(8, 8, 'Karen', 'Elisha', 'female', 19, '12A'),
+(9, 9, 'Chezhiyan', 'Anandaraj', 'male', 24, '12A'),
+(10, 10, 'Suresh', 'Naidu', 'male', 49, '12A'),
+(11, 11, 'Suresh', 'Naidu', 'male', 49, '12A'),
+(12, 12, 'Tom', 'Robert', 'male', 25, '12A'),
+(13, 13, 'Tom', 'Robert', 'male', 25, '12A'),
+(14, 14, 'Robert', 'Thomson', 'male', 48, '12A'),
+(15, 15, 'Robert', 'Thomson', 'male', 48, '12A'),
+(16, 16, 'Tom', 'Anandaraj', 'male', 25, '12A'),
+(17, 17, 'Tom', 'Anandaraj', 'male', 25, '12A'),
+(18, 18, 'Sony', 'Chezhiyan', 'male', 38, '12A,Window'),
+(19, 19, 'Sony', 'Chezhiyan', 'male', 38, '12A,Window');
 
 -- --------------------------------------------------------
 
@@ -290,7 +326,10 @@ INSERT INTO `tickets` (`ticket_id`, `user_id`, `flight_id`, `airline_name`, `num
 (16, 5, 1003, 'Vistara', 1, 5299.00, '2025-05-17 17:48:06', 'pending'),
 (17, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 17:50:23', 'pending'),
 (18, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 17:55:05', 'pending'),
-(19, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 17:59:18', 'pending');
+(19, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 17:59:18', 'pending'),
+(20, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 18:22:58', 'pending'),
+(21, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 18:25:29', 'pending'),
+(22, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 18:40:03', 'pending');
 
 -- --------------------------------------------------------
 
@@ -428,7 +467,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `feedback`
@@ -458,7 +497,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `passengers`
 --
 ALTER TABLE `passengers`
-  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `promotions`
@@ -470,7 +509,7 @@ ALTER TABLE `promotions`
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `users`
