@@ -119,7 +119,7 @@ $user_id = $_SESSION['user_id'];
       <!-- Passenger Information Form -->
       <div class="mb-6">
         <h3 class="text-lg font-semibold mb-4">Passenger Information</h3>
-        <form id="bookingForm" method="post" action="complete-booking.php">
+        <form id="bookingForm" method="post" action="process_booking.php">
           <!-- Hidden fields to store flight data -->
           <input type="hidden" id="flight_id" name="flight_id">
           <input type="hidden" id="departure_date" name="departure_date">
