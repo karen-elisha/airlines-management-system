@@ -46,6 +46,43 @@ $_SESSION['flight_search'] = [
     'tickets' => $tickets
 ];
 
+// Handle AJAX request to create a ticket
+if(isset($_POST['book_flight']) && isset($_SESSION['user_id'])) {
+    $flight_id = $_POST['flight_id'];
+    $airline_name = $_POST['airline_name'];
+    $user_id = $_SESSION['user_id'];
+    $passengers = $_POST['passengers'];
+    $base_price = $_POST['base_price'];
+    
+    // Insert record into tickets table
+    $ticket_insert_query = "
+        INSERT INTO tickets (user_id, flight_id, airline_name, number_of_passengers, total_price, booking_date, status)
+        VALUES (?, ?, ?, ?, ?, NOW(), 'Pending')
+    ";
+    
+    $total_price = $base_price * $passengers;
+    
+    // Prepare and execute the insert statement
+    $stmt = mysqli_prepare($mysqli, $ticket_insert_query);
+    mysqli_stmt_bind_param($stmt, 'iisis', $user_id, $flight_id, $airline_name, $passengers, $total_price);
+    
+    if(mysqli_stmt_execute($stmt)) {
+        // Get the ticket ID for reference in the booking process
+        $ticket_id = mysqli_insert_id($mysqli);
+        
+        // Store ticket ID in session for the next page
+        $_SESSION['ticket_id'] = $ticket_id;
+        
+        // Return success response
+        echo json_encode(['success' => true, 'ticket_id' => $ticket_id]);
+        exit;
+    } else {
+        // Return error response
+        echo json_encode(['success' => false, 'message' => 'Failed to create ticket: ' . mysqli_error($mysqli)]);
+        exit;
+    }
+}
+
 // Fetch flight data from database - Include ticket count in query
 $flights_query = "
     SELECT 
@@ -227,6 +264,15 @@ function getStatusClass($status) {
     <?php unset($_SESSION['success_message']); ?>
   <?php endif; ?>
 
+  <!-- Loading overlay -->
+  <div id="loading-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg text-gray-800 text-center">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+      <p class="text-lg font-medium">Processing your booking...</p>
+      <p class="text-sm text-gray-500">Please do not close this window.</p>
+    </div>
+  </div>
+
   <!-- Main Content -->
   <main class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-8">
@@ -349,25 +395,60 @@ function getStatusClass($status) {
     // Book flight action
     function bookFlight(flightId, airlineName, airlineId, flightNumber, departureDate, passengers, basePrice) {
       <?php if(isset($_SESSION['user_id'])): ?>
-        // Store flight details to browser's localStorage
-        const flightDetails = {
-          flight_id: flightId,
-          airline_name: airlineName,
-          airline_id: airlineId,
-          flight_number: flightNumber,
-          origin: '<?php echo $origin; ?>',
-          destination: '<?php echo $destination; ?>',
-          departure_date: departureDate,
-          passengers: passengers,
-          base_price: basePrice,
-          total_price: basePrice * passengers
-        };
+        // Show loading overlay
+        document.getElementById('loading-overlay').classList.remove('hidden');
         
-        // Store data in localStorage
-        localStorage.setItem('flightDetails', JSON.stringify(flightDetails));
+        // First store the flight details in the ticket table
+        const formData = new FormData();
+        formData.append('book_flight', 1);
+        formData.append('flight_id', flightId);
+        formData.append('airline_name', airlineName);
+        formData.append('passengers', passengers);
+        formData.append('base_price', basePrice);
         
-        // Redirect to payment page
-        window.location.href = 'booking-forms.php';
+        // Use AJAX to submit the form data
+        fetch('available.php', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Store flight details to browser's localStorage
+            const flightDetails = {
+              flight_id: flightId,
+              ticket_id: data.ticket_id,
+              airline_name: airlineName,
+              airline_id: airlineId,
+              flight_number: flightNumber,
+              origin: '<?php echo $origin; ?>',
+              destination: '<?php echo $destination; ?>',
+              departure_date: departureDate,
+              passengers: passengers,
+              base_price: basePrice,
+              total_price: basePrice * passengers
+            };
+            
+            // Store data in localStorage
+            localStorage.setItem('flightDetails', JSON.stringify(flightDetails));
+            
+            // Redirect to booking forms page
+            window.location.href = 'booking-forms.php';
+          } else {
+            // Hide loading overlay
+            document.getElementById('loading-overlay').classList.add('hidden');
+            
+            // Show error message
+            alert('Failed to book flight: ' + (data.message || 'Unknown error'));
+          }
+        })
+        .catch(error => {
+          // Hide loading overlay
+          document.getElementById('loading-overlay').classList.add('hidden');
+          
+          // Show error message
+          alert('Error booking flight: ' + error.message);
+        });
       <?php else: ?>
         alert('Please login to book a flight');
         window.location.href = `login.php?redirect=available.php?from=<?php echo $origin; ?>&to=<?php echo $destination; ?>&departure_date=<?php echo $departure_date; ?>`;
