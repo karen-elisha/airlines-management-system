@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 17, 2025 at 12:26 PM
+-- Generation Time: May 17, 2025 at 02:38 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -120,6 +120,13 @@ CREATE TABLE `bookings` (
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `bookings`
+--
+
+INSERT INTO `bookings` (`booking_id`, `booking_reference`, `user_id`, `flight_id`, `booking_date`, `travel_date`, `num_passengers`, `total_amount`, `contact_email`, `contact_phone`, `booking_status`, `payment_status`, `payment_method`, `created_at`, `updated_at`) VALUES
+(1, 'BK-6828826CBB4A5', 5, 1002, '2025-05-17 14:34:52', '2025-05-20', 1, 5369.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+
 -- --------------------------------------------------------
 
 --
@@ -220,6 +227,13 @@ CREATE TABLE `passengers` (
   `seat_number` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `passengers`
+--
+
+INSERT INTO `passengers` (`passenger_id`, `booking_id`, `first_name`, `last_name`, `gender`, `age`, `seat_number`) VALUES
+(1, 1, 'Harry ', 'Potter', 'male', 19, '12A');
+
 -- --------------------------------------------------------
 
 --
@@ -258,7 +272,25 @@ CREATE TABLE `tickets` (
 --
 
 INSERT INTO `tickets` (`ticket_id`, `user_id`, `flight_id`, `airline_name`, `number_of_passengers`, `total_price`, `booking_date`, `status`) VALUES
-(1, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 15:40:32', 'pending');
+(1, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 15:40:32', 'pending'),
+(2, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 16:04:08', 'pending'),
+(3, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 16:04:12', 'pending'),
+(4, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 16:15:40', 'pending'),
+(5, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 16:16:45', 'pending'),
+(6, 5, 1003, 'Vistara', 1, 5299.00, '2025-05-17 16:17:46', 'pending'),
+(7, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 16:18:32', 'pending'),
+(8, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 16:18:59', 'pending'),
+(9, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 16:31:04', 'pending'),
+(10, 5, 1003, 'Vistara', 1, 5299.00, '2025-05-17 17:01:47', 'pending'),
+(11, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 17:07:12', 'pending'),
+(12, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 17:14:41', 'pending'),
+(13, 5, 1003, 'Vistara', 1, 5299.00, '2025-05-17 17:21:04', 'pending'),
+(14, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 17:23:44', 'pending'),
+(15, 5, 1003, 'Vistara', 1, 5299.00, '2025-05-17 17:37:03', 'pending'),
+(16, 5, 1003, 'Vistara', 1, 5299.00, '2025-05-17 17:48:06', 'pending'),
+(17, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 17:50:23', 'pending'),
+(18, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 17:55:05', 'pending'),
+(19, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 17:59:18', 'pending');
 
 -- --------------------------------------------------------
 
@@ -396,7 +428,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `feedback`
@@ -426,7 +458,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `passengers`
 --
 ALTER TABLE `passengers`
-  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `promotions`
@@ -438,7 +470,7 @@ ALTER TABLE `promotions`
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `users`
