@@ -64,7 +64,7 @@ $today = date('Y-m-d');
     </div>
     <nav class="hidden md:flex items-center space-x-8">
       <a href="airline-details.html" class="hover:text-indigo-300 transition">Airlines</a>
-      <a href="feedback.html" class="hover:text-indigo-300 transition">Feedback</a>
+      <a href="feedback.php" class="hover:text-indigo-300 transition">Feedback</a>
       <a href="#destinations" class="hover:text-indigo-300 transition">Destinations</a>
       <div class="relative">
         
