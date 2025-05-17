@@ -3,7 +3,7 @@
 $host = "localhost";
 $dbname = "airlines";
 $username = "root";
-$password = "root";
+$password = "";
 
 // Create MySQLi connection
 $mysqli = new mysqli($host, $username, $password, $dbname);
