@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 28, 2025 at 11:58 AM
--- Server version: 9.2.0
+-- Generation Time: May 17, 2025 at 08:34 AM
+-- Server version: 8.0.41
 -- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -97,25 +97,20 @@ INSERT INTO `airports` (`airport_id`, `airport_name`, `city`, `country`, `timezo
 
 CREATE TABLE `bookings` (
   `booking_id` int NOT NULL,
+  `booking_reference` varchar(20) NOT NULL,
   `user_id` int NOT NULL,
-  `booking_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `flight_id` int NOT NULL,
+  `booking_date` datetime NOT NULL,
+  `travel_date` date NOT NULL,
+  `num_passengers` int NOT NULL,
   `total_amount` decimal(10,2) NOT NULL,
-  `payment_status` enum('Pending','Completed','Failed','Refunded') DEFAULT 'Pending',
-  `booking_status` enum('Confirmed','Cancelled','Completed') DEFAULT 'Confirmed',
-  `flight_id` int DEFAULT NULL,
-  `number_of_passengers` int NOT NULL,
-  `total_price` decimal(10,2) NOT NULL
+  `contact_email` varchar(100) NOT NULL,
+  `contact_phone` varchar(20) NOT NULL,
+  `booking_status` enum('Pending','Confirmed','Cancelled') NOT NULL DEFAULT 'Pending',
+  `payment_status` enum('Pending','Completed','Failed','Refunded') NOT NULL DEFAULT 'Pending',
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `bookings`
---
-
-INSERT INTO `bookings` (`booking_id`, `user_id`, `booking_date`, `total_amount`, `payment_status`, `booking_status`, `flight_id`, `number_of_passengers`, `total_price`) VALUES
-(1001, 1, '2023-11-15 04:00:45', 450.00, 'Pending', 'Confirmed', NULL, 0, 0.00),
-(1002, 2, '2023-11-16 08:45:22', 890.50, 'Completed', 'Completed', NULL, 0, 0.00),
-(1003, 3, '2023-11-17 11:15:10', 675.25, 'Failed', 'Cancelled', NULL, 0, 0.00),
-(1004, 4, '2023-11-10 05:50:33', 1200.00, 'Refunded', 'Cancelled', NULL, 0, 0.00);
 
 -- --------------------------------------------------------
 
@@ -212,9 +207,9 @@ CREATE TABLE `passengers` (
   `booking_id` int NOT NULL,
   `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
-  `gender` enum('Male','Female','Other') DEFAULT NULL,
+  `gender` enum('male','female','other') NOT NULL,
   `age` int NOT NULL,
-  `seat_number` varchar(5) DEFAULT NULL
+  `seat_number` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -232,34 +227,6 @@ CREATE TABLE `promotions` (
   `valid_until` date NOT NULL,
   `active` tinyint(1) DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tickets`
---
-
-CREATE TABLE `tickets` (
-  `ticket_id` int NOT NULL,
-  `booking_id` int NOT NULL,
-  `flight_id` int NOT NULL,
-  `passenger_name` varchar(100) NOT NULL,
-  `passenger_email` varchar(100) DEFAULT NULL,
-  `passenger_phone` varchar(15) DEFAULT NULL,
-  `seat_number` varchar(10) DEFAULT NULL,
-  `ticket_class` enum('Economy','Premium Economy','Business','First') DEFAULT 'Economy',
-  `ticket_price` decimal(10,2) NOT NULL,
-  `check_in_status` tinyint(1) DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `tickets`
---
-
-INSERT INTO `tickets` (`ticket_id`, `booking_id`, `flight_id`, `passenger_name`, `passenger_email`, `passenger_phone`, `seat_number`, `ticket_class`, `ticket_price`, `check_in_status`) VALUES
-(1001, 1001, 1001, 'Rahul Sharma', 'rahul.sharma@example.com', '+919876543210', '12A', 'Economy', 4500.00, 0),
-(1002, 1002, 1002, 'Priya Patel', 'priya.p@example.com', '+919887766554', '8C', 'Premium Economy', 7500.00, 1),
-(1003, 1003, 1003, 'Amit Singh', 'amit.singh@example.com', '+919776655443', '3D', 'Business', 12500.00, 0);
 
 -- --------------------------------------------------------
 
@@ -288,7 +255,8 @@ INSERT INTO `users` (`user_id`, `full_name`, `email`, `phone`, `password`, `memb
 (2, 'Jane Smith', 'jane.smith@example.com', '+15559876543', '$2y$10$hashedpassword456', '2022-11-20 08:45:00', 450, 'Silver', '2025-04-26 14:21:17'),
 (3, 'Robert Johnson', 'robert.j@example.com', '+15555551234', '$2y$10$hashedpassword789', '2021-05-10 03:15:00', 1200, 'Gold', '2025-04-26 14:21:17'),
 (4, 'Emily Davis', 'emily.d@example.com', '+15553334444', '$2y$10$hashedpassword012', '2020-08-05 10:50:00', 3000, 'Platinum', '2025-04-26 14:21:17'),
-(5, 'Karen Elisha Chezhiyan', 'karenelisha0204@gmail.com', '9591553820', '$2y$10$xyaSVBEqCkpFzMS/Gf5eg.niz84jwlhqtThIlBiforda.IAvc.Xaq', '2025-04-26 14:36:37', 0, 'Bronze', '2025-04-26 14:36:37');
+(5, 'Karen Elisha Chezhiyan', 'karenelisha0204@gmail.com', '9591553820', '$2y$10$xyaSVBEqCkpFzMS/Gf5eg.niz84jwlhqtThIlBiforda.IAvc.Xaq', '2025-04-26 14:36:37', 0, 'Bronze', '2025-04-26 14:36:37'),
+(6, 'ritvik', 'ritvik.medam@gmail.com', '7013631447', '$2y$10$BoaDM0B.Iz/OpMRWUTbkOexrAOWkVmtIHDWtRA8phMmxLC78HlNc.', '2025-05-17 05:57:26', 0, 'Bronze', '2025-05-17 05:57:26');
 
 --
 -- Indexes for dumped tables
@@ -319,8 +287,9 @@ ALTER TABLE `airports`
 --
 ALTER TABLE `bookings`
   ADD PRIMARY KEY (`booking_id`),
+  ADD UNIQUE KEY `booking_reference` (`booking_reference`),
   ADD KEY `user_id` (`user_id`),
-  ADD KEY `fk_flight` (`flight_id`);
+  ADD KEY `flight_id` (`flight_id`);
 
 --
 -- Indexes for table `feedback`
@@ -367,14 +336,6 @@ ALTER TABLE `promotions`
   ADD UNIQUE KEY `promo_code` (`promo_code`);
 
 --
--- Indexes for table `tickets`
---
-ALTER TABLE `tickets`
-  ADD PRIMARY KEY (`ticket_id`),
-  ADD KEY `booking_id` (`booking_id`),
-  ADD KEY `flight_id` (`flight_id`);
-
---
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -395,7 +356,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1005;
+  MODIFY `booking_id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `feedback`
@@ -434,16 +395,10 @@ ALTER TABLE `promotions`
   MODIFY `promo_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `tickets`
---
-ALTER TABLE `tickets`
-  MODIFY `ticket_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1004;
-
---
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
@@ -453,8 +408,8 @@ ALTER TABLE `users`
 -- Constraints for table `bookings`
 --
 ALTER TABLE `bookings`
-  ADD CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `fk_flight` FOREIGN KEY (`flight_id`) REFERENCES `flights` (`flight_id`);
+  ADD CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`flight_id`) REFERENCES `flights` (`flight_id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `feedback`
@@ -486,14 +441,7 @@ ALTER TABLE `notifications`
 -- Constraints for table `passengers`
 --
 ALTER TABLE `passengers`
-  ADD CONSTRAINT `passengers_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`booking_id`);
-
---
--- Constraints for table `tickets`
---
-ALTER TABLE `tickets`
-  ADD CONSTRAINT `tickets_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`booking_id`),
-  ADD CONSTRAINT `tickets_ibfk_2` FOREIGN KEY (`flight_id`) REFERENCES `flights` (`flight_id`);
+  ADD CONSTRAINT `passengers_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`booking_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
