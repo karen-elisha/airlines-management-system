@@ -144,7 +144,7 @@ try {
     $mysqli->close();
 
     // Successful redirect
-    header('Location: payment.php');
+   header('Location: payment.php');
     exit;
 
 } catch (Exception $e) {

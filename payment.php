@@ -1,88 +1,142 @@
 <?php
-// Start session for user management
+// Start session and enable error reporting
 session_start();
+require_once 'db_connect.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+ini_set('error_log', 'php_errors.log');
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    // Redirect to login page
     header('Location: login.php?redirect=payment.php');
     exit;
 }
 
 // Check if booking ID is set in session
-if (!isset($_SESSION['booking_id'])) {
-    // Redirect to flights page
-    header('Location: index.php');
+if (!isset($_SESSION['current_booking_id'])) {
+    $_SESSION['booking_error'] = "No booking found. Please start again.";
+    header('Location: booking-forms.php');
     exit;
 }
 
 // Include database connection
 require_once 'db_connect.php';
 
-// Get booking details from session
-$booking_id = $_SESSION['booking_id'] ?? 0;
-$booking_reference = $_SESSION['booking_reference'] ?? '';
-$total_amount = $_SESSION['total_amount'] ?? 0;
-$num_passengers = $_SESSION['num_passengers'] ?? 0;
-
-// Process payment if form submitted
+// Initialize variables
 $payment_processed = false;
 $payment_method = '';
+$error_message = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get the payment method from POST data
-    $payment_method = $_POST['payment_method'] ?? '';
-    
-    if (!empty($payment_method)) {
-        try {
-            // Update booking payment status
-            $sql = "UPDATE bookings SET payment_status = 'Completed', updated_at = NOW() WHERE booking_id = ?";
-            $stmt = $mysqli->prepare($sql);
-            $stmt->bind_param("i", $booking_id);
-            $result = $stmt->execute();
-            
-            if ($result) {
-                // Payment successfully processed
-                $payment_processed = true;
-            } else {
-                error_log("Payment processing error: " . $mysqli->error);
-            }
-            
-        } catch (Exception $e) {
-            error_log("Payment processing error: " . $e->getMessage());
+// Get booking details from session - use current_booking_id consistently
+$booking_id = (int)($_SESSION['current_booking_id'] ?? 0);
+$booking_reference = $_SESSION['booking_reference'] ?? '';
+$total_amount = (float)($_SESSION['total_amount'] ?? 0);
+$num_passengers = (int)($_SESSION['num_passengers'] ?? 0);
+
+// Validate booking ID
+if ($booking_id <= 0) {
+    $_SESSION['booking_error'] = "Invalid booking reference";
+    header('Location: booking-forms.php');
+    exit;
+}
+
+// Process payment if form submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_method'])) {
+    try {
+        $payment_method = trim($_POST['payment_method']);
+        
+        if (empty($payment_method)) {
+            throw new Exception("Please select a payment method");
         }
+
+        // Validate payment method
+        $allowed_methods = ['upi', 'card', 'netbanking', 'wallet'];
+        if (!in_array($payment_method, $allowed_methods)) {
+            throw new Exception("Invalid payment method selected");
+        }
+
+        // Begin transaction
+        $mysqli->begin_transaction();
+
+        // Update booking payment status
+        $sql = "UPDATE bookings SET 
+                payment_status = 'completed', 
+                payment_method = ?,
+                updated_at = NOW() 
+                WHERE booking_id = ?";
+        
+        $stmt = $mysqli->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Database error: " . $mysqli->error);
+        }
+
+        // Bind parameters
+        if (!$stmt->bind_param("si", $payment_method, $booking_id)) {
+            throw new Exception("Failed to bind parameters: " . $stmt->error);
+        }
+
+        // Execute update
+        if (!$stmt->execute()) {
+            throw new Exception("Failed to update booking: " . $stmt->error);
+        }
+
+        // Commit transaction
+        $mysqli->commit();
+        $payment_processed = true;
+        
+        // Update session
+        $_SESSION['payment_status'] = 'completed';
+        
+    } catch (Exception $e) {
+        // Rollback on error
+        if (isset($mysqli) && $mysqli instanceof mysqli) {
+            $mysqli->rollback();
+        }
+        $error_message = $e->getMessage();
+        error_log("Payment Error: " . $error_message);
+        $_SESSION['payment_error'] = $error_message;
     }
 }
 
-// Get flight and passenger details for ticket display
-$flight_details = [];
-$passenger_details = [];
-
+// Get booking details for display
 try {
-    // Get booking details
-    $sql = "SELECT b.*, f.airline_id, f.flight_number, f.origin, f.destination, f.departure_time 
+    $flight_details = [];
+    $passenger_details = [];
+
+    // Get flight details
+    $sql = "SELECT b.*, f.airline_id, f.flight_number, f.origin_airport, f.destination_airport, 
+            f.departure_time, f.arrival_time, f.duration
             FROM bookings b 
             JOIN flights f ON b.flight_id = f.flight_id 
             WHERE b.booking_id = ?";
+    
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param("i", $booking_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $flight_details = $result->fetch_assoc();
     
+    if (empty($flight_details)) {
+        throw new Exception("Flight details not found");
+    }
+
     // Get passenger details
-    $sql = "SELECT * FROM passengers WHERE booking_id = ?";
+    $sql = "SELECT * FROM passengers WHERE booking_id = ? ORDER BY passenger_id";
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param("i", $booking_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    $passenger_details = [];
+    
     while ($row = $result->fetch_assoc()) {
         $passenger_details[] = $row;
     }
-    
+
 } catch (Exception $e) {
-    error_log("Database error: " . $e->getMessage());
+    error_log("Database Error: " . $e->getMessage());
+    $_SESSION['booking_error'] = "Error retrieving booking details";
+    header('Location: booking-forms.php');
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -141,7 +195,7 @@ try {
           </div>
           <div class="flex justify-between mb-2">
             <span class="text-gray-600">Route:</span>
-            <span class="font-medium"><?php echo htmlspecialchars($flight_details['origin'] . ' → ' . $flight_details['destination']); ?></span>
+            <span class="font-medium"><?php echo htmlspecialchars($flight_details['origin_airport'] . ' → ' . $flight_details['destination_airport']); ?></span>
           </div>
           <div class="flex justify-between mb-2">
             <span class="text-gray-600">Date:</span>
@@ -149,7 +203,7 @@ try {
           </div>
           <div class="flex justify-between">
             <span class="text-gray-600">Passengers:</span>
-            <span class="font-medium"><?php echo htmlspecialchars($flight_details['number_of_passengers']); ?></span>
+            <span class="font-medium"><?php echo htmlspecialchars($flight_details['num_passengers']); ?></span>
           </div>
           <?php endif; ?>
         </div>
