@@ -2,7 +2,7 @@
 // Direct MySQLi connection (replace with your real credentials)
 $host = "localhost";
 $user = "root";
-$password = "root";
+$password = "";
 $database = "airlines";
 
 $conn = new mysqli($host, $user, $password, $database);
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
 
     if ($stmt->execute()) {
       // Redirect to login page after successful registration
-      header("Location: admin_login.php");
+      header("Location: admin-login.php");
       exit;
     } else {
       $error_message = "Error: " . $stmt->error;

@@ -4,7 +4,7 @@ session_start();
 // Replace these with your actual DB credentials
 $host = "localhost";
 $user = "root";
-$password = "root";
+$password = "";
 $database = "airlines";
 
 $conn = new mysqli($host, $user, $password, $database);
