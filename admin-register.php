@@ -120,8 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
   <!-- Footer -->
   <footer class="bg-white py-6 border-t">
     <div class="container mx-auto px-6 text-center text-gray-500 text-sm">
-      &copy; 2025 TUXIMO. All rights reserved.
-    </div>
+      &copy; © 2025 BOOKMYFLIGHT. All rights reserved. | Academic Project
   </footer>
 
   <script>
