@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 17, 2025 at 06:03 PM
+-- Generation Time: May 18, 2025 at 04:02 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -154,7 +154,9 @@ INSERT INTO `bookings` (`booking_id`, `booking_reference`, `user_id`, `flight_id
 (27, 'BK-6828AA4FCB117', 5, 1001, '2025-05-17 17:25:03', '2025-05-23', 1, 4719.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
 (28, 'BK-6828AC8374FD9', 5, 1001, '2025-05-17 17:34:27', '2025-05-23', 1, 4719.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-17 21:04:42'),
 (29, 'BK-6828AEBE03E2A', 5, 1001, '2025-05-17 17:43:58', '2025-05-23', 1, 4719.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-17 21:18:01'),
-(30, 'BK-6828AFC8A980E', 5, 1001, '2025-05-17 17:48:24', '2025-05-23', 1, 4719.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Completed', 'card', '0000-00-00 00:00:00', '2025-05-17 21:24:55');
+(30, 'BK-6828AFC8A980E', 5, 1001, '2025-05-17 17:48:24', '2025-05-23', 1, 4719.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Completed', 'card', '0000-00-00 00:00:00', '2025-05-17 21:24:55'),
+(31, 'BK-6829D3BACEC9D', 5, 1002, '2025-05-18 14:34:02', '2025-05-21', 1, 5369.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-18 18:09:11'),
+(32, 'BK-6829D4FF5EAF5', 5, 1002, '2025-05-18 14:39:27', '2025-05-21', 1, 5369.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -297,7 +299,9 @@ INSERT INTO `passengers` (`passenger_id`, `booking_id`, `first_name`, `last_name
 (27, 27, 'Harry ', 'Potter', 'male', 26, '12A'),
 (28, 28, 'Karen', 'Elisha', 'female', 15, '12A'),
 (29, 29, 'Karen', 'Elisha', 'female', 15, '12A'),
-(30, 30, 'Karen', 'Elisha', 'female', 15, '12A');
+(30, 30, 'Karen', 'Elisha', 'female', 15, '12A'),
+(31, 31, 'Harry ', 'Potter', 'male', 19, '12A'),
+(32, 32, 'Harry ', 'Potter', 'male', 19, '12A');
 
 -- --------------------------------------------------------
 
@@ -359,7 +363,8 @@ INSERT INTO `tickets` (`ticket_id`, `user_id`, `flight_id`, `airline_name`, `num
 (20, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 18:22:58', 'pending'),
 (21, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 18:25:29', 'pending'),
 (22, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 18:40:03', 'pending'),
-(23, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 19:26:26', 'pending');
+(23, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 19:26:26', 'pending'),
+(24, 5, 1002, 'Air India', 1, 4550.00, '2025-05-18 18:03:37', 'pending');
 
 -- --------------------------------------------------------
 
@@ -497,7 +502,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `feedback`
@@ -527,7 +532,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `passengers`
 --
 ALTER TABLE `passengers`
-  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `promotions`
@@ -539,7 +544,7 @@ ALTER TABLE `promotions`
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `users`
