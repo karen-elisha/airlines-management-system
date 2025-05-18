@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 18, 2025 at 05:36 PM
+-- Generation Time: May 18, 2025 at 07:53 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -213,8 +213,7 @@ CREATE TABLE `flights` (
 
 INSERT INTO `flights` (`flight_id`, `flight_number`, `airline_id`, `origin_airport`, `destination_airport`, `departure_time`, `arrival_time`, `duration`, `base_price`, `total_seats`, `available_seats`, `flight_status`) VALUES
 (1001, '6E101', '6E', 'DEL', 'BOM', '2023-12-20 06:00:00', '2023-12-20 08:15:00', 135, 4599.00, 180, 180, 'Scheduled'),
-(1002, 'AI202', 'AI', 'BOM', 'BLR', '2023-12-20 09:30:00', '2023-12-20 11:00:00', 90, 3899.00, 160, 145, 'Scheduled'),
-(1003, 'SG303', 'SG', 'BLR', 'DEL', '2023-12-20 13:15:00', '2023-12-20 15:45:00', 150, 4199.00, 189, 120, 'Scheduled');
+(1002, 'AI202', 'AI', 'BOM', 'BLR', '2023-12-20 09:30:00', '2023-12-20 11:00:00', 90, 3899.00, 160, 145, 'Scheduled');
 
 -- --------------------------------------------------------
 
@@ -354,17 +353,12 @@ INSERT INTO `tickets` (`ticket_id`, `user_id`, `flight_id`, `airline_name`, `num
 (3, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 16:04:12', 'pending'),
 (4, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 16:15:40', 'pending'),
 (5, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 16:16:45', 'pending'),
-(6, 5, 1003, 'Vistara', 1, 5299.00, '2025-05-17 16:17:46', 'pending'),
 (7, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 16:18:32', 'pending'),
 (8, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 16:18:59', 'pending'),
 (9, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 16:31:04', 'pending'),
-(10, 5, 1003, 'Vistara', 1, 5299.00, '2025-05-17 17:01:47', 'pending'),
 (11, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 17:07:12', 'pending'),
 (12, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 17:14:41', 'pending'),
-(13, 5, 1003, 'Vistara', 1, 5299.00, '2025-05-17 17:21:04', 'pending'),
 (14, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 17:23:44', 'pending'),
-(15, 5, 1003, 'Vistara', 1, 5299.00, '2025-05-17 17:37:03', 'pending'),
-(16, 5, 1003, 'Vistara', 1, 5299.00, '2025-05-17 17:48:06', 'pending'),
 (17, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 17:50:23', 'pending'),
 (18, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 17:55:05', 'pending'),
 (19, 5, 1002, 'Air India', 1, 4550.00, '2025-05-17 17:59:18', 'pending'),
@@ -523,7 +517,7 @@ ALTER TABLE `feedback`
 -- AUTO_INCREMENT for table `flights`
 --
 ALTER TABLE `flights`
-  MODIFY `flight_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1005;
+  MODIFY `flight_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1006;
 
 --
 -- AUTO_INCREMENT for table `flight_schedule`
