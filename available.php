@@ -222,7 +222,7 @@ function getStatusClass($status) {
       </a>
       <nav class="flex items-center space-x-6">
         <a href="index.php" class="hover:text-indigo-400 transition">Home</a>
-        <a href="feedback.html" class="hover:text-indigo-400 transition">Feedback</a>
+        <a href="feedback.php" class="hover:text-indigo-400 transition">Feedback</a>
         <?php if(isset($_SESSION['user_id'])): ?>
           <div class="relative">
             <button onclick="toggleDropdown()" class="flex items-center hover:text-indigo-400 transition">
