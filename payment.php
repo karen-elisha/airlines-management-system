@@ -27,6 +27,8 @@ require_once 'db_connect.php';
 $payment_processed = false;
 $payment_method = '';
 $error_message = '';
+$payment_details = '';
+$processing_payment = false;
 
 // Get booking details from session - use current_booking_id consistently
 $booking_id = (int)($_SESSION['current_booking_id'] ?? 0);
@@ -42,51 +44,108 @@ if ($booking_id <= 0) {
 }
 
 // Process payment if form submitted
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_method'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $payment_method = trim($_POST['payment_method']);
-        
-        if (empty($payment_method)) {
-            throw new Exception("Please select a payment method");
+        // Check if we're in the payment details step
+        if (isset($_POST['payment_method']) && !isset($_POST['payment_details_submitted'])) {
+            $payment_method = trim($_POST['payment_method']);
+            
+            if (empty($payment_method)) {
+                throw new Exception("Please select a payment method");
+            }
+
+            // Validate payment method
+            $allowed_methods = ['upi', 'card', 'netbanking', 'wallet'];
+            if (!in_array($payment_method, $allowed_methods)) {
+                throw new Exception("Invalid payment method selected");
+            }
+            
+            // Set session to show payment details form
+            $_SESSION['payment_method'] = $payment_method;
+            $processing_payment = false;
         }
+        // Process payment details
+        else if (isset($_POST['payment_details_submitted'])) {
+            $payment_method = $_SESSION['payment_method'] ?? '';
+            
+            if (empty($payment_method)) {
+                throw new Exception("Payment method not found");
+            }
+            
+            // Collect and validate payment details based on method
+            switch ($payment_method) {
+                case 'upi':
+                    if (empty($_POST['upi_id'])) {
+                        throw new Exception("UPI ID is required");
+                    }
+                    $payment_details = $_POST['upi_id'];
+                    break;
+                    
+                case 'card':
+                    if (empty($_POST['card_number']) || empty($_POST['card_expiry']) || empty($_POST['card_cvv'])) {
+                        throw new Exception("All card details are required");
+                    }
+                    // Store only last 4 digits for security
+                    $card_number = preg_replace('/\s+/', '', $_POST['card_number']);
+                    $last_four = substr($card_number, -4);
+                    $payment_details = "xxxx-xxxx-xxxx-" . $last_four;
+                    break;
+                    
+                case 'netbanking':
+                    if (empty($_POST['bank_name'])) {
+                        throw new Exception("Bank selection is required");
+                    }
+                    $payment_details = $_POST['bank_name'];
+                    break;
+                    
+                case 'wallet':
+                    if (empty($_POST['wallet_name'])) {
+                        throw new Exception("Wallet selection is required");
+                    }
+                    $payment_details = $_POST['wallet_name'];
+                    break;
+                    
+                default:
+                    throw new Exception("Invalid payment method");
+            }
 
-        // Validate payment method
-        $allowed_methods = ['upi', 'card', 'netbanking', 'wallet'];
-        if (!in_array($payment_method, $allowed_methods)) {
-            throw new Exception("Invalid payment method selected");
+            // Begin transaction
+            $mysqli->begin_transaction();
+
+            // Update booking payment status
+            $sql = "UPDATE bookings SET 
+                    payment_status = 'completed', 
+                    payment_method = ?,
+                    payment_details = ?,
+                    updated_at = NOW() 
+                    WHERE booking_id = ?";
+            
+            $stmt = $mysqli->prepare($sql);
+            if (!$stmt) {
+                throw new Exception("Database error: " . $mysqli->error);
+            }
+
+            // Bind parameters
+            if (!$stmt->bind_param("ssi", $payment_method, $payment_details, $booking_id)) {
+                throw new Exception("Failed to bind parameters: " . $stmt->error);
+            }
+
+            // Execute update
+            if (!$stmt->execute()) {
+                throw new Exception("Failed to update booking: " . $stmt->error);
+            }
+
+            // Commit transaction
+            $mysqli->commit();
+            $payment_processed = true;
+            $processing_payment = true;
+            
+            // Update session
+            $_SESSION['payment_status'] = 'completed';
+            
+            // Clear payment method from session
+            unset($_SESSION['payment_method']);
         }
-
-        // Begin transaction
-        $mysqli->begin_transaction();
-
-        // Update booking payment status
-        $sql = "UPDATE bookings SET 
-                payment_status = 'completed', 
-                payment_method = ?,
-                updated_at = NOW() 
-                WHERE booking_id = ?";
-        
-        $stmt = $mysqli->prepare($sql);
-        if (!$stmt) {
-            throw new Exception("Database error: " . $mysqli->error);
-        }
-
-        // Bind parameters
-        if (!$stmt->bind_param("si", $payment_method, $booking_id)) {
-            throw new Exception("Failed to bind parameters: " . $stmt->error);
-        }
-
-        // Execute update
-        if (!$stmt->execute()) {
-            throw new Exception("Failed to update booking: " . $stmt->error);
-        }
-
-        // Commit transaction
-        $mysqli->commit();
-        $payment_processed = true;
-        
-        // Update session
-        $_SESSION['payment_status'] = 'completed';
         
     } catch (Exception $e) {
         // Rollback on error
@@ -97,6 +156,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_method'])) {
         error_log("Payment Error: " . $error_message);
         $_SESSION['payment_error'] = $error_message;
     }
+}
+
+// Get payment method from session if it exists
+if (!$payment_processed && !$processing_payment && isset($_SESSION['payment_method'])) {
+    $payment_method = $_SESSION['payment_method'];
 }
 
 // Get booking details for display
@@ -151,6 +215,51 @@ try {
     .payment-card { transition: all 0.2s ease; }
     .payment-card:hover { transform: translateY(-2px); }
     .modal-content { max-width: 28rem; }
+    
+    /* Payment Processing Animation */
+    .payment-processing {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #e0e0e0;
+      border-top: 5px solid #4f46e5;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .progress-bar {
+      width: 300px;
+      height: 6px;
+      background-color: #e0e0e0;
+      border-radius: 3px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    
+    .progress {
+      height: 100%;
+      width: 0%;
+      background-color: #4f46e5;
+      transition: width 0.1s ease;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body class="bg-gray-50 font-sans">
@@ -174,29 +283,39 @@ try {
 
   <!-- Main Content -->
   <?php if ($payment_processed): ?>
-
-    <!-- Ticket Confirmation -->
+    <!-- Payment Processing Animation -->
+    <div id="paymentProcessing" class="payment-processing">
+      <div class="spinner"></div>
+      <div class="progress-bar">
+        <div id="progressBar" class="progress"></div>
+      </div>
+      <div id="processingStatus" class="text-center mt-4">
+        <p class="font-medium text-gray-700">Processing your payment...</p>
+        <p class="text-sm text-gray-500">Please do not refresh the page</p>
+      </div>
+    </div>
+    
 
           
     <!-- Ticket Confirmation -->
-<main class="container mx-auto px-4 py-8 max-w-4xl">
-  <div class="bg-white rounded-lg shadow-md overflow-hidden">
-    <!-- Ticket Header -->
-    <div class="bg-gradient-to-r from-indigo-800 to-blue-600 text-white p-6">
-      <div class="flex justify-between items-center">
-        <div class="flex items-center">
-          <img src="https://img.icons8.com/ios-filled/50/ffffff/airport.png" alt="Airport Logo" class="h-10 w-10 mr-3">
-          <div>
-            <h1 class="text-2xl font-bold">BookMyFlight</h1>
-            <p class="text-sm font-light">Your journey begins here</p>
+<main id="ticketConfirmation" class="container mx-auto px-4 py-8 max-w-4xl" style="display: none;">
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <!-- Ticket Header -->
+        <div class="bg-gradient-to-r from-indigo-800 to-blue-600 text-white p-6">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <img src="https://img.icons8.com/ios-filled/50/ffffff/airport.png" alt="Airport Logo" class="h-10 w-10 mr-3">
+              <div>
+                <h1 class="text-2xl font-bold">BookMyFlight</h1>
+                <p class="text-sm font-light">Your journey begins here</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-sm font-light">Booking Reference</div>
+              <div class="text-xl font-bold"><?php echo htmlspecialchars($booking_reference); ?></div>
+            </div>
           </div>
         </div>
-        <div class="text-right">
-          <div class="text-sm font-light">Booking Reference</div>
-          <div class="text-xl font-bold"><?php echo htmlspecialchars($booking_reference); ?></div>
-        </div>
-      </div>
-    </div>
     
     <!-- Ticket Content -->
     <div class="p-6">
@@ -375,8 +494,135 @@ try {
     }
   }
 </style>
+  <?php elseif (isset($payment_method) && !empty($payment_method) && !$processing_payment): ?>
+    <!-- Payment Details Form -->
+    <main class="container mx-auto px-4 py-8 max-w-md">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold text-center text-gray-800 mb-6">Enter Payment Details</h2>
+        
+        <!-- Booking Summary -->
+        <div class="mb-6 p-4 bg-gray-50 rounded-md">
+          <h3 class="font-semibold mb-2">Booking Summary</h3>
+          <div class="flex justify-between text-sm mb-1">
+            <span>Booking Reference:</span>
+            <span class="font-medium"><?php echo htmlspecialchars($booking_reference); ?></span>
+          </div>
+          <div class="flex justify-between text-sm mb-1">
+            <span>Passengers:</span>
+            <span class="font-medium"><?php echo htmlspecialchars($num_passengers); ?></span>
+          </div>
+          <div class="flex justify-between text-sm mb-1">
+            <span>Payment Method:</span>
+            <span class="font-medium capitalize"><?php echo htmlspecialchars($payment_method); ?></span>
+          </div>
+          <div class="flex justify-between font-semibold text-base border-t border-gray-200 pt-2 mt-2">
+            <span>Total Amount:</span>
+            <span>₹<?php echo number_format($total_amount, 2); ?></span>
+          </div>
+        </div>
+        
+        <!-- Error message if any -->
+        <?php if (!empty($error_message)): ?>
+          <div class="mb-4 p-3 bg-red-50 text-red-700 rounded-md text-sm">
+            <i class="fas fa-exclamation-circle mr-2"></i> <?php echo htmlspecialchars($error_message); ?>
+          </div>
+        <?php endif; ?>
+        
+        <form method="post" action="" id="paymentDetailsForm">
+          <input type="hidden" name="payment_details_submitted" value="1">
+          
+          <?php if ($payment_method === 'upi'): ?>
+            <!-- UPI Payment Form -->
+            <div class="mb-4">
+              <label for="upi_id" class="block text-sm font-medium text-gray-700 mb-1">UPI ID</label>
+              <div class="flex">
+                <input type="text" id="upi_id" name="upi_id" placeholder="username@upi" 
+                       class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">Example: yourname@okaxis, yourname@ybl</p>
+            </div>
+          
+          <?php elseif ($payment_method === 'card'): ?>
+            <!-- Credit/Debit Card Form -->
+            <div class="mb-4">
+              <label for="card_number" class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+              <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" 
+                     class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                     maxlength="19" required>
+            </div>
+            
+            <div class="flex justify-between mb-4">
+              <div class="w-1/2 pr-2">
+                <label for="card_expiry" class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                <input type="text" id="card_expiry" name="card_expiry" placeholder="MM/YY" 
+                       class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       maxlength="5" required>
+              </div>
+              <div class="w-1/2 pl-2">
+                <label for="card_cvv" class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
+                <input type="password" id="card_cvv" name="card_cvv" placeholder="123" 
+                       class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       maxlength="4" required>
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <label for="card_name" class="block text-sm font-medium text-gray-700 mb-1">Name on Card</label>
+              <input type="text" id="card_name" name="card_name" placeholder="John Doe" 
+                     class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            </div>
+          
+          <?php elseif ($payment_method === 'netbanking'): ?>
+            <!-- Net Banking Form -->
+            <div class="mb-4">
+              <label for="bank_name" class="block text-sm font-medium text-gray-700 mb-1">Select Bank</label>
+              <select id="bank_name" name="bank_name" 
+                      class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                <option value="">Select a Bank</option>
+                <option value="SBI">State Bank of India</option>
+                <option value="HDFC">HDFC Bank</option>
+                <option value="ICICI">ICICI Bank</option>
+                <option value="AXIS">Axis Bank</option>
+                <option value="PNB">Punjab National Bank</option>
+                <option value="BOB">Bank of Baroda</option>
+                <option value="Canara">Canara Bank</option>
+                <option value="Others">Other Banks</option>
+              </select>
+            </div>
+          
+          <?php elseif ($payment_method === 'wallet'): ?>
+            <!-- Digital Wallet Form -->
+            <div class="mb-4">
+              <label for="wallet_name" class="block text-sm font-medium text-gray-700 mb-1">Select Wallet</label>
+              <select id="wallet_name" name="wallet_name" 
+                      class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                <option value="">Select a Wallet</option>
+                <option value="Paytm">Paytm</option>
+                <option value="Amazon Pay">Amazon Pay</option>
+                <option value="PhonePe">PhonePe</option>
+                <option value="Google Pay">Google Pay</option>
+                <option value="MobiKwik">MobiKwik</option>
+              </select>
+            </div>
+          <?php endif; ?>
+          
+          <div class="mt-6 flex items-center justify-between">
+            <a href="payment.php" class="text-indigo-600 hover:text-indigo-800">
+              <i class="fas fa-arrow-left mr-1"></i> Change Method
+            </a>
+            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700">
+              Pay ₹<?php echo number_format($total_amount, 2); ?>
+            </button>
+          </div>
+          
+          <div class="mt-6 text-center text-xs text-gray-500">
+            <i class="fas fa-lock mr-1"></i> Secure payment gateway
+          </div>
+        </form>
+      </div>
+    </main>
   <?php else: ?>
-    <!-- Payment Options -->
+    <!-- Payment Method Selection - This part remains unchanged -->
     <main class="container mx-auto px-4 py-8 max-w-md">
       <div class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-xl font-semibold text-center text-gray-800 mb-6">Select Payment Method</h2>
@@ -397,6 +643,13 @@ try {
             <span>₹<?php echo number_format($total_amount, 2); ?></span>
           </div>
         </div>
+        
+        <!-- Error message if any -->
+        <?php if (!empty($error_message)): ?>
+          <div class="mb-4 p-3 bg-red-50 text-red-700 rounded-md text-sm">
+            <i class="fas fa-exclamation-circle mr-2"></i> <?php echo htmlspecialchars($error_message); ?>
+          </div>
+        <?php endif; ?>
         
         <form method="post" action="">
           <div class="space-y-3">
@@ -446,7 +699,7 @@ try {
               <i class="fas fa-arrow-left mr-1"></i> Back
             </a>
             <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700">
-              Complete Payment
+              Continue
             </button>
           </div>
 
@@ -464,10 +717,40 @@ try {
   </footer>
 
   <script>
-    // Print ticket function
-    function printTicket() {
-      window.print();
-    }
+    // Card formatting
+    document.addEventListener('DOMContentLoaded', function() {
+      // Format card number with spaces
+      const cardNumberInput = document.getElementById('card_number');
+      if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+          let formattedValue = '';
+          
+          for (let i = 0; i < value.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+              formattedValue += ' ';
+            }
+            formattedValue += value[i];
+          }
+          
+          e.target.value = formattedValue;
+        });
+      }
+      
+      // Format expiry date with slash
+      const expiryInput = document.getElementById('card_expiry');
+      if (expiryInput) {
+        expiryInput.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\D/g, '');
+          
+          if (value.length > 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+          }
+          
+          e.target.value = value;
+        });
+      }
+    });
     
     // Payment card selection
     document.querySelectorAll('input[name="payment_method"]').forEach(input => {
@@ -491,6 +774,109 @@ try {
         }
       });
     });
+    
+    // Payment processing animation
+document.addEventListener('DOMContentLoaded', function() {
+  // For payment processing animation
+  const paymentProcessing = document.getElementById('paymentProcessing');
+  const progressBar = document.getElementById('progressBar');
+  const processingStatus = document.getElementById('processingStatus');
+  const ticketConfirmation = document.getElementById('ticketConfirmation');
+  
+  if (paymentProcessing && progressBar && processingStatus) {
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 5;
+      progressBar.style.width = progress + '%';
+      
+      if (progress === 30) {
+        processingStatus.innerHTML = '<p class="font-medium text-gray-700">Verifying payment details...</p><p class="text-sm text-gray-500">Please wait</p>';
+      } else if (progress === 60) {
+        processingStatus.innerHTML = '<p class="font-medium text-gray-700">Payment successful!</p><p class="text-sm text-gray-500">Generating your ticket...</p>';
+      } else if (progress >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          if (paymentProcessing) paymentProcessing.style.display = 'none';
+          if (ticketConfirmation) ticketConfirmation.style.display = 'block';
+        }, 500);
+      }
+    }, 100);
+  }
+  
+  // Payment method selection highlighting
+  document.querySelectorAll('input[name="payment_method"]').forEach(input => {
+    input.addEventListener('change', function() {
+      // Reset all cards
+      document.querySelectorAll('.payment-card .check-icon').forEach(icon => {
+        icon.classList.add('opacity-0');
+      });
+      document.querySelectorAll('.payment-card div').forEach(card => {
+        card.classList.remove('border-indigo-600');
+        card.classList.add('border-gray-300');
+      });
+      
+      // Highlight selected card
+      if (this.checked) {
+        const card = this.parentElement.querySelector('div');
+        const icon = this.parentElement.querySelector('.check-icon');
+        if (card && icon) {
+          card.classList.remove('border-gray-300');
+          card.classList.add('border-indigo-600');
+          icon.classList.remove('opacity-0');
+        }
+      }
+    });
+  });
+  
+  // Add initial check for preselected radio buttons
+  const selectedPaymentMethod = document.querySelector('input[name="payment_method"]:checked');
+  if (selectedPaymentMethod) {
+    const card = selectedPaymentMethod.parentElement.querySelector('div');
+    const icon = selectedPaymentMethod.parentElement.querySelector('.check-icon');
+    if (card && icon) {
+      card.classList.remove('border-gray-300');
+      card.classList.add('border-indigo-600');
+      icon.classList.remove('opacity-0');
+    }
+  }
+
+  // Format card inputs if they exist
+  const cardNumberInput = document.getElementById('card_number');
+  if (cardNumberInput) {
+    cardNumberInput.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+      let formattedValue = '';
+      
+      for (let i = 0; i < value.length; i++) {
+        if (i > 0 && i % 4 === 0) {
+          formattedValue += ' ';
+        }
+        formattedValue += value[i];
+      }
+      
+      e.target.value = formattedValue;
+    });
+  }
+  
+  // Format expiry date with slash
+  const expiryInput = document.getElementById('card_expiry');
+  if (expiryInput) {
+    expiryInput.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      
+      if (value.length > 2) {
+        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+      }
+      
+      e.target.value = value;
+    });
+  }
+  
+  // Print ticket function
+  window.printTicket = function() {
+    window.print();
+  };
+});
   </script>
 </body>
 </html>
