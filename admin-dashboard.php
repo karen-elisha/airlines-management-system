@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             // Insert new flight
             $stmt = $mysqli->prepare("INSERT INTO flights 
-                (airline_id, flight_number, origin_airport, destination_airport, departure_time, arrival_time, price, available_seats) 
+                (airline_id, flight_number, origin_airport, destination_airport, departure_time, arrival_time,base_price,available_seats)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("isssssdi", 
                 $data['airline_id'],
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $status = $_POST['flight_status'];
         
         $stmt = $mysqli->prepare("UPDATE flights SET flight_status = ? WHERE flight_id = ?");
-        $stmt->bind_param("si", $flight_status, $flight_id);
+        $stmt->bind_param("si", $status, $flight_id);
         $stmt->execute();
         $stmt->close();
         
@@ -610,95 +610,105 @@ $active_section = isset($_GET['section']) ? $_GET['section'] : 'dashboard';
     </section>
   </main>
 
+  <>
   <script>
-    // Initialize charts
-    document.addEventListener('DOMContentLoaded', function() {
-      // Flight Status Chart
-      if (document.getElementById('flightStatusChart')) {
-        new Chart(document.getElementById('flightStatusChart'), {
-          type: 'doughnut',
-          data: {
-            labels: ['On Time', 'Delayed', 'Cancelled'],
-            datasets: [{
-              data: [<?= $flight_stats['on_time'] ?>, <?= $flight_stats['delayed'] ?>, <?= $flight_stats['cancelled'] ?>],
-              backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
-              borderWidth: 0
-            }]
-          },
-          options: { 
-            cutout: '70%', 
-            plugins: { 
-              legend: { 
-                position: 'bottom',
-                labels: {
-                  color: '#fff',
-                  font: {
-                    family: "'Inter', sans-serif"
-                  }
+  // Initialize charts
+  document.addEventListener('DOMContentLoaded', function() {
+    // Flight Status Chart (if you have this chart)
+    if (document.getElementById('flightStatusChart')) {
+      new Chart(document.getElementById('flightStatusChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['On Time', 'Delayed', 'Cancelled'],
+          datasets: [{
+            data: [75, 15, 10], // Example data - replace with your actual data
+            backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+            borderWidth: 0
+          }]
+        },
+        options: { 
+          cutout: '70%', 
+          plugins: { 
+            legend: { 
+              position: 'bottom',
+              labels: {
+                color: '#fff',
+                font: {
+                  family: "'Inter', sans-serif"
                 }
-              } 
-            }
-                  }
+              }
+            } 
+          }
+        }
+      });
+    }
+    
+    // Set up event listeners for all interactive elements
+    setupEventListeners();
+  });
+
+  function setupEventListeners() {
+    // Flight form buttons
+    const addFlightBtn = document.querySelector('button[onclick="showFlightForm()"]');
+    if (addFlightBtn) {
+      addFlightBtn.addEventListener('click', showFlightForm);
+    }
+    
+    const cancelFlightBtn = document.querySelector('button[onclick="hideFlightForm()"]');
+    if (cancelFlightBtn) {
+      cancelFlightBtn.addEventListener('click', hideFlightForm);
+    }
+    
+    // Confirm all delete actions
+    document.querySelectorAll('a[onclick*="confirm("]').forEach(link => {
+      link.addEventListener('click', function(e) {
+        if (!confirm(this.getAttribute('data-confirm') || 'Are you sure?')) {
+          e.preventDefault();
+        }
+      });
     });
   }
-});
 
-// Flight Form Functions
-function showFlightForm() {
-  document.getElementById('flightForm').classList.remove('hidden');
-  document.getElementById('flightFormTitle').textContent = 'Add New Flight';
-  document.getElementById('flightFormElement').reset();
-  document.getElementById('editFlightId').value = '';
-}
+  // Flight Form Functions
+  function showFlightForm() {
+    const form = document.getElementById('flightForm');
+    if (form) {
+      form.classList.remove('hidden');
+      document.getElementById('flightFormTitle').textContent = 'Add New Flight';
+      document.getElementById('flightFormElement').reset();
+      document.getElementById('editFlightId').value = '';
+      form.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 
-function hideFlightForm() {
-  document.getElementById('flightForm').classList.add('hidden');
-}
+  function hideFlightForm() {
+    const form = document.getElementById('flightForm');
+    if (form) form.classList.add('hidden');
+  }
 
-function editFlight(flightId, airlineId, flightNumber, origin, destination, departure, arrival, price, seats) {
-  showFlightForm();
-  document.getElementById('flightFormTitle').textContent = 'Edit Flight';
-  document.getElementById('editFlightId').value = flightId;
-  document.querySelector('select[name="airline_id"]').value = airlineId;
-  document.querySelector('input[name="flight_number"]').value = flightNumber;
-  document.querySelector('input[name="origin_airport"]').value = origin;
-  document.querySelector('input[name="destination_airport"]').value = destination;
-  document.querySelector('input[name="departure_time"]').value = departure;
-  document.querySelector('input[name="arrival_time"]').value = arrival;
-  document.querySelector('input[name="price"]').value = price;
-  document.querySelector('input[name="available_seats"]').value = seats;
-}
+  function editFlight(flightId, airlineId, flightNumber, origin, destination, departure, arrival, price, seats) {
+    showFlightForm();
+    const form = document.getElementById('flightForm');
+    if (form) {
+      document.getElementById('flightFormTitle').textContent = 'Edit Flight';
+      document.getElementById('editFlightId').value = flightId;
+      document.querySelector('select[name="airline_id"]').value = airlineId;
+      document.querySelector('input[name="flight_number"]').value = flightNumber;
+      document.querySelector('input[name="origin_airport"]').value = origin;
+      document.querySelector('input[name="destination_airport"]').value = destination;
+      document.querySelector('input[name="departure_time"]').value = departure;
+      document.querySelector('input[name="arrival_time"]').value = arrival;
+      document.querySelector('input[name="base_price"]').value = price;
+      document.querySelector('input[name="available_seats"]').value = seats;
+      form.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 
-// Mobile menu toggle (if needed)
-function toggleMobileMenu() {
-  const sidebar = document.querySelector('.sidebar');
-  sidebar.classList.toggle('hidden');
-}
-// Flight Form Functions
-function showFlightForm() {
-  document.getElementById('flightForm').classList.remove('hidden');
-  document.getElementById('flightFormTitle').textContent = 'Add New Flight';
-  document.getElementById('flightFormElement').reset();
-  document.getElementById('editFlightId').value = '';
-}
-
-function hideFlightForm() {
-  document.getElementById('flightForm').classList.add('hidden');
-}
-
-function editFlight(flightId, airlineId, flightNumber, origin, destination, departure, arrival, price, seats) {
-  showFlightForm();
-  document.getElementById('flightFormTitle').textContent = 'Edit Flight';
-  document.getElementById('editFlightId').value = flightId;
-  document.querySelector('select[name="airline_id"]').value = airlineId;
-  document.querySelector('input[name="flight_number"]').value = flightNumber;
-  document.querySelector('input[name="origin_airport"]').value = origin;
-  document.querySelector('input[name="destination_airport"]').value = destination;
-  document.querySelector('input[name="departure_time"]').value = departure;
-  document.querySelector('input[name="arrival_time"]').value = arrival;
-  document.querySelector('input[name="base_price"]').value = price;
-  document.querySelector('input[name="available_seats"]').value = seats;
-}
+  // Mobile menu toggle (if needed)
+  function toggleMobileMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) sidebar.classList.toggle('hidden');
+  }
 </script>
 </body>
 </html>
