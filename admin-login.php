@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // Successful login
       $_SESSION['admin_id'] = $admin_id;
       $_SESSION['admin_username'] = $username;
-      header("Location: admin-dashboard.html");
+      header("Location: admin-dashboard.php");
       exit;
     } else {
       $error_message = "Incorrect password.";
