@@ -125,6 +125,7 @@ if (isset($_GET['delete_airline'])) {
     exit;
 }
 
+
 // FLIGHT MANAGEMENT
 // Add or edit flight
 if (isset($_POST['save_flight'])) {
@@ -136,6 +137,7 @@ if (isset($_POST['save_flight'])) {
     $arrival_time = $mysqli->real_escape_string($_POST['arrival_time']);
     $base_price = $mysqli->real_escape_string($_POST['base_price']);
     $available_seats = $mysqli->real_escape_string($_POST['available_seats']);
+    $flight_status = $mysqli->real_escape_string($_POST['flight_status']); // Added this line to capture flight status
     
     // Calculate duration in minutes
     $departure = new DateTime($departure_time);
@@ -155,7 +157,8 @@ if (isset($_POST['save_flight'])) {
                     arrival_time='$arrival_time',
                     duration=$duration,
                     base_price=$base_price,
-                    available_seats=$available_seats
+                    available_seats=$available_seats,
+                    flight_status='$flight_status' 
                 WHERE flight_id=$flight_id";
         
         if ($mysqli->query($query)) {
@@ -174,7 +177,7 @@ if (isset($_POST['save_flight'])) {
                 ) VALUES (
                     '$airline_id', '$flight_number', '$origin_airport', '$destination_airport',
                     '$departure_time', '$arrival_time', $duration, $base_price,
-                    $total_seats, $available_seats, 'On Time'
+                    $total_seats, $available_seats, '$flight_status'
                 )";
         
         if ($mysqli->query($query)) {
@@ -208,7 +211,6 @@ if (isset($_GET['delete_flight'])) {
     header("Location: ?section=flights");
     exit;
 }
-
 // USER MANAGEMENT
 // Delete user
 if (isset($_GET['delete_user'])) {
@@ -472,6 +474,17 @@ if (isset($_GET['delete_user'])) {
             <label class="block text-sm text-gray-400 mb-1"><i class="fas fa-chair mr-1"></i> Available Seats</label>
             <input type="number" min="1" name="available_seats" class="w-full p-2 rounded bg-gray-800 border border-gray-700" required>
           </div>
+          <!-- Add Flight Status Field -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-1"><i class="fas fa-info-circle mr-1"></i> Flight Status</label>
+            <select name="flight_status" class="w-full p-2 rounded bg-gray-800 border border-gray-700" required>
+              <option value="Scheduled">Scheduled</option>
+              <option value="Delayed">Delayed</option>
+              <option value="Cancelled">Cancelled</option>
+              <option value="Departed">Departed</option>
+              <option value="Arrived">Arrived</option>
+            </select>
+          </div>
         </div>
         <div class="flex justify-end mt-4 space-x-2">
           <button type="button" onclick="hideFlightForm()" class="px-4 py-2 border border-gray-600 rounded">
@@ -529,7 +542,8 @@ if (isset($_GET['delete_user'])) {
                 '<?= date('Y-m-d\TH:i', strtotime($flight['departure_time'])) ?>',
                 '<?= date('Y-m-d\TH:i', strtotime($flight['arrival_time'])) ?>',
                 '<?= $flight['base_price'] ?>',
-                '<?= $flight['available_seats'] ?>'
+                '<?= $flight['available_seats'] ?>',
+                '<?= $flight['flight_status'] ?>'
               )" class="text-indigo-400 hover:text-indigo-300 mr-2">
                 <i class="fas fa-edit"></i>
               </button>
@@ -545,7 +559,7 @@ if (isset($_GET['delete_user'])) {
   </div>
 </section>
 
-    <!-- Users Section -->
+  <!-- Users Section -->
     <section id="usersSection" class="section <?= $active_section === 'users' ? 'active' : '' ?>">
       <div class="card p-5 rounded-xl overflow-x-auto">
         <h3 class="text-lg font-semibold mb-4"><i class="fas fa-users mr-2"></i> User Management</h3>
@@ -579,6 +593,8 @@ if (isset($_GET['delete_user'])) {
         </table>
       </div>
     </section>
+
+
 
 <!-- Airlines Section -->
 <section id="airlinesSection" class="section <?= $active_section === 'airlines' ? 'active' : '' ?>">
@@ -881,28 +897,29 @@ function setupEventListeners() {
   setupTabNavigation();
 }
 
-// Flight Form Functions
-function showFlightForm() {
-  const form = document.getElementById('flightForm');
-  if (form) {
-    form.classList.remove('hidden');
-    document.getElementById('flightFormTitle').textContent = 'Add New Flight';
-    document.getElementById('flightFormElement').reset();
-    document.getElementById('editFlightId').value = '';
-    form.scrollIntoView({ behavior: 'smooth' });
-  }
-}
-
 function hideFlightForm() {
   const form = document.getElementById('flightForm');
   if (form) form.classList.add('hidden');
 }
 
-function editFlight(flightId, airlineId, flightNumber, origin, destination, departure, arrival, price, seats) {
+function showFlightForm() {
+  // Reset the form
+  document.getElementById('flightFormElement').reset();
+  document.getElementById('editFlightId').value = '';
+  document.getElementById('flightFormTitle').innerHTML = '<i class="fas fa-plus mr-2"></i> Add New Flight';
+  
+  // Show the form
+  document.getElementById('flightForm').classList.remove('hidden');
+  
+  // Scroll to the form
+  document.getElementById('flightForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+function editFlight(flightId, airlineId, flightNumber, origin, destination, departure, arrival, price, seats, status) {
   showFlightForm();
   const form = document.getElementById('flightFormElement');
   if (form) {
-    document.getElementById('flightFormTitle').textContent = 'Edit Flight';
+    document.getElementById('flightFormTitle').innerHTML = '<i class="fas fa-edit mr-2"></i> Edit Flight';
     document.getElementById('editFlightId').value = flightId;
     form.querySelector('select[name="airline_id"]').value = airlineId;
     form.querySelector('input[name="flight_number"]').value = flightNumber;
@@ -912,11 +929,10 @@ function editFlight(flightId, airlineId, flightNumber, origin, destination, depa
     form.querySelector('input[name="arrival_time"]').value = arrival;
     form.querySelector('input[name="base_price"]').value = price;
     form.querySelector('input[name="available_seats"]').value = seats;
-    
+    form.querySelector('select[name="flight_status"]').value = status;
     document.getElementById('flightForm').scrollIntoView({ behavior: 'smooth' });
   }
 }
-
 // Airline Form Functions
 function showAirlineForm() {
   const form = document.getElementById('airlineForm');
