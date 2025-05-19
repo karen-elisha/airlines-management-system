@@ -1,196 +1,235 @@
 <?php
-session_start();
-require_once 'db_connect.php'; // Your database connection file
+// Database connection
+$db_host = "localhost";
+$db_user = "root";
+$db_pass = "";
+$db_name = "airlines";
+
+// Establish connection
+$mysqli = new mysqli($db_host, $db_user, $db_pass, $db_name);
+
+// Check connection
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
+}
+
+// Initialize session if not already started
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Check if admin is logged in
-if (!isset($_SESSION['admin_id'])) {
-    header("Location: admin-login.php");
-    exit();
+if (!isset($_SESSION['admin_id']) && !strpos($_SERVER['REQUEST_URI'], 'login.php')) {
+    header("Location: login.php");
+    exit;
 }
+
+// Set default active section
+$active_section = isset($_GET['section']) ? $_GET['section'] : 'dashboard';
+
+// Fetch dashboard statistics
+$bookings_count = $mysqli->query("SELECT COUNT(*) as count FROM bookings")->fetch_assoc()['count'];
+$users_count = $mysqli->query("SELECT COUNT(*) as count FROM users")->fetch_assoc()['count'];
+$flights_count = $mysqli->query("SELECT COUNT(*) as count FROM flights")->fetch_assoc()['count'];
+$airlines_count = $mysqli->query("SELECT COUNT(*) as count FROM airlines")->fetch_assoc()['count'];
+
+// Fetch recent bookings for dashboard
+$recent_bookings = $mysqli->query("SELECT b.booking_reference, u.full_name, b.booking_date, b.booking_status 
+                                FROM bookings b
+                                JOIN users u ON b.user_id = u.user_id
+                                ORDER BY b.booking_date DESC
+                                LIMIT 5")->fetch_all(MYSQLI_ASSOC);
+
+// Fetch airlines
+$airlines = $mysqli->query("SELECT * FROM airlines ORDER BY airline_name")->fetch_all(MYSQLI_ASSOC);
+
+// Fetch flights with airline info
+$flights = $mysqli->query("SELECT f.*, a.airline_name 
+                    FROM flights f
+                    JOIN airlines a ON f.airline_id = a.airline_id
+                    ORDER BY f.departure_time")->fetch_all(MYSQLI_ASSOC);
+
+// Fetch users
+$users = $mysqli->query("SELECT * FROM users ORDER BY created_at DESC")->fetch_all(MYSQLI_ASSOC);
 
 // Handle logout
 if (isset($_GET['logout'])) {
     session_destroy();
-    header("Location: admin-login.php");
-    exit();
+    header("Location: login.php");
+    exit;
 }
 
-// Handle flight operations
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['save_flight'])) {
-        // Add or update flight
-        $flight_id = $_POST['flight_id'] ?? null;
-        $data = [
-            'airline_id' => $_POST['airline_id'],
-            'flight_number' => $_POST['flight_number'],
-            'origin_airport' => $_POST['origin_airport'],
-            'destination_airport' => $_POST['destination_airport'],
-            'departure_time' => $_POST['departure_time'],
-            'arrival_time' => $_POST['arrival_time'],
-            'base_price' => $_POST['base_price'],
-            'available_seats' => $_POST['available_seats']
-        ];
-
-        if ($flight_id) {
-            // Update existing flight
-            $stmt = $mysqli->prepare("UPDATE flights SET 
-                airline_id = ?, 
-                flight_number = ?, 
-                origin_airport = ?, 
-                destination_airport = ?, 
-                departure_time = ?, 
-                arrival_time = ?, 
-                base_price = ?, 
-                available_seats = ? 
-                WHERE flight_id = ?");
-            $stmt->bind_param("isssssdii", 
-                $data['airline_id'],
-                $data['flight_number'],
-                $data['origin_airport'],
-                $data['destination_airport'],
-                $data['departure_time'],
-                $data['arrival_time'],
-                $data['base_price'],
-                $data['available_seats'],
-                $flight_id
-            );
-        } else {
-            // Insert new flight
-            $stmt = $mysqli->prepare("INSERT INTO flights 
-                (airline_id, flight_number, origin_airport, destination_airport, departure_time, arrival_time,base_price,available_seats)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("isssssdi", 
-                $data['airline_id'],
-                $data['flight_number'],
-                $data['origin_airport'],
-                $data['destination_airport'],
-                $data['departure_time'],
-                $data['arrival_time'],
-                $data['base_price'],
-                $data['available_seats']
-            );
-        }
-        $stmt->execute();
-        $stmt->close();
-        
-        // Refresh to show changes
-        header("Location: admin-dashboard.php");
-        exit();
-    }
+// AIRLINE MANAGEMENT
+// Add new airline
+if (isset($_POST['add_airline'])) {
+    $airline_name = $mysqli->real_escape_string($_POST['airline_name']);
+    $customer_care = $mysqli->real_escape_string($_POST['customer_care']);
+    $contact_url = $mysqli->real_escape_string($_POST['contact_url']);
     
-    if (isset($_POST['update_flight_status'])) {
-        // Update flight status
-        $flight_id = $_POST['flight_id'];
-        $status = $_POST['flight_status'];
-        
-        $stmt = $mysqli->prepare("UPDATE flights SET flight_status = ? WHERE flight_id = ?");
-        $stmt->bind_param("si", $status, $flight_id);
-        $stmt->execute();
-        $stmt->close();
-        
-        // Refresh to show changes
-        header("Location: admin-dashboard.php");
-        exit();
-    }
+    $query = "INSERT INTO airlines (airline_name, customer_care, contact_url, active) 
+              VALUES ('$airline_name', '$customer_care', '$contact_url', 1)";
     
-    if (isset($_POST['add_airline'])) {
-        // Add new airline
-        $airline_name = $_POST['airline_name'];
-        $logo_url = $_POST['logo_url'] ?? '';
-        $website = $_POST['website'] ?? '';
-        $customer_care = $_POST['customer_care'] ?? '';
-        $contact_url = $_POST['contact_url'] ?? '';
-        
-        $stmt = $mysqli->prepare("INSERT INTO airlines 
-            (airline_name, logo_url, website, customer_care, contact_url) 
-            VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $airline_name, $logo_url, $website, $customer_care, $contact_url);
-        $stmt->execute();
-        $stmt->close();
-        
-        // Refresh to show changes
-        header("Location: admin-dashboard.php?section=airlines");
-        exit();
-    }
-}
-
-// Handle deletions
-if (isset($_GET['delete_flight'])) {
-    $flight_id = $_GET['delete_flight'];
-    $stmt = $mysqli->prepare("DELETE FROM flights WHERE flight_id = ?");
-    $stmt->bind_param("i", $flight_id);
-    $stmt->execute();
-    $stmt->close();
-    
-    header("Location: admin-dashboard.php?section=flights");
-    exit();
-}
-
-if (isset($_GET['delete_airline'])) {
-    $airline_id = (int)$_GET['delete_airline'];
-    
-    // Prepare the delete statement
-    $stmt = $mysqli->prepare("DELETE FROM airlines WHERE airline_id = ?");
-    if (!$stmt) {
-        die("Prepare failed: " . $mysqli->error);
-    }
-    
-    $stmt->bind_param("i", $airline_id);
-    
-    if ($stmt->execute()) {
-        // Success - redirect back to airlines section
-        header("Location: admin-dashboard.php?section=airlines");
-        exit();
+    if ($mysqli->query($query)) {
+        $_SESSION['success_message'] = "Airline added successfully!";
     } else {
-        // Error handling
-        die("Delete failed: " . $stmt->error);
+        $_SESSION['error_message'] = "Error adding airline: " . $mysqli->error;
     }
     
-    $stmt->close();
+    header("Location: ?section=airlines");
+    exit;
 }
 
-if (isset($_GET['delete_user'])) {
-    $user_id = $_GET['delete_user'];
-    $stmt = $mysqli->prepare("DELETE FROM users WHERE user_id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $stmt->close();
+// Edit airline
+if (isset($_POST['edit_airline'])) {
+    $airline_id = $mysqli->real_escape_string($_POST['airline_id']);
+    $airline_name = $mysqli->real_escape_string($_POST['airline_name']);
+    $customer_care = $mysqli->real_escape_string($_POST['customer_care']);
+    $contact_url = $mysqli->real_escape_string($_POST['contact_url']);
+    $active = isset($_POST['active']) ? 1 : 0;
     
-    header("Location: admin-dashboard.php?section=users");
-    exit();
+    $query = "UPDATE airlines 
+              SET airline_name='$airline_name', 
+                  customer_care='$customer_care',
+                  contact_url='$contact_url',
+                  active=$active
+              WHERE airline_id=$airline_id";
+    
+    if ($mysqli->query($query)) {
+        $_SESSION['success_message'] = "Airline updated successfully!";
+    } else {
+        $_SESSION['error_message'] = "Error updating airline: " . $mysqli->error;
+    }
+    
+    header("Location: ?section=airlines");
+    exit;
 }
 
-// Get counts for dashboard
-$bookings_count = $mysqli->query("SELECT COUNT(*) FROM bookings")->fetch_row()[0];
-$users_count = $mysqli->query("SELECT COUNT(*) FROM users")->fetch_row()[0];
-$flights_count = $mysqli->query("SELECT COUNT(*) FROM flights")->fetch_row()[0];
-$airlines_count = $mysqli->query("SELECT COUNT(*) FROM airlines")->fetch_row()[0];
+// Delete airline
+if (isset($_GET['delete_airline'])) {
+    $airline_id = $mysqli->real_escape_string($_GET['delete_airline']);
+    
+    // Check if airline is used in flights before deleting
+    $check_flights = $mysqli->query("SELECT COUNT(*) as count FROM flights WHERE airline_id = $airline_id")->fetch_assoc()['count'];
+    
+    if ($check_flights > 0) {
+        $_SESSION['error_message'] = "Cannot delete: This airline has active flights.";
+    } else {
+        if ($mysqli->query("DELETE FROM airlines WHERE airline_id = $airline_id")) {
+            $_SESSION['success_message'] = "Airline deleted successfully!";
+        } else {
+            $_SESSION['error_message'] = "Error deleting airline: " . $mysqli->error;
+        }
+    }
+    
+    header("Location: ?section=airlines");
+    exit;
+}
 
-// Get recent bookings
-$recent_bookings_result = $mysqli->query("SELECT b.*, u.full_name 
-                                      FROM bookings b 
-                                      JOIN users u ON b.user_id = u.user_id 
-                                      ORDER BY b.created_at DESC LIMIT 10");
-$recent_bookings = $recent_bookings_result->fetch_all(MYSQLI_ASSOC);
+// FLIGHT MANAGEMENT
+// Add or edit flight
+if (isset($_POST['save_flight'])) {
+    $airline_id = $mysqli->real_escape_string($_POST['airline_id']);
+    $flight_number = $mysqli->real_escape_string($_POST['flight_number']);
+    $origin_airport = $mysqli->real_escape_string($_POST['origin_airport']);
+    $destination_airport = $mysqli->real_escape_string($_POST['destination_airport']);
+    $departure_time = $mysqli->real_escape_string($_POST['departure_time']);
+    $arrival_time = $mysqli->real_escape_string($_POST['arrival_time']);
+    $base_price = $mysqli->real_escape_string($_POST['base_price']);
+    $available_seats = $mysqli->real_escape_string($_POST['available_seats']);
+    
+    // Calculate duration in minutes
+    $departure = new DateTime($departure_time);
+    $arrival = new DateTime($arrival_time);
+    $duration = ($arrival->getTimestamp() - $departure->getTimestamp()) / 60;
+    
+    if (isset($_POST['flight_id']) && $_POST['flight_id'] != '') {
+        // Edit existing flight
+        $flight_id = $mysqli->real_escape_string($_POST['flight_id']);
+        
+        $query = "UPDATE flights 
+                SET airline_id='$airline_id',
+                    flight_number='$flight_number',
+                    origin_airport='$origin_airport',
+                    destination_airport='$destination_airport',
+                    departure_time='$departure_time',
+                    arrival_time='$arrival_time',
+                    duration=$duration,
+                    base_price=$base_price,
+                    available_seats=$available_seats
+                WHERE flight_id=$flight_id";
+        
+        if ($mysqli->query($query)) {
+            $_SESSION['success_message'] = "Flight updated successfully!";
+        } else {
+            $_SESSION['error_message'] = "Error updating flight: " . $mysqli->error;
+        }
+    } else {
+        // Add new flight
+        $total_seats = $available_seats; // Initially, total seats = available seats
+        
+        $query = "INSERT INTO flights (
+                    airline_id, flight_number, origin_airport, destination_airport,
+                    departure_time, arrival_time, duration, base_price,
+                    total_seats, available_seats, flight_status
+                ) VALUES (
+                    '$airline_id', '$flight_number', '$origin_airport', '$destination_airport',
+                    '$departure_time', '$arrival_time', $duration, $base_price,
+                    $total_seats, $available_seats, 'On Time'
+                )";
+        
+        if ($mysqli->query($query)) {
+            $_SESSION['success_message'] = "Flight added successfully!";
+        } else {
+            $_SESSION['error_message'] = "Error adding flight: " . $mysqli->error;
+        }
+    }
+    
+    header("Location: ?section=flights");
+    exit;
+}
 
-// Get all users
-$users_result = $mysqli->query("SELECT * FROM users ORDER BY created_at DESC");
-$users = $users_result->fetch_all(MYSQLI_ASSOC);
+// Delete flight
+if (isset($_GET['delete_flight'])) {
+    $flight_id = $mysqli->real_escape_string($_GET['delete_flight']);
+    
+    // Check if flight has bookings before deleting
+    $check_bookings = $mysqli->query("SELECT COUNT(*) as count FROM bookings WHERE flight_id = $flight_id")->fetch_assoc()['count'];
+    
+    if ($check_bookings > 0) {
+        $_SESSION['error_message'] = "Cannot delete: This flight has active bookings.";
+    } else {
+        if ($mysqli->query("DELETE FROM flights WHERE flight_id = $flight_id")) {
+            $_SESSION['success_message'] = "Flight deleted successfully!";
+        } else {
+            $_SESSION['error_message'] = "Error deleting flight: " . $mysqli->error;
+        }
+    }
+    
+    header("Location: ?section=flights");
+    exit;
+}
 
-// Get all airlines
-$airlines_result = $mysqli->query("SELECT * FROM airlines");
-$airlines = $airlines_result->fetch_all(MYSQLI_ASSOC);
-
-// Get all flights with airline names
-$flights_result = $mysqli->query("SELECT f.*, a.airline_name 
-                              FROM flights f
-                              JOIN airlines a ON f.airline_id = a.airline_id
-                              ORDER BY f.departure_time DESC");
-$flights = $flights_result->fetch_all(MYSQLI_ASSOC);
-
-
-// Get active section from URL or default to dashboard
-$active_section = isset($_GET['section']) ? $_GET['section'] : 'dashboard';
+// USER MANAGEMENT
+// Delete user
+if (isset($_GET['delete_user'])) {
+    $user_id = $mysqli->real_escape_string($_GET['delete_user']);
+    
+    // Check if user has bookings before deleting
+    $check_bookings = $mysqli->query("SELECT COUNT(*) as count FROM bookings WHERE user_id = $user_id")->fetch_assoc()['count'];
+    
+    if ($check_bookings > 0) {
+        $_SESSION['error_message'] = "Cannot delete: This user has active bookings.";
+    } else {
+        if ($mysqli->query("DELETE FROM users WHERE user_id = $user_id")) {
+            $_SESSION['success_message'] = "User deleted successfully!";
+        } else {
+            $_SESSION['error_message'] = "Error deleting user: " . $mysqli->error;
+        }
+    }
+    
+    header("Location: ?section=users");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -613,103 +652,605 @@ $active_section = isset($_GET['section']) ? $_GET['section'] : 'dashboard';
 
 
   <script>
-  // Initialize charts
-  document.addEventListener('DOMContentLoaded', function() {
-    // Flight Status Chart (if you have this chart)
-    if (document.getElementById('flightStatusChart')) {
-      new Chart(document.getElementById('flightStatusChart'), {
-        type: 'doughnut',
-        data: {
-          labels: ['On Time', 'Delayed', 'Cancelled'],
-          datasets: [{
-            data: [75, 15, 10], // Example data - replace with your actual data
-            backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
-            borderWidth: 0
-          }]
-        },
-        options: { 
-          cutout: '70%', 
-          plugins: { 
-            legend: { 
-              position: 'bottom',
-              labels: {
-                color: '#fff',
-                font: {
-                  family: "'Inter', sans-serif"
-                }
-              }
-            } 
-          }
+// Initialize dashboard and charts
+document.addEventListener('DOMContentLoaded', function() {
+  // Display alert messages from PHP session
+  displaySessionMessages();
+  
+  // Flight Status Chart
+  if (document.getElementById('flightStatusChart')) {
+    initializeFlightStatusChart();
+  }
+  
+  // Booking Trends Chart (monthly data)
+  if (document.getElementById('bookingTrendsChart')) {
+    initializeBookingTrendsChart();
+  }
+  
+  // Initialize DataTables for better table functionality
+  initializeDataTables();
+  
+  // Set up event listeners for all interactive elements
+  setupEventListeners();
+});
+
+// Handle PHP session messages (success and error)
+function displaySessionMessages() {
+  const successMsg = document.getElementById('successMessage');
+  const errorMsg = document.getElementById('errorMessage');
+  
+  if (successMsg && successMsg.textContent.trim() !== '') {
+    successMsg.classList.remove('hidden');
+    setTimeout(() => {
+      successMsg.classList.add('hidden');
+    }, 5000);
+  }
+  
+  if (errorMsg && errorMsg.textContent.trim() !== '') {
+    errorMsg.classList.remove('hidden');
+    setTimeout(() => {
+      errorMsg.classList.add('hidden');
+    }, 5000);
+  }
+}
+
+// Initialize DataTables plugin for better table management
+function initializeDataTables() {
+  const tables = [
+    '#flightsTable', 
+    '#airlinesTable', 
+    '#usersTable', 
+    '#bookingsTable'
+  ];
+  
+  tables.forEach(tableId => {
+    const table = document.querySelector(tableId);
+    if (table) {
+      $(tableId).DataTable({
+        responsive: true,
+        pageLength: 10,
+        language: {
+          search: "Search:",
+          lengthMenu: "Show _MENU_ entries",
+          info: "Showing _START_ to _END_ of _TOTAL_ entries"
         }
       });
     }
-    
-    // Set up event listeners for all interactive elements
-    setupEventListeners();
   });
+}
 
-  function setupEventListeners() {
-    // Flight form buttons
-    const addFlightBtn = document.querySelector('button[onclick="showFlightForm()"]');
-    if (addFlightBtn) {
-      addFlightBtn.addEventListener('click', showFlightForm);
-    }
-    
-    const cancelFlightBtn = document.querySelector('button[onclick="hideFlightForm()"]');
-    if (cancelFlightBtn) {
-      cancelFlightBtn.addEventListener('click', hideFlightForm);
-    }
-    
-    // Confirm all delete actions
-    document.querySelectorAll('a[onclick*="confirm("]').forEach(link => {
-      link.addEventListener('click', function(e) {
-        if (!confirm(this.getAttribute('data-confirm') || 'Are you sure?')) {
-          e.preventDefault();
+// Initialize Flight Status Chart
+function initializeFlightStatusChart() {
+  // Fetch actual data from backend via AJAX or use data embedded in page
+  const onTimeCount = parseInt(document.getElementById('onTimeCount')?.dataset.count || 75);
+  const delayedCount = parseInt(document.getElementById('delayedCount')?.dataset.count || 15);
+  const cancelledCount = parseInt(document.getElementById('cancelledCount')?.dataset.count || 10);
+  
+  new Chart(document.getElementById('flightStatusChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['On Time', 'Delayed', 'Cancelled'],
+      datasets: [{
+        data: [onTimeCount, delayedCount, cancelledCount],
+        backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+        borderWidth: 0
+      }]
+    },
+    options: { 
+      cutout: '70%', 
+      plugins: { 
+        legend: { 
+          position: 'bottom',
+          labels: {
+            padding: 20,
+            font: {
+              family: "'Inter', sans-serif"
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.raw || 0;
+              const total = context.dataset.data.reduce((acc, curr) => acc + curr, 0);
+              const percentage = Math.round((value / total) * 100);
+              return `${label}: ${value} (${percentage}%)`;
+            }
+          }
         }
+      }
+    }
+  });
+}
+
+// Initialize Booking Trends Chart
+function initializeBookingTrendsChart() {
+  // Fetch booking data via AJAX or use data embedded in page
+  const ctx = document.getElementById('bookingTrendsChart').getContext('2d');
+  
+  // Example data - in production you would fetch this from your PHP backend
+  const bookingData = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    datasets: [{
+      label: 'Bookings',
+      data: [65, 59, 80, 81, 56, 55, 40, 45, 60, 75, 82, 90],
+      borderColor: '#3B82F6',
+      backgroundColor: 'rgba(59, 130, 246, 0.5)',
+      tension: 0.3,
+      fill: true
+    }]
+  };
+  
+  new Chart(ctx, {
+    type: 'line',
+    data: bookingData,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            precision: 0
+          }
+        }
+      }
+    }
+  });
+}
+
+function setupEventListeners() {
+  // Flight form buttons
+  const addFlightBtn = document.querySelector('.add-flight-btn');
+  if (addFlightBtn) {
+    addFlightBtn.addEventListener('click', showFlightForm);
+  }
+  
+  const cancelFlightBtn = document.querySelector('.cancel-flight-btn');
+  if (cancelFlightBtn) {
+    cancelFlightBtn.addEventListener('click', hideFlightForm);
+  }
+  
+  // Airline form buttons
+  const addAirlineBtn = document.querySelector('.add-airline-btn');
+  if (addAirlineBtn) {
+    addAirlineBtn.addEventListener('click', showAirlineForm);
+  }
+  
+  const cancelAirlineBtn = document.querySelector('.cancel-airline-btn');
+  if (cancelAirlineBtn) {
+    cancelAirlineBtn.addEventListener('click', hideAirlineForm);
+  }
+  
+  // Confirm all delete actions
+  document.querySelectorAll('a[href*="delete_"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+      let confirmMessage = 'Are you sure you want to delete this item?';
+      
+      // Customize message based on what's being deleted
+      if (link.href.includes('delete_airline')) {
+        confirmMessage = 'Are you sure you want to delete this airline? This cannot be undone.';
+      } else if (link.href.includes('delete_flight')) {
+        confirmMessage = 'Are you sure you want to delete this flight? This cannot be undone.';
+      } else if (link.href.includes('delete_user')) {
+        confirmMessage = 'Are you sure you want to delete this user? This cannot be undone.';
+      }
+      
+      if (!confirm(confirmMessage)) {
+        e.preventDefault();
+      }
+    });
+  });
+  
+  // Flight form validation
+  const flightForm = document.getElementById('flightFormElement');
+  if (flightForm) {
+    flightForm.addEventListener('submit', validateFlightForm);
+  }
+  
+  // Airline form validation
+  const airlineForm = document.getElementById('airlineFormElement');
+  if (airlineForm) {
+    airlineForm.addEventListener('submit', validateAirlineForm);
+  }
+  
+  // Add date and time validation to departure/arrival inputs
+  const departureInput = document.querySelector('input[name="departure_time"]');
+  const arrivalInput = document.querySelector('input[name="arrival_time"]');
+  
+  if (departureInput && arrivalInput) {
+    departureInput.addEventListener('change', function() {
+      validateFlightTimes();
+    });
+    
+    arrivalInput.addEventListener('change', function() {
+      validateFlightTimes();
+    });
+  }
+  
+  // Setup tab navigation if present
+  setupTabNavigation();
+}
+
+// Flight Form Functions
+function showFlightForm() {
+  const form = document.getElementById('flightForm');
+  if (form) {
+    form.classList.remove('hidden');
+    document.getElementById('flightFormTitle').textContent = 'Add New Flight';
+    document.getElementById('flightFormElement').reset();
+    document.getElementById('editFlightId').value = '';
+    form.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function hideFlightForm() {
+  const form = document.getElementById('flightForm');
+  if (form) form.classList.add('hidden');
+}
+
+function editFlight(flightId, airlineId, flightNumber, origin, destination, departure, arrival, price, seats) {
+  showFlightForm();
+  const form = document.getElementById('flightFormElement');
+  if (form) {
+    document.getElementById('flightFormTitle').textContent = 'Edit Flight';
+    document.getElementById('editFlightId').value = flightId;
+    form.querySelector('select[name="airline_id"]').value = airlineId;
+    form.querySelector('input[name="flight_number"]').value = flightNumber;
+    form.querySelector('input[name="origin_airport"]').value = origin;
+    form.querySelector('input[name="destination_airport"]').value = destination;
+    form.querySelector('input[name="departure_time"]').value = departure;
+    form.querySelector('input[name="arrival_time"]').value = arrival;
+    form.querySelector('input[name="base_price"]').value = price;
+    form.querySelector('input[name="available_seats"]').value = seats;
+    
+    document.getElementById('flightForm').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+// Airline Form Functions
+function showAirlineForm() {
+  const form = document.getElementById('airlineForm');
+  if (form) {
+    form.classList.remove('hidden');
+    document.getElementById('airlineFormTitle').textContent = 'Add New Airline';
+    document.getElementById('airlineFormElement').reset();
+    document.getElementById('editAirlineId').value = '';
+    form.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function hideAirlineForm() {
+  const form = document.getElementById('airlineForm');
+  if (form) form.classList.add('hidden');
+}
+
+function editAirline(airlineId, airlineName, customerCare, contactUrl, active) {
+  showAirlineForm();
+  const form = document.getElementById('airlineFormElement');
+  if (form) {
+    document.getElementById('airlineFormTitle').textContent = 'Edit Airline';
+    document.getElementById('editAirlineId').value = airlineId;
+    form.querySelector('input[name="airline_name"]').value = airlineName;
+    form.querySelector('input[name="customer_care"]').value = customerCare;
+    form.querySelector('input[name="contact_url"]').value = contactUrl;
+    
+    // Handle active/inactive status
+    const activeCheckbox = form.querySelector('input[name="active"]');
+    if (activeCheckbox) {
+      activeCheckbox.checked = active === '1';
+    }
+    
+    document.getElementById('airlineForm').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+// Form Validation
+function validateFlightForm(e) {
+  const form = e.target;
+  let isValid = true;
+  
+  // Required fields
+  const requiredFields = [
+    'airline_id', 'flight_number', 'origin_airport', 
+    'destination_airport', 'departure_time', 'arrival_time',
+    'base_price', 'available_seats'
+  ];
+  
+  requiredFields.forEach(field => {
+    const input = form.querySelector(`[name="${field}"]`);
+    if (!input || !input.value.trim()) {
+      isValid = false;
+      highlightError(input, 'This field is required');
+    } else {
+      removeError(input);
+    }
+  });
+  
+  // Validate flight number format (e.g., AB123)
+  const flightNumberInput = form.querySelector('[name="flight_number"]');
+  if (flightNumberInput && flightNumberInput.value.trim()) {
+    const flightNumberRegex = /^[A-Z0-9]{2,8}$/;
+    if (!flightNumberRegex.test(flightNumberInput.value.trim())) {
+      isValid = false;
+      highlightError(flightNumberInput, 'Flight number should be 2-8 alphanumeric characters');
+    }
+  }
+  
+  // Make sure origin and destination are different
+  const origin = form.querySelector('[name="origin_airport"]').value.trim();
+  const destination = form.querySelector('[name="destination_airport"]').value.trim();
+  
+  if (origin && destination && origin.toLowerCase() === destination.toLowerCase()) {
+    isValid = false;
+    highlightError(form.querySelector('[name="destination_airport"]'), 
+      'Origin and destination cannot be the same');
+  }
+  
+  // Validate departure/arrival times
+  if (!validateFlightTimes()) {
+    isValid = false;
+  }
+  
+  // Validate numeric fields
+  const basePrice = form.querySelector('[name="base_price"]');
+  if (basePrice && basePrice.value.trim() && (isNaN(basePrice.value) || parseFloat(basePrice.value) <= 0)) {
+    isValid = false;
+    highlightError(basePrice, 'Base price must be a positive number');
+  }
+  
+  const availableSeats = form.querySelector('[name="available_seats"]');
+  if (availableSeats && availableSeats.value.trim() && 
+      (isNaN(availableSeats.value) || parseInt(availableSeats.value) <= 0)) {
+    isValid = false;
+    highlightError(availableSeats, 'Available seats must be a positive integer');
+  }
+  
+  if (!isValid) {
+    e.preventDefault();
+  }
+  
+  return isValid;
+}
+
+function validateFlightTimes() {
+  const departureInput = document.querySelector('input[name="departure_time"]');
+  const arrivalInput = document.querySelector('input[name="arrival_time"]');
+  
+  if (!departureInput || !arrivalInput) return true;
+  
+  const departure = new Date(departureInput.value);
+  const arrival = new Date(arrivalInput.value);
+  
+  if (departure && arrival && departure >= arrival) {
+    highlightError(arrivalInput, 'Arrival time must be after departure time');
+    return false;
+  } else {
+    removeError(departureInput);
+    removeError(arrivalInput);
+    return true;
+  }
+}
+
+function validateAirlineForm(e) {
+  const form = e.target;
+  let isValid = true;
+  
+  // Validate required fields
+  const requiredFields = ['airline_name', 'customer_care'];
+  
+  requiredFields.forEach(field => {
+    const input = form.querySelector(`[name="${field}"]`);
+    if (!input || !input.value.trim()) {
+      isValid = false;
+      highlightError(input, 'This field is required');
+    } else {
+      removeError(input);
+    }
+  });
+  
+  // Validate URL format if provided
+  const contactUrlInput = form.querySelector('[name="contact_url"]');
+  if (contactUrlInput && contactUrlInput.value.trim()) {
+    try {
+      new URL(contactUrlInput.value);
+      removeError(contactUrlInput);
+    } catch (e) {
+      isValid = false;
+      highlightError(contactUrlInput, 'Please enter a valid URL (e.g., https://example.com)');
+    }
+  }
+  
+  if (!isValid) {
+    e.preventDefault();
+  }
+  
+  return isValid;
+}
+
+// Form helper functions
+function highlightError(input, message) {
+  if (!input) return;
+  
+  input.classList.add('border-red-500');
+  
+  // Create or update error message
+  let errorElement = input.nextElementSibling;
+  if (!errorElement || !errorElement.classList.contains('error-message')) {
+    errorElement = document.createElement('p');
+    errorElement.className = 'error-message text-red-500 text-sm mt-1';
+    input.parentNode.insertBefore(errorElement, input.nextSibling);
+  }
+  
+  errorElement.textContent = message;
+}
+
+function removeError(input) {
+  if (!input) return;
+  
+  input.classList.remove('border-red-500');
+  
+  // Remove error message if exists
+  const errorElement = input.nextElementSibling;
+  if (errorElement && errorElement.classList.contains('error-message')) {
+    errorElement.remove();
+  }
+}
+
+// Tab navigation system (if needed)
+function setupTabNavigation() {
+  const tabLinks = document.querySelectorAll('.tab-link');
+  const tabContents = document.querySelectorAll('.tab-content');
+  
+  if (tabLinks.length && tabContents.length) {
+    tabLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Get tab ID from data attribute
+        const tabId = this.getAttribute('data-tab');
+        
+        // Remove active class from all tabs and contents
+        tabLinks.forEach(tab => tab.classList.remove('active'));
+        tabContents.forEach(content => content.classList.add('hidden'));
+        
+        // Add active class to current tab and content
+        this.classList.add('active');
+        document.getElementById(tabId).classList.remove('hidden');
+        
+        // Update URL without reloading (for bookmarking)
+        history.pushState(null, null, `?section=${tabId}`);
       });
     });
   }
+}
 
-  // Flight Form Functions
-  function showFlightForm() {
-    const form = document.getElementById('flightForm');
-    if (form) {
-      form.classList.remove('hidden');
-      document.getElementById('flightFormTitle').textContent = 'Add New Flight';
-      document.getElementById('flightFormElement').reset();
-      document.getElementById('editFlightId').value = '';
-      form.scrollIntoView({ behavior: 'smooth' });
+// Mobile menu toggle
+function toggleMobileMenu() {
+  const sidebar = document.querySelector('.sidebar');
+  const mainContent = document.querySelector('.main-content');
+  
+  if (sidebar) {
+    sidebar.classList.toggle('hidden');
+    sidebar.classList.toggle('md:block');
+    
+    if (mainContent) {
+      mainContent.classList.toggle('md:ml-64');
     }
   }
+}
 
-  function hideFlightForm() {
-    const form = document.getElementById('flightForm');
-    if (form) form.classList.add('hidden');
-  }
+// Function to fetch flight details using AJAX (for populating modals, etc.)
+function fetchFlightDetails(flightId) {
+  fetch(`get_flight_details.php?flight_id=${flightId}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Populate modal or form with flight details
+        populateFlightDetailModal(data.flight);
+      } else {
+        alert('Error loading flight details: ' + data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
 
-  function editFlight(flightId, airlineId, flightNumber, origin, destination, departure, arrival, price, seats) {
-    showFlightForm();
-    const form = document.getElementById('flightForm');
-    if (form) {
-      document.getElementById('flightFormTitle').textContent = 'Edit Flight';
-      document.getElementById('editFlightId').value = flightId;
-      document.querySelector('select[name="airline_id"]').value = airlineId;
-      document.querySelector('input[name="flight_number"]').value = flightNumber;
-      document.querySelector('input[name="origin_airport"]').value = origin;
-      document.querySelector('input[name="destination_airport"]').value = destination;
-      document.querySelector('input[name="departure_time"]').value = departure;
-      document.querySelector('input[name="arrival_time"]').value = arrival;
-      document.querySelector('input[name="base_price"]').value = price;
-      document.querySelector('input[name="available_seats"]').value = seats;
-      form.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
+// Function to display flight details in a modal
+function populateFlightDetailModal(flight) {
+  const modal = document.getElementById('flightDetailModal');
+  if (!modal) return;
+  
+  // Populate modal content with flight details
+  modal.querySelector('.modal-title').textContent = `Flight ${flight.flight_number}`;
+  modal.querySelector('.modal-airline').textContent = flight.airline_name;
+  modal.querySelector('.modal-route').textContent = `${flight.origin_airport} to ${flight.destination_airport}`;
+  modal.querySelector('.modal-departure').textContent = formatDateTime(flight.departure_time);
+  modal.querySelector('.modal-arrival').textContent = formatDateTime(flight.arrival_time);
+  modal.querySelector('.modal-price').textContent = `$${parseFloat(flight.base_price).toFixed(2)}`;
+  modal.querySelector('.modal-seats').textContent = flight.available_seats;
+  modal.querySelector('.modal-status').textContent = flight.flight_status;
+  
+  // Show the modal
+  modal.classList.remove('hidden');
+}
 
-  // Mobile menu toggle (if needed)
-  function toggleMobileMenu() {
-    const sidebar = document.querySelector('.sidebar');
-    if (sidebar) sidebar.classList.toggle('hidden');
+// Helper function to format date and time
+function formatDateTime(dateTimeStr) {
+  const options = { 
+    weekday: 'short',
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  };
+  
+  return new Date(dateTimeStr).toLocaleString(undefined, options);
+}
+
+// Close modal when clicking outside or on X button
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('modal-backdrop') || 
+      e.target.classList.contains('close-modal')) {
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.classList.add('hidden');
+    });
   }
+});
+
+// Export bookings to CSV
+function exportBookingsToCSV() {
+  // Fetch data via AJAX or use table data
+  const table = document.getElementById('bookingsTable');
+  if (!table) return;
+  
+  let csvContent = "data:text/csv;charset=utf-8,";
+  
+  // Add headers
+  const headers = [];
+  table.querySelectorAll('thead th').forEach(th => {
+    headers.push(th.textContent.trim());
+  });
+  csvContent += headers.join(',') + '\n';
+  
+  // Add rows
+  table.querySelectorAll('tbody tr').forEach(row => {
+    const rowData = [];
+    row.querySelectorAll('td').forEach(cell => {
+      // Clean and quote the data to handle commas
+      rowData.push('"' + cell.textContent.trim().replace(/"/g, '""') + '"');
+    });
+    csvContent += rowData.join(',') + '\n';
+  });
+  
+  // Create download link
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', 'bookings_export.csv');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// Add event listener for export functionality if the button exists
+document.addEventListener('DOMContentLoaded', function() {
+  const exportBtn = document.getElementById('exportBookingsBtn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', exportBookingsToCSV);
+  }
+});
 </script>
 </body>
 </html>
