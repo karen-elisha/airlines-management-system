@@ -127,14 +127,26 @@ if (isset($_GET['delete_flight'])) {
 }
 
 if (isset($_GET['delete_airline'])) {
-    $airline_id = $_GET['delete_airline'];
-    $stmt = $mysqli->prepare("DELETE FROM airlines WHERE airline_id = ?");
-    $stmt->bind_param("i", $airline_id);
-    $stmt->execute();
-    $stmt->close();
+    $airline_id = (int)$_GET['delete_airline'];
     
-    header("Location: admin-dashboard.php?section=airlines");
-    exit();
+    // Prepare the delete statement
+    $stmt = $mysqli->prepare("DELETE FROM airlines WHERE airline_id = ?");
+    if (!$stmt) {
+        die("Prepare failed: " . $mysqli->error);
+    }
+    
+    $stmt->bind_param("i", $airline_id);
+    
+    if ($stmt->execute()) {
+        // Success - redirect back to airlines section
+        header("Location: admin-dashboard.php?section=airlines");
+        exit();
+    } else {
+        // Error handling
+        die("Delete failed: " . $stmt->error);
+    }
+    
+    $stmt->close();
 }
 
 if (isset($_GET['delete_user'])) {
@@ -529,88 +541,77 @@ $active_section = isset($_GET['section']) ? $_GET['section'] : 'dashboard';
       </div>
     </section>
 
-    <!-- Airlines Section -->
-    <section id="airlinesSection" class="section <?= $active_section === 'airlines' ? 'active' : '' ?>">
-      <div class="card p-5 rounded-xl">
-        <h3 class="text-lg font-semibold mb-4"><i class="fas fa-building mr-2"></i> Manage Airlines</h3>
-        <form method="POST" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
-          <div>
-            <label class="block text-sm text-gray-400 mb-1"><i class="fas fa-signature mr-1"></i> Airline Name</label>
-            <input type="text" name="airline_name" placeholder="Airline Name" class="w-full p-2 rounded bg-gray-800 border border-gray-700" required>
-          </div>
-          <div>
-            <label class="block text-sm text-gray-400 mb-1"><i class="fas fa-image mr-1"></i> Logo URL</label>
-            <input type="text" name="logo_url" placeholder="Logo URL" class="w-full p-2 rounded bg-gray-800 border border-gray-700">
-          </div>
-          <div>
-            <label class="block text-sm text-gray-400 mb-1"><i class="fas fa-globe mr-1"></i> Website</label>
-            <input type="text" name="website" placeholder="Website" class="w-full p-2 rounded bg-gray-800 border border-gray-700">
-          </div>
-          <div>
-            <label class="block text-sm text-gray-400 mb-1"><i class="fas fa-phone mr-1"></i> Customer Care</label>
-            <input type="text" name="customer_care" placeholder="Customer Care" class="w-full p-2 rounded bg-gray-800 border border-gray-700">
-          </div>
-          <div>
-            <label class="block text-sm text-gray-400 mb-1"><i class="fas fa-link mr-1"></i> Contact URL</label>
-            <input type="text" name="contact_url" placeholder="Contact URL" class="w-full p-2 rounded bg-gray-800 border border-gray-700">
-          </div>
-          <div class="flex items-end">
-            <button type="submit" name="add_airline" class="bg-indigo-600 hover:bg-indigo-700 py-2 px-4 rounded transition w-full">
-              <i class="fas fa-plus mr-2"></i> Add Airline
-            </button>
-          </div>
-        </form>
-        
-        <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead>
-              <tr class="border-b border-gray-800 text-left">
-                <th class="p-3">Airline</th>
-                <th class="p-3">Website</th>
-                <th class="p-3">Customer Care</th>
-                <th class="p-3">Status</th>
-                <th class="p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php foreach ($airlines as $airline): ?>
-              <tr class="table-row border-b border-gray-800">
-                <td class="p-3 flex items-center">
-                  <?php if ($airline['logo_url']): ?>
-                  <img src="<?= $airline['logo_url'] ?>" class="w-8 h-8 mr-2 rounded-full">
-                  <?php endif; ?>
-                  <?= $airline['airline_name'] ?>
-                </td>
-                <td class="p-3">
-                  <?php if ($airline['website']): ?>
-                  <a href="<?= $airline['website'] ?>" target="_blank" class="text-indigo-400 hover:underline">
-                    <?= parse_url($airline['website'], PHP_URL_HOST) ?>
-                  </a>
-                  <?php else: ?>
-                  N/A
-                  <?php endif; ?>
-                </td>
-                <td class="p-3"><?= $airline['customer_care'] ?: 'N/A' ?></td>
-                <td class="p-3">
-                  <span class="badge <?= $airline['active'] ? 'badge-success' : 'badge-danger' ?>">
-                    <?= $airline['active'] ? 'Active' : 'Inactive' ?>
-                  </span>
-                </td>
-                <td class="p-3">
-                  <a href="?delete_airline=<?= $airline['airline_id'] ?>" class="text-red-400 hover:text-red-300" onclick="return confirm('Are you sure you want to delete this airline?')">
-                    <i class="fas fa-trash"></i>
-                  </a>
-                </td>
-              </tr>
-              <?php endforeach; ?>
-            </tbody>
-          </table>
-        </div>
+<!-- Airlines Section -->
+<section id="airlinesSection" class="section <?= $active_section === 'airlines' ? 'active' : '' ?>">
+  <div class="card p-5 rounded-xl">
+    <h3 class="text-lg font-semibold mb-4"><i class="fas fa-building mr-2"></i> Manage Airlines</h3>
+    <form method="POST" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+      <div>
+        <label class="block text-sm text-gray-400 mb-1"><i class="fas fa-signature mr-1"></i> Airline Name</label>
+        <input type="text" name="airline_name" placeholder="Airline Name" class="w-full p-2 rounded bg-gray-800 border border-gray-700" required>
       </div>
-    </section>
+      <div>
+        <label class="block text-sm text-gray-400 mb-1"><i class="fas fa-phone mr-1"></i> Customer Care</label>
+        <input type="text" name="customer_care" placeholder="Customer Care" class="w-full p-2 rounded bg-gray-800 border border-gray-700">
+      </div>
+      <div>
+        <label class="block text-sm text-gray-400 mb-1"><i class="fas fa-link mr-1"></i> Customer URL</label>
+        <input type="text" name="contact_url" placeholder="Contact URL" class="w-full p-2 rounded bg-gray-800 border border-gray-700">
+      </div>
+      <div class="flex items-end">
+        <button type="submit" name="add_airline" class="bg-indigo-600 hover:bg-indigo-700 py-2 px-4 rounded transition w-full">
+          <i class="fas fa-plus mr-2"></i> Add Airline
+        </button>
+      </div>
+    </form>
+    
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-gray-800 text-left">
+            <th class="p-3">Airline</th>
+            <th class="p-3">Customer Care</th>
+            <th class="p-3">Contact URL</th>
+            <th class="p-3">Status</th>
+            <th class="p-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($airlines as $airline): ?>
+          <tr class="table-row border-b border-gray-800">
+            <td class="p-3">
+              <?= htmlspecialchars($airline['airline_name']) ?>
+            </td>
+            <td class="p-3"><?= $airline['customer_care'] ? htmlspecialchars($airline['customer_care']) : 'N/A' ?></td>
+            <td class="p-3">
+              <?php if ($airline['contact_url']): ?>
+              <a href="<?= htmlspecialchars($airline['contact_url']) ?>" target="_blank" class="text-indigo-400 hover:underline">
+                <?= parse_url($airline['contact_url'], PHP_URL_HOST) ?>
+              </a>
+              <?php else: ?>
+              N/A
+              <?php endif; ?>
+            </td>
+            <td class="p-3">
+              <span class="badge <?= $airline['active'] ? 'badge-success' : 'badge-danger' ?>">
+                <?= $airline['active'] ? 'Active' : 'Inactive' ?>
+              </span>
+            </td>
+            <td class="p-3">
+              <a href="?section=airlines&delete_airline=<?= $airline['airline_id'] ?>" class="text-red-400 hover:text-red-300" onclick="return confirm('Are you sure you want to delete this airline?')">
+                <i class="fas fa-trash"></i>
+              </a>
+            </td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
   </main>
 
-  <>
+
   <script>
   // Initialize charts
   document.addEventListener('DOMContentLoaded', function() {
