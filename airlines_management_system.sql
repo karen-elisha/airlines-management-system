@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 18, 2025 at 07:53 PM
+-- Generation Time: May 20, 2025 at 06:06 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -64,8 +64,14 @@ CREATE TABLE `airlines` (
 --
 
 INSERT INTO `airlines` (`airline_id`, `airline_name`, `logo_url`, `website`, `customer_care`, `contact_url`, `active`) VALUES
-('6E', 'IndiGo', 'logos/indigo.png', NULL, NULL, NULL, 1),
+('6E', 'IndiGo', 'logos/indigo.png', 'https://goindigo.in', '0124-6173838', 'https://goindigo.in/contact', 1),
 ('AI', 'Air India', 'logos/ai.png', NULL, NULL, NULL, 1),
+('AI05', 'Go First', 'https://gofirst.in/logo.png', 'https://gofirst.in', '1800-210-0999', 'https://gofirst.in/contact', 1),
+('AI06', 'AirAsia India', 'https://airasia.com/logo.png', 'https://airasia.com', '080-4747-7474', 'https://airasia.com/contact', 1),
+('AI07', 'Alliance Air', 'https://allianceair.in/logo.png', 'https://allianceair.in', '1800-180-1407', 'https://allianceair.in/contact', 1),
+('AI08', 'TruJet', 'https://trujet.com/logo.png', 'https://trujet.com', '040-67137137', 'https://trujet.com/contact', 1),
+('AI09', 'Star Air', 'https://starair.in/logo.png', 'https://starair.in', '1800-425-1111', 'https://starair.in/contact', 1),
+('AI10', 'FlyBig', 'https://flybig.in/logo.png', 'https://flybig.in', '0755-6614141', 'https://flybig.in/contact', 1),
 ('SG', 'SpiceJet', 'logos/spicejet.png', NULL, NULL, NULL, 1),
 ('UK', 'Vistara', 'logos/vistara.png', NULL, NULL, NULL, 1);
 
@@ -144,12 +150,9 @@ INSERT INTO `bookings` (`booking_id`, `booking_reference`, `user_id`, `flight_id
 (16, 'BK-68288DDEADE53', 5, 1001, '2025-05-17 15:23:42', '2025-05-23', 1, 4719.00, 'tom@gmail.com', '9849973543', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 (17, 'BK-68288E312F7FF', 5, 1001, '2025-05-17 15:25:05', '2025-05-23', 1, 4719.00, 'tom@gmail.com', '9849973543', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 (18, 'BK-68288E730C5A4', 5, 1001, '2025-05-17 15:26:11', '2025-05-23', 1, 4719.00, 'sony@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(19, 'BK-6828902E5BF02', 5, 1001, '2025-05-17 15:33:34', '2025-05-23', 1, 4719.00, 'sony@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-17 19:07:42', NULL),
 (20, 'BK-682895B2D25CA', 5, 1001, '2025-05-17 15:57:06', '2025-05-23', 1, 4719.00, 'carolyn@gmail.com', '9886026336', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 (21, 'BK-682895F5411E1', 5, 1001, '2025-05-17 15:58:13', '2025-05-23', 1, 4719.00, 'carolyn@gmail.com', '9886026336', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 (22, 'BK-682899A8900AC', 5, 1001, '2025-05-17 16:14:00', '2025-05-23', 1, 4719.00, 'carolyn@gmail.com', '9886026336', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(23, 'BK-68289F238C96F', 5, 1001, '2025-05-17 16:37:23', '2025-05-23', 1, 4719.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(24, 'BK-6828A70196E50', 5, 1001, '2025-05-17 17:10:57', '2025-05-23', 1, 4719.00, 'harry@gmail.com', '9886026336', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 (25, 'BK-6828A7F252B81', 5, 1001, '2025-05-17 17:14:58', '2025-05-23', 1, 4719.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 (26, 'BK-6828A94061033', 5, 1001, '2025-05-17 17:20:32', '2025-05-23', 1, 4719.00, 'chezanand@gmail.com', '7013631447', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 (27, 'BK-6828AA4FCB117', 5, 1001, '2025-05-17 17:25:03', '2025-05-23', 1, 4719.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
@@ -212,8 +215,9 @@ CREATE TABLE `flights` (
 --
 
 INSERT INTO `flights` (`flight_id`, `flight_number`, `airline_id`, `origin_airport`, `destination_airport`, `departure_time`, `arrival_time`, `duration`, `base_price`, `total_seats`, `available_seats`, `flight_status`) VALUES
-(1001, '6E101', '6E', 'DEL', 'BOM', '2023-12-20 06:00:00', '2023-12-20 08:15:00', 135, 4599.00, 180, 180, 'Scheduled'),
-(1002, 'AI202', 'AI', 'BOM', 'BLR', '2023-12-20 09:30:00', '2023-12-20 11:00:00', 90, 3899.00, 160, 145, 'Scheduled');
+(1001, '6E101', '6E', 'DEL', 'BOM', '2025-05-22 06:00:00', '2023-05-25 08:15:00', 135, 5600.00, 180, 180, 'Scheduled'),
+(1002, 'AI202', 'AI', 'BOM', 'BLR', '2023-12-20 09:30:00', '2023-12-20 11:00:00', 90, 3999.00, 160, 145, 'Scheduled'),
+(1008, 'SG303', 'SG', 'BOM', 'DEL', '2025-05-21 20:37:00', '2025-05-23 20:37:00', 2880, 4500.00, 100, 100, 'Scheduled');
 
 -- --------------------------------------------------------
 
@@ -243,15 +247,6 @@ CREATE TABLE `notifications` (
   `created_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `notifications`
---
-
-INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `notification_type`, `is_read`, `created_at`) VALUES
-(1, 1, 'Your flight 6E101 from DEL to BOM has been rescheduled to 07:00 AM', 'Flight Update', 0, '2025-04-26 14:31:31'),
-(2, 2, 'Your booking #BK1001 has been confirmed', 'Booking', 1, '2023-12-15 09:00:00'),
-(3, 3, 'Special 20% discount on your next booking! Use code FLY20', 'Offer', 0, '2025-04-26 14:31:31');
-
 -- --------------------------------------------------------
 
 --
@@ -267,48 +262,6 @@ CREATE TABLE `passengers` (
   `age` int(11) NOT NULL,
   `seat_number` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `passengers`
---
-
-INSERT INTO `passengers` (`passenger_id`, `booking_id`, `first_name`, `last_name`, `gender`, `age`, `seat_number`) VALUES
-(1, 1, 'Harry ', 'Potter', 'male', 19, '12A'),
-(2, 2, 'Harry ', 'Potter', 'male', 19, '12A'),
-(3, 3, 'Karen', 'Chezhiyan', 'female', 24, '12A,Window'),
-(4, 4, 'Karen', 'Elisha', 'female', 19, '12A'),
-(5, 5, 'Karen', 'Elisha', 'female', 19, '12A'),
-(6, 6, 'Karen', 'Elisha', 'female', 19, '12A'),
-(7, 7, 'Karen', 'Elisha', 'female', 19, '12A'),
-(8, 8, 'Karen', 'Elisha', 'female', 19, '12A'),
-(9, 9, 'Chezhiyan', 'Anandaraj', 'male', 24, '12A'),
-(10, 10, 'Suresh', 'Naidu', 'male', 49, '12A'),
-(11, 11, 'Suresh', 'Naidu', 'male', 49, '12A'),
-(12, 12, 'Tom', 'Robert', 'male', 25, '12A'),
-(13, 13, 'Tom', 'Robert', 'male', 25, '12A'),
-(14, 14, 'Robert', 'Thomson', 'male', 48, '12A'),
-(15, 15, 'Robert', 'Thomson', 'male', 48, '12A'),
-(16, 16, 'Tom', 'Anandaraj', 'male', 25, '12A'),
-(17, 17, 'Tom', 'Anandaraj', 'male', 25, '12A'),
-(18, 18, 'Sony', 'Chezhiyan', 'male', 38, '12A,Window'),
-(19, 19, 'Sony', 'Chezhiyan', 'male', 38, '12A,Window'),
-(20, 20, 'Carolyn', 'Maria', 'female', 11, '12A'),
-(21, 21, 'Carolyn', 'Maria', 'female', 11, '12A'),
-(22, 22, 'Carolyn', 'Maria', 'female', 11, '12A'),
-(23, 23, 'Karen', 'Potter', 'female', 47, '12A,Window'),
-(24, 24, 'Harry ', 'Potter', 'male', 19, '12A'),
-(25, 25, 'Harry ', 'Potter', 'male', 16, '12A'),
-(26, 26, 'Chezhiyan', 'Robert', 'male', 36, '12A'),
-(27, 27, 'Harry ', 'Potter', 'male', 26, '12A'),
-(28, 28, 'Karen', 'Elisha', 'female', 15, '12A'),
-(29, 29, 'Karen', 'Elisha', 'female', 15, '12A'),
-(30, 30, 'Karen', 'Elisha', 'female', 15, '12A'),
-(31, 31, 'Harry ', 'Potter', 'male', 19, '12A'),
-(32, 32, 'Harry ', 'Potter', 'male', 19, '12A'),
-(33, 33, 'Harry ', 'Anandaraj', 'male', 19, '12A'),
-(34, 34, 'Harry ', 'Anandaraj', 'male', 19, '12A'),
-(35, 35, 'Harry ', 'Anandaraj', 'male', 19, '12A'),
-(36, 36, 'Harry ', 'Potter', 'male', 19, '12A');
 
 -- --------------------------------------------------------
 
@@ -392,12 +345,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `full_name`, `email`, `phone`, `password`, `member_since`, `loyalty_points`, `loyalty_tier`, `created_at`) VALUES
-(1, 'John Doe', 'john.doe@example.com', '+15551234567', '$2y$10$hashedpassword123', '2023-01-15 05:00:00', 150, 'Bronze', '2025-04-26 14:21:17'),
-(2, 'Jane Smith', 'jane.smith@example.com', '+15559876543', '$2y$10$hashedpassword456', '2022-11-20 08:45:00', 450, 'Silver', '2025-04-26 14:21:17'),
-(3, 'Robert Johnson', 'robert.j@example.com', '+15555551234', '$2y$10$hashedpassword789', '2021-05-10 03:15:00', 1200, 'Gold', '2025-04-26 14:21:17'),
-(4, 'Emily Davis', 'emily.d@example.com', '+15553334444', '$2y$10$hashedpassword012', '2020-08-05 10:50:00', 3000, 'Platinum', '2025-04-26 14:21:17'),
 (5, 'Karen Elisha Chezhiyan', 'karenelisha0204@gmail.com', '9591553820', '$2y$10$xyaSVBEqCkpFzMS/Gf5eg.niz84jwlhqtThIlBiforda.IAvc.Xaq', '2025-04-26 14:36:37', 0, 'Bronze', '2025-04-26 14:36:37'),
-(6, 'ritvik', 'ritvik.medam@gmail.com', '7013631447', '$2y$10$BoaDM0B.Iz/OpMRWUTbkOexrAOWkVmtIHDWtRA8phMmxLC78HlNc.', '2025-05-17 05:57:26', 0, 'Bronze', '2025-05-17 05:57:26');
+(8, 'Kevin', 'kevin@gmail.com', '6363976507', '$2y$10$WV82FFe7QB0292J1fKo.quV77KDiu3WLPezcKFa7aJO5zOKj1oZne', '2025-05-20 15:20:25', 0, 'Bronze', '2025-05-20 15:20:25'),
+(9, 'Dhanya', 'dhanya@gmail.com', '7338553820', '$2y$10$P/28T7NyMT256G0x1o28dOUcV2lxzreo7QWqDBgJg59OHbmSeMT4S', '2025-05-20 15:21:43', 0, 'Bronze', '2025-05-20 15:21:43');
 
 --
 -- Indexes for dumped tables
@@ -517,7 +467,7 @@ ALTER TABLE `feedback`
 -- AUTO_INCREMENT for table `flights`
 --
 ALTER TABLE `flights`
-  MODIFY `flight_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1006;
+  MODIFY `flight_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1009;
 
 --
 -- AUTO_INCREMENT for table `flight_schedule`
@@ -535,7 +485,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `passengers`
 --
 ALTER TABLE `passengers`
-  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `promotions`
@@ -553,7 +503,7 @@ ALTER TABLE `tickets`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables
