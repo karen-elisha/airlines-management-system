@@ -67,29 +67,21 @@ if (isset($_POST['add_airline'])) {
     $contact_url = $mysqli->real_escape_string($_POST['contact_url']);
     $website = isset($_POST['website']) ? $mysqli->real_escape_string($_POST['website']) : '';
     
-    try {
-        // Check if airline already exists
-        $check_airline = $mysqli->query("SELECT airline_id FROM airlines WHERE airline_name = '$airline_name'");
-        if ($check_airline->num_rows > 0) {
-            throw new Exception("Airline already exists!");
-        }
-
-        // Start transaction
-        $mysqli->begin_transaction();
-        
-        $query = "INSERT INTO airlines (airline_name, customer_care, contact_url, website, active) 
-                  VALUES ('$airline_name', '$customer_care', '$contact_url', '$website', 1)";
-        
-        if (!$mysqli->query($query)) {
-            throw new Exception("Error adding airline: " . $mysqli->error);
-        }
-        
-        $mysqli->commit();
+    // Check if airline already exists
+    $check_airline = $mysqli->query("SELECT airline_id FROM airlines WHERE airline_name = '$airline_name'");
+    if ($check_airline->num_rows > 0) {
+        $_SESSION['error_message'] = "Airline already exists!";
+        header("Location: ?section=airlines");
+        exit;
+    }
+    
+    $query = "INSERT INTO airlines (airline_name, customer_care, contact_url, website, active) 
+              VALUES ('$airline_name', '$customer_care', '$contact_url', '$website', 1)";
+    
+    if ($mysqli->query($query)) {
         $_SESSION['success_message'] = "Airline added successfully!";
-        
-    } catch (Exception $e) {
-        $mysqli->rollback();
-        $_SESSION['error_message'] = $e->getMessage();
+    } else {
+        $_SESSION['error_message'] = "Error adding airline: " . $mysqli->error;
     }
     
     header("Location: ?section=airlines");
@@ -105,34 +97,26 @@ if (isset($_POST['edit_airline'])) {
     $website = isset($_POST['website']) ? $mysqli->real_escape_string($_POST['website']) : '';
     $active = isset($_POST['active']) ? 1 : 0;
     
-    try {
-        // Check if airline exists
-        $check_airline = $mysqli->query("SELECT airline_id FROM airlines WHERE airline_id = $airline_id");
-        if ($check_airline->num_rows == 0) {
-            throw new Exception("Airline not found!");
-        }
-
-        // Start transaction
-        $mysqli->begin_transaction();
-        
-        $query = "UPDATE airlines 
-                  SET airline_name='$airline_name', 
-                      customer_care='$customer_care',
-                      contact_url='$contact_url',
-                      website='$website',
-                      active=$active
-                  WHERE airline_id=$airline_id";
-        
-        if (!$mysqli->query($query)) {
-            throw new Exception("Error updating airline: " . $mysqli->error);
-        }
-        
-        $mysqli->commit();
+    // Check if airline exists
+    $check_airline = $mysqli->query("SELECT airline_id FROM airlines WHERE airline_id = $airline_id");
+    if ($check_airline->num_rows == 0) {
+        $_SESSION['error_message'] = "Airline not found!";
+        header("Location: ?section=airlines");
+        exit;
+    }
+    
+    $query = "UPDATE airlines 
+              SET airline_name='$airline_name', 
+                  customer_care='$customer_care',
+                  contact_url='$contact_url',
+                  website='$website',
+                  active=$active
+              WHERE airline_id=$airline_id";
+    
+    if ($mysqli->query($query)) {
         $_SESSION['success_message'] = "Airline updated successfully!";
-        
-    } catch (Exception $e) {
-        $mysqli->rollback();
-        $_SESSION['error_message'] = $e->getMessage();
+    } else {
+        $_SESSION['error_message'] = "Error updating airline: " . $mysqli->error;
     }
     
     header("Location: ?section=airlines");
@@ -143,36 +127,25 @@ if (isset($_POST['edit_airline'])) {
 if (isset($_GET['delete_airline'])) {
     $airline_id = $mysqli->real_escape_string($_GET['delete_airline']);
     
-    try {
-        // Check if airline exists
-        $check_airline = $mysqli->query("SELECT airline_id FROM airlines WHERE airline_id = $airline_id");
-        if ($check_airline->num_rows == 0) {
-            throw new Exception("Airline not found!");
+    // Check if airline exists
+    $check_airline = $mysqli->query("SELECT airline_id FROM airlines WHERE airline_id = $airline_id");
+    if ($check_airline->num_rows == 0) {
+        $_SESSION['error_message'] = "Airline not found!";
+        header("Location: ?section=airlines");
+        exit;
+    }
+    
+    // Check if airline is used in flights before deleting
+    $check_flights = $mysqli->query("SELECT COUNT(*) as count FROM flights WHERE airline_id = $airline_id")->fetch_assoc()['count'];
+    
+    if ($check_flights > 0) {
+        $_SESSION['error_message'] = "Cannot delete: This airline has active flights.";
+    } else {
+        if ($mysqli->query("DELETE FROM airlines WHERE airline_id = $airline_id")) {
+            $_SESSION['success_message'] = "Airline deleted successfully!";
+        } else {
+            $_SESSION['error_message'] = "Error deleting airline: " . $mysqli->error;
         }
-
-        // Get all flights using this airline
-        $flights = $mysqli->query("SELECT flight_id, flight_number FROM flights WHERE airline_id = $airline_id");
-        if ($flights->num_rows > 0) {
-            $flight_list = [];
-            while ($flight = $flights->fetch_assoc()) {
-                $flight_list[] = "Flight #{$flight['flight_number']} (ID: {$flight['flight_id']})";
-            }
-            throw new Exception("Cannot delete: This airline has active flights.\n\nFlights using this airline:\n" . implode("\n", $flight_list) . "\n\nTo delete this airline, you must first:\n1. Update the airline_id in all related flights to another airline\n2. Or mark all related flights as inactive\n3. Then try deleting the airline again");
-        }
-
-        // Start transaction
-        $mysqli->begin_transaction();
-        
-        if (!$mysqli->query("DELETE FROM airlines WHERE airline_id = $airline_id")) {
-            throw new Exception("Error deleting airline: " . $mysqli->error);
-        }
-        
-        $mysqli->commit();
-        $_SESSION['success_message'] = "Airline deleted successfully!";
-        
-    } catch (Exception $e) {
-        $mysqli->rollback();
-        $_SESSION['error_message'] = $e->getMessage();
     }
     
     header("Location: ?section=airlines");
@@ -283,30 +256,24 @@ if (isset($_GET['delete_user'])) {
     
     if ($check_bookings > 0) {
         $_SESSION['error_message'] = "Cannot delete: This user has active bookings.";
-        header("Location: ?section=users");
-        exit;
-    }
-    
-    // Start transaction
-    try {
+    } else {
+        // Start transaction
         $mysqli->begin_transaction();
-        
-        // Delete user's bookings first
-        $delete_bookings = $mysqli->query("DELETE FROM bookings WHERE user_id = $user_id");
-        
-        // Then delete user
-        $delete_user = $mysqli->query("DELETE FROM users WHERE user_id = $user_id");
-        
-        if ($delete_user) {
-            $mysqli->commit();
-            $_SESSION['success_message'] = "User deleted successfully!";
-        } else {
+        try {
+            // Delete user's bookings first
+            $mysqli->query("DELETE FROM bookings WHERE user_id = $user_id");
+            // Then delete user
+            if ($mysqli->query("DELETE FROM users WHERE user_id = $user_id")) {
+                $mysqli->commit();
+                $_SESSION['success_message'] = "User deleted successfully!";
+            } else {
+                $mysqli->rollback();
+                $_SESSION['error_message'] = "Error deleting user: " . $mysqli->error;
+            }
+        } catch (Exception $e) {
             $mysqli->rollback();
-            $_SESSION['error_message'] = "Error deleting user: " . $mysqli->error;
+            $_SESSION['error_message'] = "Error during deletion: " . $e->getMessage();
         }
-    } catch (Exception $e) {
-        $mysqli->rollback();
-        $_SESSION['error_message'] = "Error during deletion: " . $e->getMessage();
     }
     
     header("Location: ?section=users");
@@ -663,7 +630,7 @@ if (isset($_GET['delete_user'])) {
               <td class="p-3"><?= $user['phone'] ?? 'N/A' ?></td>
               <td class="p-3"><?= date('M d, Y', strtotime($user['created_at'])) ?></td>
               <td class="p-3">
-                <a href="javascript:void(0)" onclick="deleteUser(<?= $user['user_id'] ?>)" class="text-red-400 hover:text-red-300">
+                <a href="?delete_user=<?= $user['user_id'] ?>" class="text-red-400 hover:text-red-300" onclick="return confirm('Are you sure you want to delete this user?')">
                   <i class="fas fa-trash"></i>
                 </a>
               </td>
@@ -691,44 +658,43 @@ if (isset($_GET['delete_user'])) {
           <h4 class="text-md font-semibold mb-3" id="airlineFormTitle">
             <i class="fas fa-building mr-2"></i> Add New Airline
           </h4>
-          <form method="POST" class="space-y-4" id="airlineForm">
-            <input type="hidden" name="airline_id" value="<?= $airline ? $airline['airline_id'] : '' ?>">
+          <form action="?section=airlines" method="POST" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Airline Name *</label>
-                <input type="text" name="airline_name" value="<?= $airline ? htmlspecialchars($airline['airline_name']) : '' ?>" 
-                       class="w-full px-3 py-2 rounded-lg bg-gray-800 text-gray-300 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                       required>
+                <label class="block text-gray-400 mb-1">Airline ID</label>
+                <input type="text" name="airline_id" id="airline_id" class="w-full p-2 rounded bg-gray-800 border border-gray-700" readonly>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Customer Care *</label>
-                <input type="text" name="customer_care" value="<?= $airline ? htmlspecialchars($airline['customer_care']) : '' ?>" 
-                       class="w-full px-3 py-2 rounded-lg bg-gray-800 text-gray-300 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                       required>
+                <label class="block text-gray-400 mb-1">Airline Name</label>
+                <input type="text" name="airline_name" required class="w-full p-2 rounded bg-gray-800 border border-gray-700">
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Contact URL *</label>
-                <input type="url" name="contact_url" value="<?= $airline ? htmlspecialchars($airline['contact_url']) : '' ?>" 
-                       class="w-full px-3 py-2 rounded-lg bg-gray-800 text-gray-300 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                       required>
+                <label class="block text-gray-400 mb-1">Customer Care</label>
+                <input type="text" name="customer_care" required class="w-full p-2 rounded bg-gray-800 border border-gray-700">
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Website</label>
-                <input type="url" name="website" value="<?= $airline ? htmlspecialchars($airline['website']) : '' ?>" 
-                       class="w-full px-3 py-2 rounded-lg bg-gray-800 text-gray-300 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <label class="block text-gray-400 mb-1">Contact URL</label>
+                <input type="url" name="contact_url" required class="w-full p-2 rounded bg-gray-800 border border-gray-700">
               </div>
-              <div class="col-span-2">
-                <label class="block text-sm font-medium text-gray-300 mb-1">Status *</label>
-                <select name="active" class="w-full px-3 py-2 rounded-lg bg-gray-800 text-gray-300 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
-                  <option value="1" <?= $airline && $airline['active'] ? 'selected' : '' ?>>Active</option>
-                  <option value="0" <?= $airline && !$airline['active'] ? 'selected' : '' ?>>Inactive</option>
+              <div>
+                <label class="block text-gray-400 mb-1">Website</label>
+                <input type="url" name="website" class="w-full p-2 rounded bg-gray-800 border border-gray-700">
+              </div>
+              <div>
+                <label class="block text-gray-400 mb-1">Status</label>
+                <select name="active" class="w-full p-2 rounded bg-gray-800 border border-gray-700">
+                  <option value="1">Active</option>
+                  <option value="0">Inactive</option>
                 </select>
               </div>
             </div>
-            <div class="flex justify-end mt-4">
-              <button type="submit" name="<?= $airline ? 'edit_airline' : 'add_airline' ?>" 
-                      class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <?= $airline ? 'Update Airline' : 'Add Airline' ?>
+            <input type="hidden" name="action" id="action">
+            <div class="flex justify-end space-x-2 mt-4">
+              <button type="button" onclick="hideAirlineForm()" class="px-4 py-2 rounded text-gray-400 hover:text-white transition">
+                Cancel
+              </button>
+              <button type="submit" name="edit_airline" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded text-white transition">
+                Save
               </button>
             </div>
           </form>
@@ -784,21 +750,6 @@ if (isset($_GET['delete_user'])) {
 
 
   <script>
-// Function to handle user deletion
-function deleteUser(userId) {
-    if (confirm('Are you sure you want to delete this user?')) {
-        // Show loading indicator
-        const button = document.querySelector(`[onclick*="deleteUser(${userId})"]`);
-        if (button) {
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            button.disabled = true;
-        }
-
-        // Make the request
-        window.location.href = '?section=users&delete_user=' + userId;
-    }
-}
-
 // Initialize dashboard and charts
 document.addEventListener('DOMContentLoaded', function() {
   // Display alert messages from PHP session
