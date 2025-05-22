@@ -161,19 +161,10 @@ function formatDuration($duration) {
         echo 'N/A';
         return;
     }
-    
-    $parts = explode(':', $duration);
-    
-    if (count($parts) < 2) {
-        echo 'N/A';
-        return;
-    }
-    
-    $hours = (int)$parts[0];
-    $minutes = (int)$parts[1];
-    
-    echo "<span style='color: black;'>" . $hours . 'h ' . $minutes . 'm' . "</span>";
+
+    echo $duration ;
 }
+
 
 function getStatusClass($status) {
     if (empty($status)) {
@@ -390,7 +381,7 @@ mysqli_stmt_close($stmt);
                   <div class="font-semibold text-lg"><?php echo formatTime($flight['arrival_time']); ?></div>
                   <div class="text-sm text-gray-500"><?php echo $flight['destination_code']; ?></div>
                 </td>
-                <td class="p-4 font-medium"><?php echo formatDuration($flight['duration']); ?></td>
+                <td class="p-4 font-medium"><?php echo formatDuration($flight['duration']); ?> minutes</td>
                 <td class="p-4">
                   <span class="px-3 py-1 rounded-full text-xs font-medium <?php echo getStatusClass($flight['flight_status']); ?>">
                     <?php echo htmlspecialchars($flight['flight_status']); ?>
