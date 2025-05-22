@@ -100,6 +100,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Login
           </button>
         </form>
+
+        <!-- Registration Link -->
+        <div class="mt-6 text-center">
+          <p class="text-gray-600 text-sm">
+            New admin? 
+            <a href="admin-register.php" class="text-indigo-600 hover:text-indigo-800 font-medium transition">
+              Register here
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   </main>
