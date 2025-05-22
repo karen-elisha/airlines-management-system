@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 20, 2025 at 06:06 PM
+-- Generation Time: May 22, 2025 at 12:32 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -41,7 +41,8 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`admin_id`, `username`, `password`, `email`, `full_name`, `created_at`) VALUES
-(1, 'karen_elisha', '$2y$10$EynWZZeeUiOPTKWxNoHB3uMxlbEpw4obFm5RuaL3/pLe1NA1JuzuG', 'karenelisha0204@gmail.com', 'Karen Elisha Chezhiyan', '2025-05-17 09:46:50');
+(1, 'karen_elisha', '$2y$10$EynWZZeeUiOPTKWxNoHB3uMxlbEpw4obFm5RuaL3/pLe1NA1JuzuG', 'karenelisha0204@gmail.com', 'Karen Elisha Chezhiyan', '2025-05-17 09:46:50'),
+(2, 'ritvik_medam', '$2y$10$9wwg83mk1BWsQNQSS8iDT.Eclgy.41lm1pTdI7eCliMHln2Ky/l0u', 'ritvik.medam@gmail.com', 'Medam Ritvik', '2025-05-22 07:18:49');
 
 -- --------------------------------------------------------
 
@@ -65,14 +66,14 @@ CREATE TABLE `airlines` (
 
 INSERT INTO `airlines` (`airline_id`, `airline_name`, `logo_url`, `website`, `customer_care`, `contact_url`, `active`) VALUES
 ('6E', 'IndiGo', 'logos/indigo.png', 'https://goindigo.in', '0124-6173838', 'https://goindigo.in/contact', 1),
+('AA', 'Alliance Air', 'https://allianceair.in/logo.png', 'https://allianceair.in', '1800-180-1407', 'https://allianceair.in/contact', 1),
+('AAI', 'AirAsia India', 'https://airasia.com/logo.png', 'https://airasia.com', '080-4747-7474', 'https://airasia.com/contact', 1),
 ('AI', 'Air India', 'logos/ai.png', NULL, NULL, NULL, 1),
-('AI05', 'Go First', 'https://gofirst.in/logo.png', 'https://gofirst.in', '1800-210-0999', 'https://gofirst.in/contact', 1),
-('AI06', 'AirAsia India', 'https://airasia.com/logo.png', 'https://airasia.com', '080-4747-7474', 'https://airasia.com/contact', 1),
-('AI07', 'Alliance Air', 'https://allianceair.in/logo.png', 'https://allianceair.in', '1800-180-1407', 'https://allianceair.in/contact', 1),
-('AI08', 'TruJet', 'https://trujet.com/logo.png', 'https://trujet.com', '040-67137137', 'https://trujet.com/contact', 1),
-('AI09', 'Star Air', 'https://starair.in/logo.png', 'https://starair.in', '1800-425-1111', 'https://starair.in/contact', 1),
-('AI10', 'FlyBig', 'https://flybig.in/logo.png', 'https://flybig.in', '0755-6614141', 'https://flybig.in/contact', 1),
+('FB', 'FlyBig', 'https://flybig.in/logo.png', 'https://flybig.in', '0755-6614141', 'https://flybig.in/contact', 1),
+('GF', 'Go First', 'https://gofirst.in/logo.png', 'https://gofirst.in', '1800-210-0999', 'https://gofirst.in/contact', 1),
+('SA', 'Star Air', 'https://starair.in/logo.png', 'https://starair.in', '1800-425-1111', 'https://starair.in/contact', 1),
 ('SG', 'SpiceJet', 'logos/spicejet.png', NULL, NULL, NULL, 1),
+('TJ', 'TruJet', 'https://trujet.com/logo.png', 'https://trujet.com', '040-67137137', 'https://trujet.com/contact', 1),
 ('UK', 'Vistara', 'logos/vistara.png', NULL, NULL, NULL, 1);
 
 -- --------------------------------------------------------
@@ -95,12 +96,16 @@ CREATE TABLE `airports` (
 --
 
 INSERT INTO `airports` (`airport_id`, `airport_name`, `city`, `country`, `timezone`, `airport_code`) VALUES
+('AMD', 'Sardar Vallabhbhai Patel International Airport', 'Ahmedabad', 'India', 'IST', 'AMD'),
 ('BLR', 'Kempegowda International Airport', 'Bangalore', 'India', 'Asia/Kolkata', 'BLR'),
 ('BOM', 'Chhatrapati Shivaji International Airport', 'Mumbai', 'India', 'Asia/Kolkata', 'BOM'),
 ('CCU', 'Netaji Subhash Chandra Bose International Airport', 'Kolkata', 'India', 'Asia/Kolkata', 'CCU'),
+('COK', 'Cochin International Airport', 'Kochi', 'India', 'IST', 'COK'),
 ('DEL', 'Indira Gandhi International Airport', 'Delhi', 'India', 'Asia/Kolkata', 'DEL'),
+('GOI', 'Goa International Airport', 'Goa', 'India', 'IST', 'GOI'),
 ('HYD', 'Rajiv Gandhi International Airport', 'Hyderabad', 'India', 'Asia/Kolkata', 'HYD'),
-('MAA', 'Chennai International Airport', 'Chennai', 'India', 'Asia/Kolkata', 'MAA');
+('MAA', 'Chennai International Airport', 'Chennai', 'India', 'Asia/Kolkata', 'MAA'),
+('PNQ', 'Pune Airport', 'Pune', 'India', 'IST', 'PNQ');
 
 -- --------------------------------------------------------
 
@@ -215,9 +220,38 @@ CREATE TABLE `flights` (
 --
 
 INSERT INTO `flights` (`flight_id`, `flight_number`, `airline_id`, `origin_airport`, `destination_airport`, `departure_time`, `arrival_time`, `duration`, `base_price`, `total_seats`, `available_seats`, `flight_status`) VALUES
-(1001, '6E101', '6E', 'DEL', 'BOM', '2025-05-22 06:00:00', '2023-05-25 08:15:00', 135, 5600.00, 180, 180, 'Scheduled'),
-(1002, 'AI202', 'AI', 'BOM', 'BLR', '2023-12-20 09:30:00', '2023-12-20 11:00:00', 90, 3999.00, 160, 145, 'Scheduled'),
-(1008, 'SG303', 'SG', 'BOM', 'DEL', '2025-05-21 20:37:00', '2025-05-23 20:37:00', 2880, 4500.00, 100, 100, 'Scheduled');
+(1001, '6E101', '6E', 'DEL', 'BOM', '2025-05-22 06:00:00', '2023-05-25 08:15:00', 90, 5600.00, 180, 100, 'Scheduled'),
+(1002, 'AI202', 'AI', 'BOM', 'BLR', '2023-12-20 09:30:00', '2023-12-20 11:00:00', 90, 4999.00, 160, 145, 'Scheduled'),
+(1003, '6E101', '6E', 'DEL', 'BOM', '2025-05-20 06:00:00', '2025-05-20 08:15:00', 135, 4500.00, 180, 45, ''),
+(1004, 'AI202', 'AI', 'BOM', 'BLR', '2025-05-20 07:30:00', '2025-05-20 09:15:00', 105, 5200.00, 160, 22, ''),
+(1005, 'GF303', 'GF', 'BLR', 'DEL', '2025-05-20 09:00:00', '2025-05-20 11:30:00', 150, 5800.00, 144, 18, ''),
+(1006, 'AA404', 'AA', 'MAA', 'HYD', '2025-05-20 10:15:00', '2025-05-20 11:30:00', 75, 3200.00, 186, 56, ''),
+(1007, 'UK505', 'UK', 'DEL', 'CCU', '2025-05-20 11:45:00', '2025-05-20 14:00:00', 135, 6100.00, 144, 12, ''),
+(1008, 'SG606', 'SG', 'BOM', 'GOI', '2025-05-20 13:00:00', '2025-05-20 14:15:00', 75, 3800.00, 180, 34, ''),
+(1009, '6E707', '6E', 'HYD', 'DEL', '2025-05-20 14:30:00', '2025-05-20 16:45:00', 135, 4700.00, 180, 28, ''),
+(1010, 'AI808', 'AI', 'CCU', 'BOM', '2025-05-20 16:00:00', '2025-05-20 18:30:00', 150, 5400.00, 160, 15, ''),
+(1011, 'GF909', 'GF', 'DEL', 'BLR', '2025-05-20 17:30:00', '2025-05-20 20:00:00', 150, 5900.00, 144, 9, ''),
+(1012, 'AA110', 'AA', 'BLR', 'MAA', '2025-05-20 19:00:00', '2025-05-20 20:15:00', 75, 3100.00, 186, 42, ''),
+(1013, '6E111', '6E', 'DEL', 'BOM', '2025-05-21 06:00:00', '2025-05-21 08:15:00', 135, 4500.00, 180, 38, ''),
+(1014, 'AI212', 'AI', 'BOM', 'BLR', '2025-05-21 07:30:00', '2025-05-21 09:15:00', 105, 5200.00, 160, 19, ''),
+(1015, 'GF313', 'GF', 'BLR', 'DEL', '2025-05-21 09:00:00', '2025-05-21 11:30:00', 150, 5800.00, 144, 14, 'Delayed'),
+(1016, 'AA414', 'AA', 'MAA', 'HYD', '2025-05-21 10:15:00', '2025-05-21 11:30:00', 75, 3200.00, 186, 51, ''),
+(1017, 'UK515', 'UK', 'DEL', 'CCU', '2025-05-21 11:45:00', '2025-05-21 14:00:00', 135, 6100.00, 144, 8, ''),
+(1018, 'SG616', 'SG', 'BOM', 'GOI', '2025-05-21 13:00:00', '2025-05-21 14:15:00', 75, 3800.00, 180, 29, ''),
+(1019, '6E717', '6E', 'HYD', 'DEL', '2025-05-21 14:30:00', '2025-05-21 16:45:00', 135, 4700.00, 180, 24, ''),
+(1020, 'AI818', 'AI', 'CCU', 'BOM', '2025-05-21 16:00:00', '2025-05-21 18:30:00', 150, 5400.00, 160, 12, 'Cancelled'),
+(1021, 'GF919', 'GF', 'DEL', 'BLR', '2025-05-21 17:30:00', '2025-05-21 20:00:00', 150, 5900.00, 144, 6, ''),
+(1022, 'AA120', 'AA', 'BLR', 'MAA', '2025-05-21 19:00:00', '2025-05-21 20:15:00', 75, 3100.00, 186, 37, ''),
+(1023, '6E121', '6E', 'DEL', 'BOM', '2025-05-22 06:00:00', '2025-05-22 08:15:00', 135, 4500.00, 180, 32, ''),
+(1024, 'AI222', 'AI', 'BOM', 'BLR', '2025-05-22 07:30:00', '2025-05-22 09:15:00', 105, 5200.00, 160, 16, 'Scheduled'),
+(1025, 'GF323', 'GF', 'BLR', 'DEL', '2025-05-22 09:00:00', '2025-05-22 11:30:00', 150, 5800.00, 144, 11, 'Delayed'),
+(1026, 'AA424', 'AA', 'MAA', 'HYD', '2025-05-22 10:15:00', '2025-05-22 11:30:00', 75, 3200.00, 186, 46, ''),
+(1027, 'UK525', 'UK', 'DEL', 'CCU', '2025-05-22 11:45:00', '2025-05-22 14:00:00', 135, 6100.00, 144, 5, ''),
+(1028, 'SG626', 'SG', 'BOM', 'GOI', '2025-05-22 13:00:00', '2025-05-22 14:15:00', 75, 3800.00, 180, 24, ''),
+(1029, '6E727', '6E', 'HYD', 'DEL', '2025-05-22 14:30:00', '2025-05-22 16:45:00', 135, 4700.00, 180, 19, ''),
+(1030, 'AI828', 'AI', 'CCU', 'BOM', '2025-05-22 16:00:00', '2025-05-22 18:30:00', 150, 5400.00, 160, 9, ''),
+(1031, 'GF929', 'GF', 'DEL', 'BLR', '2025-05-22 17:30:00', '2025-05-22 20:00:00', 150, 5900.00, 144, 3, ''),
+(1032, 'AA130', 'AA', 'BLR', 'MAA', '2025-05-22 19:00:00', '2025-05-22 20:15:00', 75, 3100.00, 186, 32, '');
 
 -- --------------------------------------------------------
 
@@ -246,6 +280,24 @@ CREATE TABLE `notifications` (
   `is_read` tinyint(1) DEFAULT 0,
   `created_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `notification_type`, `is_read`, `created_at`) VALUES
+(1, 5, 'Your flight 6E-101 from DEL to BOM is on time', '', 0, '2025-05-20 00:00:00'),
+(2, 5, 'Your flight AI-202 from BOM to BLR has been delayed by 30 minutes', '', 1, '2025-05-20 01:30:00'),
+(3, 5, 'Your booking for flight G8-303 from BLR to DEL is confirmed', 'Booking', 1, '2025-05-19 08:55:00'),
+(4, 5, 'Check-in for your flight 6E-101 is now open', '', 0, '2025-05-19 12:30:00'),
+(5, 10, 'Your flight UK-505 from DEL to CCU is on time', '', 1, '2025-05-20 05:30:00'),
+(6, 10, 'Your flight AI-818 from CCU to BOM has been cancelled', '', 0, '2025-05-21 09:00:00'),
+(7, 10, 'Alternative flights have been suggested for your cancelled flight', 'Booking', 0, '2025-05-21 09:05:00'),
+(8, 10, 'Your booking for flight I5-120 from BLR to MAA is confirmed', 'Booking', 1, '2025-05-20 03:45:00'),
+(9, 11, 'Your flight G8-323 from BLR to DEL is delayed by 45 minutes', '', 0, '2025-05-22 03:00:00'),
+(10, 11, 'Check-in for your flight SG-626 from BOM to GOI is now open', '', 0, '2025-05-21 16:30:00'),
+(11, 11, 'Your flight 6E-717 from HYD to DEL is on time', '', 1, '2025-05-21 08:15:00'),
+(12, 11, 'Special offer: 20% discount on your next booking', '', 0, '2025-05-20 05:00:00');
 
 -- --------------------------------------------------------
 
@@ -320,7 +372,8 @@ INSERT INTO `tickets` (`ticket_id`, `user_id`, `flight_id`, `airline_name`, `num
 (22, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 18:40:03', 'pending'),
 (23, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-17 19:26:26', 'pending'),
 (24, 5, 1002, 'Air India', 1, 4550.00, '2025-05-18 18:03:37', 'pending'),
-(25, 5, 1002, 'Air India', 1, 4550.00, '2025-05-18 20:57:39', 'pending');
+(25, 5, 1002, 'Air India', 1, 4550.00, '2025-05-18 20:57:39', 'pending'),
+(26, 5, 1001, 'IndiGo', 1, 3999.00, '2025-05-21 20:33:11', 'pending');
 
 -- --------------------------------------------------------
 
@@ -346,8 +399,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `full_name`, `email`, `phone`, `password`, `member_since`, `loyalty_points`, `loyalty_tier`, `created_at`) VALUES
 (5, 'Karen Elisha Chezhiyan', 'karenelisha0204@gmail.com', '9591553820', '$2y$10$xyaSVBEqCkpFzMS/Gf5eg.niz84jwlhqtThIlBiforda.IAvc.Xaq', '2025-04-26 14:36:37', 0, 'Bronze', '2025-04-26 14:36:37'),
-(8, 'Kevin', 'kevin@gmail.com', '6363976507', '$2y$10$WV82FFe7QB0292J1fKo.quV77KDiu3WLPezcKFa7aJO5zOKj1oZne', '2025-05-20 15:20:25', 0, 'Bronze', '2025-05-20 15:20:25'),
-(9, 'Dhanya', 'dhanya@gmail.com', '7338553820', '$2y$10$P/28T7NyMT256G0x1o28dOUcV2lxzreo7QWqDBgJg59OHbmSeMT4S', '2025-05-20 15:21:43', 0, 'Bronze', '2025-05-20 15:21:43');
+(10, 'Kevin Joseph', 'kevinjoseph@gmail.com', '7338553820', '$2y$10$hYQs4dQVDFvxBulZTqKJoeZ60Cm9vSfdnhXm3V13wB9TdnkNlu/XC', '2025-05-22 07:16:22', 0, 'Bronze', '2025-05-22 07:16:22'),
+(11, 'Dhanya', 'dhanya@gmail.com', '6363976507', '$2y$10$pH6NEjxVyjV1mZ7rnPHhqux4S/CQ5rz8oL.gyo/FJb/frDuOo.55m', '2025-05-22 07:16:40', 0, 'Bronze', '2025-05-22 07:16:40');
 
 --
 -- Indexes for dumped tables
@@ -449,7 +502,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `admins`
 --
 ALTER TABLE `admins`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `bookings`
@@ -467,7 +520,7 @@ ALTER TABLE `feedback`
 -- AUTO_INCREMENT for table `flights`
 --
 ALTER TABLE `flights`
-  MODIFY `flight_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1009;
+  MODIFY `flight_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1033;
 
 --
 -- AUTO_INCREMENT for table `flight_schedule`
@@ -479,7 +532,7 @@ ALTER TABLE `flight_schedule`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `passengers`
@@ -497,13 +550,13 @@ ALTER TABLE `promotions`
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Constraints for dumped tables
