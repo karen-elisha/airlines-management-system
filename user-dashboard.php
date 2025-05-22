@@ -368,7 +368,7 @@ if (isset($mysqli)) {
       <a href="#" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-700" onclick="showSection('profile')">
         <i class="fas fa-user-circle mr-3 w-5 text-center"></i> Profile
       </a>
-      <a href="myflight.html" class="flex items-center p-3 rounded-lg hover:bg-gray-700">
+      <a href="myflight.php" class="flex items-center p-3 rounded-lg hover:bg-gray-700">
         <i class="fas fa-plane mr-3 w-5 text-center"></i> My Flights
       </a>
       <a href="logout.php" class="flex items-center p-3 rounded-lg text-red-400 hover:bg-gray-700 mt-8">
