@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 22, 2025 at 03:56 PM
+-- Generation Time: May 22, 2025 at 07:03 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -173,7 +173,8 @@ INSERT INTO `bookings` (`booking_id`, `booking_reference`, `user_id`, `flight_id
 (37, 'BK-682F016E4EE54', 10, 1001, '2025-05-22 12:50:22', '2025-05-30', 1, 4719.00, 'kevinjoseph@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 16:20:36', 'kevin@okaxis'),
 (38, 'BK-682F167A0973E', 10, 1003, '2025-05-22 14:20:10', '2025-05-29', 1, 6253.00, 'chezanand@gmail.com', '9886026336', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 17:50:18', 'kevin@okaxis'),
 (39, 'BK-682F1E1C9D99A', 10, 1049, '2025-05-22 14:52:44', '2025-05-23', 1, 6549.00, 'harry@gmail.com', '9591553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 18:22:56', 'harry@okaxis'),
-(40, 'BK-682F20098FC45', 10, 1049, '2025-05-22 15:00:57', '2025-05-23', 1, 6549.00, 'medamritvik@gmail.com', '7013631447', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 18:31:03', 'karen@okaxis');
+(40, 'BK-682F20098FC45', 10, 1049, '2025-05-22 15:00:57', '2025-05-23', 1, 6549.00, 'medamritvik@gmail.com', '7013631447', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 18:31:03', 'karen@okaxis'),
+(41, 'BK-682F52C759C3C', 10, 1685, '2025-05-22 18:37:27', '2025-05-28', 1, 3835.00, 'harry@gmail.com', '9591553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 22:07:32', 'harry@okaxis');
 
 -- --------------------------------------------------------
 
@@ -227,7 +228,6 @@ INSERT INTO `flights` (`flight_id`, `flight_number`, `airline_id`, `origin_airpo
 (1001, '6E101', '6E', 'DEL', 'BOM', '2025-05-22 06:00:00', '2023-05-25 08:15:00', 90, 5600.00, 180, 100, 'Scheduled'),
 (1002, 'AI202', 'AI', 'BOM', 'BLR', '2023-12-20 09:30:00', '2023-12-20 11:00:00', 90, 4999.00, 160, 145, 'Scheduled'),
 (1003, '6E101', '6E', 'DEL', 'BOM', '2025-05-20 06:00:00', '2025-05-20 08:15:00', 135, 4500.00, 180, 45, ''),
-(1004, 'AI202', 'AI', 'BOM', 'BLR', '2025-05-20 07:30:00', '2025-05-20 09:15:00', 105, 5200.00, 160, 22, ''),
 (1005, 'GF303', 'GF', 'BLR', 'DEL', '2025-05-20 09:00:00', '2025-05-20 11:30:00', 150, 5800.00, 144, 18, ''),
 (1006, 'AA404', 'AA', 'MAA', 'HYD', '2025-05-20 10:15:00', '2025-05-20 11:30:00', 75, 3200.00, 186, 56, ''),
 (1007, 'UK505', 'UK', 'DEL', 'CCU', '2025-05-20 11:45:00', '2025-05-20 14:00:00', 135, 6100.00, 144, 12, ''),
@@ -382,24 +382,6 @@ CREATE TABLE `notifications` (
   `created_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `notifications`
---
-
-INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `notification_type`, `is_read`, `created_at`) VALUES
-(1, 5, 'Your flight 6E-101 from DEL to BOM is on time', '', 0, '2025-05-20 00:00:00'),
-(2, 5, 'Your flight AI-202 from BOM to BLR has been delayed by 30 minutes', '', 1, '2025-05-20 01:30:00'),
-(3, 5, 'Your booking for flight G8-303 from BLR to DEL is confirmed', 'Booking', 1, '2025-05-19 08:55:00'),
-(4, 5, 'Check-in for your flight 6E-101 is now open', '', 0, '2025-05-19 12:30:00'),
-(5, 10, 'Your flight UK-505 from DEL to CCU is on time', '', 1, '2025-05-20 05:30:00'),
-(6, 10, 'Your flight AI-818 from CCU to BOM has been cancelled', '', 0, '2025-05-21 09:00:00'),
-(7, 10, 'Alternative flights have been suggested for your cancelled flight', 'Booking', 0, '2025-05-21 09:05:00'),
-(8, 10, 'Your booking for flight I5-120 from BLR to MAA is confirmed', 'Booking', 1, '2025-05-20 03:45:00'),
-(9, 11, 'Your flight G8-323 from BLR to DEL is delayed by 45 minutes', '', 0, '2025-05-22 03:00:00'),
-(10, 11, 'Check-in for your flight SG-626 from BOM to GOI is now open', '', 0, '2025-05-21 16:30:00'),
-(11, 11, 'Your flight 6E-717 from HYD to DEL is on time', '', 1, '2025-05-21 08:15:00'),
-(12, 11, 'Special offer: 20% discount on your next booking', '', 0, '2025-05-20 05:00:00');
-
 -- --------------------------------------------------------
 
 --
@@ -424,7 +406,8 @@ INSERT INTO `passengers` (`passenger_id`, `booking_id`, `first_name`, `last_name
 (1, 37, 'Kevin', 'Joseph', 'male', 19, '12A,Window'),
 (2, 38, 'Chezhiyan', 'Anandaraj', 'male', 51, '11A,Window'),
 (3, 39, 'Harry ', 'Potter', 'male', 236, '12A'),
-(4, 40, 'Medam ', 'Ritvik', 'male', 18, '9A');
+(4, 40, 'Medam ', 'Ritvik', 'male', 18, '9A'),
+(5, 41, 'Harry ', 'Anandaraj', 'male', 26, '12A');
 
 -- --------------------------------------------------------
 
@@ -491,7 +474,8 @@ INSERT INTO `tickets` (`ticket_id`, `user_id`, `flight_id`, `airline_name`, `num
 (30, 10, 1026, 'Alliance Air', 1, 3200.00, '2025-05-22 18:13:12', 'pending'),
 (31, 10, 1049, 'FlyBig', 1, 5550.00, '2025-05-22 18:21:53', 'pending'),
 (32, 10, 1049, 'FlyBig', 1, 5550.00, '2025-05-22 18:22:06', 'pending'),
-(33, 10, 1049, 'FlyBig', 1, 5550.00, '2025-05-22 18:30:23', 'pending');
+(33, 10, 1049, 'FlyBig', 1, 5550.00, '2025-05-22 18:30:23', 'pending'),
+(34, 10, 1685, 'Go First', 1, 3250.00, '2025-05-22 22:07:03', 'pending');
 
 -- --------------------------------------------------------
 
@@ -619,7 +603,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `feedback`
@@ -643,7 +627,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `passengers`
 --
 ALTER TABLE `passengers`
-  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `promotions`
@@ -655,7 +639,7 @@ ALTER TABLE `promotions`
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `users`
