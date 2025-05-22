@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 22, 2025 at 02:44 PM
+-- Generation Time: May 22, 2025 at 03:56 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -171,7 +171,9 @@ INSERT INTO `bookings` (`booking_id`, `booking_reference`, `user_id`, `flight_id
 (35, 'BK-6829F12CE2169', 5, 1002, '2025-05-18 16:39:40', '2025-05-21', 1, 5369.00, 'medamritvik@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-18 20:09:50', 'karen@okaxis'),
 (36, 'BK-6829FC912D49F', 5, 1002, '2025-05-18 17:28:17', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-18 20:58:54', 'karen@okaxis'),
 (37, 'BK-682F016E4EE54', 10, 1001, '2025-05-22 12:50:22', '2025-05-30', 1, 4719.00, 'kevinjoseph@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 16:20:36', 'kevin@okaxis'),
-(38, 'BK-682F167A0973E', 10, 1003, '2025-05-22 14:20:10', '2025-05-29', 1, 6253.00, 'chezanand@gmail.com', '9886026336', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 17:50:18', 'kevin@okaxis');
+(38, 'BK-682F167A0973E', 10, 1003, '2025-05-22 14:20:10', '2025-05-29', 1, 6253.00, 'chezanand@gmail.com', '9886026336', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 17:50:18', 'kevin@okaxis'),
+(39, 'BK-682F1E1C9D99A', 10, 1049, '2025-05-22 14:52:44', '2025-05-23', 1, 6549.00, 'harry@gmail.com', '9591553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 18:22:56', 'harry@okaxis'),
+(40, 'BK-682F20098FC45', 10, 1049, '2025-05-22 15:00:57', '2025-05-23', 1, 6549.00, 'medamritvik@gmail.com', '7013631447', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 18:31:03', 'karen@okaxis');
 
 -- --------------------------------------------------------
 
@@ -368,19 +370,6 @@ INSERT INTO `flights` (`flight_id`, `flight_number`, `airline_id`, `origin_airpo
 -- --------------------------------------------------------
 
 --
--- Table structure for table `flight_schedule`
---
-
-CREATE TABLE `flight_schedule` (
-  `schedule_id` int(11) NOT NULL,
-  `flight_id` int(11) NOT NULL,
-  `flight_date` date NOT NULL,
-  `available_seats` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `notifications`
 --
 
@@ -433,7 +422,9 @@ CREATE TABLE `passengers` (
 
 INSERT INTO `passengers` (`passenger_id`, `booking_id`, `first_name`, `last_name`, `gender`, `age`, `seat_number`) VALUES
 (1, 37, 'Kevin', 'Joseph', 'male', 19, '12A,Window'),
-(2, 38, 'Chezhiyan', 'Anandaraj', 'male', 51, '11A,Window');
+(2, 38, 'Chezhiyan', 'Anandaraj', 'male', 51, '11A,Window'),
+(3, 39, 'Harry ', 'Potter', 'male', 236, '12A'),
+(4, 40, 'Medam ', 'Ritvik', 'male', 18, '9A');
 
 -- --------------------------------------------------------
 
@@ -497,7 +488,10 @@ INSERT INTO `tickets` (`ticket_id`, `user_id`, `flight_id`, `airline_name`, `num
 (27, 10, 1001, 'IndiGo', 1, 3999.00, '2025-05-22 16:19:07', 'pending'),
 (28, 10, 1003, 'Vistara', 1, 5299.00, '2025-05-22 17:48:55', 'pending'),
 (29, 10, 1026, 'Alliance Air', 1, 3200.00, '2025-05-22 18:02:57', 'pending'),
-(30, 10, 1026, 'Alliance Air', 1, 3200.00, '2025-05-22 18:13:12', 'pending');
+(30, 10, 1026, 'Alliance Air', 1, 3200.00, '2025-05-22 18:13:12', 'pending'),
+(31, 10, 1049, 'FlyBig', 1, 5550.00, '2025-05-22 18:21:53', 'pending'),
+(32, 10, 1049, 'FlyBig', 1, 5550.00, '2025-05-22 18:22:06', 'pending'),
+(33, 10, 1049, 'FlyBig', 1, 5550.00, '2025-05-22 18:30:23', 'pending');
 
 -- --------------------------------------------------------
 
@@ -576,13 +570,6 @@ ALTER TABLE `flights`
   ADD KEY `destination_airport` (`destination_airport`);
 
 --
--- Indexes for table `flight_schedule`
---
-ALTER TABLE `flight_schedule`
-  ADD PRIMARY KEY (`schedule_id`),
-  ADD KEY `flight_id` (`flight_id`);
-
---
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -632,7 +619,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `feedback`
@@ -647,12 +634,6 @@ ALTER TABLE `flights`
   MODIFY `flight_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1713;
 
 --
--- AUTO_INCREMENT for table `flight_schedule`
---
-ALTER TABLE `flight_schedule`
-  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -662,7 +643,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `passengers`
 --
 ALTER TABLE `passengers`
-  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `promotions`
@@ -674,7 +655,7 @@ ALTER TABLE `promotions`
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -706,12 +687,6 @@ ALTER TABLE `flights`
   ADD CONSTRAINT `flights_ibfk_1` FOREIGN KEY (`airline_id`) REFERENCES `airlines` (`airline_id`),
   ADD CONSTRAINT `flights_ibfk_2` FOREIGN KEY (`origin_airport`) REFERENCES `airports` (`airport_id`),
   ADD CONSTRAINT `flights_ibfk_3` FOREIGN KEY (`destination_airport`) REFERENCES `airports` (`airport_id`);
-
---
--- Constraints for table `flight_schedule`
---
-ALTER TABLE `flight_schedule`
-  ADD CONSTRAINT `flight_schedule_ibfk_1` FOREIGN KEY (`flight_id`) REFERENCES `flights` (`flight_id`);
 
 --
 -- Constraints for table `notifications`
