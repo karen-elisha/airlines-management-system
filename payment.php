@@ -65,87 +65,111 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $processing_payment = false;
         }
         // Process payment details
-        else if (isset($_POST['payment_details_submitted'])) {
-            $payment_method = $_SESSION['payment_method'] ?? '';
-            
-            if (empty($payment_method)) {
-                throw new Exception("Payment method not found");
+        // Process payment details
+else if (isset($_POST['payment_details_submitted'])) {
+    $payment_method = $_SESSION['payment_method'] ?? '';
+    
+    if (empty($payment_method)) {
+        throw new Exception("Payment method not found");
+    }
+    
+    // Collect and validate payment details based on method
+    switch ($payment_method) {
+        case 'upi':
+            if (empty($_POST['upi_id'])) {
+                throw new Exception("UPI ID is required");
             }
+            $payment_details = $_POST['upi_id'];
+            break;
             
-            // Collect and validate payment details based on method
-            switch ($payment_method) {
-                case 'upi':
-                    if (empty($_POST['upi_id'])) {
-                        throw new Exception("UPI ID is required");
-                    }
-                    $payment_details = $_POST['upi_id'];
-                    break;
-                    
-                case 'card':
-                    if (empty($_POST['card_number']) || empty($_POST['card_expiry']) || empty($_POST['card_cvv'])) {
-                        throw new Exception("All card details are required");
-                    }
-                    // Store only last 4 digits for security
-                    $card_number = preg_replace('/\s+/', '', $_POST['card_number']);
-                    $last_four = substr($card_number, -4);
-                    $payment_details = "xxxx-xxxx-xxxx-" . $last_four;
-                    break;
-                    
-                case 'netbanking':
-                    if (empty($_POST['bank_name'])) {
-                        throw new Exception("Bank selection is required");
-                    }
-                    $payment_details = $_POST['bank_name'];
-                    break;
-                    
-                case 'wallet':
-                    if (empty($_POST['wallet_name'])) {
-                        throw new Exception("Wallet selection is required");
-                    }
-                    $payment_details = $_POST['wallet_name'];
-                    break;
-                    
-                default:
-                    throw new Exception("Invalid payment method");
+        case 'card':
+            if (empty($_POST['card_number']) || empty($_POST['card_expiry']) || empty($_POST['card_cvv'])) {
+                throw new Exception("All card details are required");
             }
-
-            // Begin transaction
-            $mysqli->begin_transaction();
-
-            // Update booking payment status
-            $sql = "UPDATE bookings SET 
-                    payment_status = 'completed', 
-                    payment_method = ?,
-                    payment_details = ?,
-                    updated_at = NOW() 
-                    WHERE booking_id = ?";
+            // Store only last 4 digits for security
+            $card_number = preg_replace('/\s+/', '', $_POST['card_number']);
+            $last_four = substr($card_number, -4);
+            $payment_details = "xxxx-xxxx-xxxx-" . $last_four;
+            break;
             
-            $stmt = $mysqli->prepare($sql);
-            if (!$stmt) {
-                throw new Exception("Database error: " . $mysqli->error);
+        case 'netbanking':
+            if (empty($_POST['bank_name'])) {
+                throw new Exception("Bank selection is required");
             }
-
-            // Bind parameters
-            if (!$stmt->bind_param("ssi", $payment_method, $payment_details, $booking_id)) {
-                throw new Exception("Failed to bind parameters: " . $stmt->error);
-            }
-
-            // Execute update
-            if (!$stmt->execute()) {
-                throw new Exception("Failed to update booking: " . $stmt->error);
-            }
-
-            // Commit transaction
-            $mysqli->commit();
-            $payment_processed = true;
-            $processing_payment = true;
+            $payment_details = $_POST['bank_name'];
+            break;
             
-            // Update session
-            $_SESSION['payment_status'] = 'completed';
+        case 'wallet':
+            if (empty($_POST['wallet_name'])) {
+                throw new Exception("Wallet selection is required");
+            }
+            $payment_details = $_POST['wallet_name'];
+            break;
             
-            // Clear payment method from session
-            unset($_SESSION['payment_method']);
-        }
+        default:
+            throw new Exception("Invalid payment method");
+    }
+
+    // Begin transaction
+    $mysqli->begin_transaction();
+
+    // Update booking payment status
+    $sql = "UPDATE bookings SET 
+            payment_status = 'completed', 
+            payment_method = ?,
+            payment_details = ?,
+            updated_at = NOW() 
+            WHERE booking_id = ?";
+    
+    $stmt = $mysqli->prepare($sql);
+    if (!$stmt) {
+        throw new Exception("Database error: " . $mysqli->error);
+    }
+
+    // Bind parameters
+    if (!$stmt->bind_param("ssi", $payment_method, $payment_details, $booking_id)) {
+        throw new Exception("Failed to bind parameters: " . $stmt->error);
+    }
+
+    // Execute update
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to update booking: " . $stmt->error);
+    }
+
+    // Update available seats in flights table
+    $sql_update_seats = "UPDATE flights 
+                        SET available_seats = available_seats - ? 
+                        WHERE flight_id = ?";
+                        
+    $stmt_update_seats = $mysqli->prepare($sql_update_seats);
+    if (!$stmt_update_seats) {
+        throw new Exception("Database error: " . $mysqli->error);
+    }
+
+    // Bind parameters (number of passengers and flight ID)
+    if (!$stmt_update_seats->bind_param("ii", $num_passengers, $flight_details['flight_id'])) {
+        throw new Exception("Failed to bind parameters: " . $stmt_update_seats->error);
+    }
+
+    // Execute update
+    if (!$stmt_update_seats->execute()) {
+        throw new Exception("Failed to update available seats: " . $stmt_update_seats->error);
+    }
+
+    // Close statement
+    $stmt_update_seats->close();
+
+    // Commit transaction
+    $mysqli->commit();
+    $payment_processed = true;
+    $processing_payment = true;
+    
+    // Update session
+    $_SESSION['payment_status'] = 'completed';
+    
+    // Clear payment method from session
+    unset($_SESSION['payment_method']);
+}
         
     } catch (Exception $e) {
         // Rollback on error
