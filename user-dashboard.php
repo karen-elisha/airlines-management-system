@@ -185,7 +185,7 @@ try {
     if (!$live_flights_result = $mysqli->query($live_flights_query)) {
         throw new Exception("Query failed: " . $mysqli->error);
     }
-    
+    $flight = [];
     $live_flights = [];
     while ($row = $live_flights_result->fetch_assoc()) {
         $live_flights[] = $row;
@@ -290,6 +290,7 @@ try {
     $flight_status_data = [];
     $top_routes = [];
     $live_flights = [];
+    $flight=[];
 }
 
 // Close connection
@@ -590,14 +591,14 @@ if (isset($mysqli)) {
                     <td class="py-3 px-4">
                       <span class="live-indicator <?php 
                         if ($flight['flight_status'] == 'Scheduled' || $flight['flight_status'] == 'Departed' || $flight['flight_status'] == 'Arrived') {
-                          echo 'live';
+                          echo 'Live';
                         } elseif ($flight['flight_status'] == 'Delayed') {
-                          echo 'delayed';
+                          echo 'Delayed';
                         } else {
-                          echo 'cancelled';
+                          echo 'Cancelled';
                         }
                       ?>">
-                        <?php echo htmlspecialchars($flight['flight_status']); ?>
+                        <?php echo $flight['flight_status']; ?>
                       </span>
                     </td>
                     <td class="py-3 px-4">
