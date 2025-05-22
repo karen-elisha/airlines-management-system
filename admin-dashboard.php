@@ -59,7 +59,7 @@ if (isset($_GET['logout'])) {
     exit;
 }
 
-// AIRLINE MANAGEMENT
+// AIRLINE MANAGEMENT - FIXED VERSION
 // Add new airline
 if (isset($_POST['add_airline'])) {
     $airline_name = $mysqli->real_escape_string($_POST['airline_name']);
@@ -96,14 +96,14 @@ if (isset($_POST['add_airline'])) {
     exit;
 }
 
-// Edit airline
+// Edit airline - FIXED
 if (isset($_POST['edit_airline'])) {
     $airline_id = $mysqli->real_escape_string($_POST['airline_id']);
     $airline_name = $mysqli->real_escape_string($_POST['airline_name']);
     $customer_care = $mysqli->real_escape_string($_POST['customer_care']);
     $contact_url = $mysqli->real_escape_string($_POST['contact_url']);
     $website = isset($_POST['website']) ? $mysqli->real_escape_string($_POST['website']) : '';
-    $active = isset($_POST['active']) ? 1 : 0;
+    $active = isset($_POST['active']) ? (int)$_POST['active'] : 1; // FIXED: Properly handle active status
     
     try {
         // Check if airline exists
@@ -139,7 +139,7 @@ if (isset($_POST['edit_airline'])) {
     exit;
 }
 
-// Delete airline
+// Delete airline - FIXED to also delete associated flights
 if (isset($_GET['delete_airline'])) {
     $airline_id = $mysqli->real_escape_string($_GET['delete_airline']);
     
@@ -150,25 +150,21 @@ if (isset($_GET['delete_airline'])) {
             throw new Exception("Airline not found!");
         }
 
-        // Get all flights using this airline
-        $flights = $mysqli->query("SELECT flight_id, flight_number FROM flights WHERE airline_id = $airline_id");
-        if ($flights->num_rows > 0) {
-            $flight_list = [];
-            while ($flight = $flights->fetch_assoc()) {
-                $flight_list[] = "Flight #{$flight['flight_number']} (ID: {$flight['flight_id']})";
-            }
-            throw new Exception("Cannot delete: This airline has active flights.\n\nFlights using this airline:\n" . implode("\n", $flight_list) . "\n\nTo delete this airline, you must first:\n1. Update the airline_id in all related flights to another airline\n2. Or mark all related flights as inactive\n3. Then try deleting the airline again");
-        }
-
         // Start transaction
         $mysqli->begin_transaction();
         
-        if (!$mysqli->query("DELETE FROM airlines WHERE airline_id = $airline_id")) {
+        // First, delete all flights associated with this airline
+        $delete_flights = $mysqli->query("DELETE FROM flights WHERE airline_id = $airline_id");
+        
+        // Then delete the airline
+        $delete_airline = $mysqli->query("DELETE FROM airlines WHERE airline_id = $airline_id");
+        
+        if (!$delete_airline) {
             throw new Exception("Error deleting airline: " . $mysqli->error);
         }
         
         $mysqli->commit();
-        $_SESSION['success_message'] = "Airline deleted successfully!";
+        $_SESSION['success_message'] = "Airline and all associated flights deleted successfully!";
         
     } catch (Exception $e) {
         $mysqli->rollback();
@@ -178,6 +174,10 @@ if (isset($_GET['delete_airline'])) {
     header("Location: ?section=airlines");
     exit;
 }
+
+// FIXED: Refresh airlines data after any operations
+$airlines = $mysqli->query("SELECT * FROM airlines ORDER BY airline_name")->fetch_all(MYSQLI_ASSOC);
+
 
 
 // FLIGHT MANAGEMENT
@@ -676,7 +676,7 @@ if (isset($_GET['delete_user'])) {
 
 
 
-<!-- Airlines Section -->
+<!-- Airlines Section - FIXED VERSION -->
 <section id="airlinesSection" class="section <?= $active_section === 'airlines' ? 'active' : '' ?>">
       <div class="card p-5 rounded-xl">
         <div class="flex justify-between items-center mb-4">
@@ -687,52 +687,55 @@ if (isset($_GET['delete_user'])) {
         </div>
 
         <!-- Add/Edit Airline Form (hidden by default) -->
-        <div id="airlineForm" class="hidden mb-6 card p-4">
-          <h4 class="text-md font-semibold mb-3" id="airlineFormTitle">
-            <i class="fas fa-building mr-2"></i> Add New Airline
-          </h4>
-          <form method="POST" class="space-y-4" id="airlineForm">
-            <input type="hidden" name="airline_id" value="<?= $airline ? $airline['airline_id'] : '' ?>">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+<div id="airlineForm" class="hidden mb-6 card p-4">
+    <h4 class="text-md font-semibold mb-3" id="airlineFormTitle">
+        <i class="fas fa-building mr-2"></i> Add New Airline
+    </h4>
+    <form method="POST" class="space-y-4" id="airlineFormElement">
+        <input type="hidden" name="airline_id" id="editAirlineId">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Airline Name *</label>
-                <input type="text" name="airline_name" value="<?= $airline ? htmlspecialchars($airline['airline_name']) : '' ?>" 
+                <input type="text" name="airline_name" id="editAirlineName"
                        class="w-full px-3 py-2 rounded-lg bg-gray-800 text-gray-300 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
                        required>
-              </div>
-              <div>
+            </div>
+            <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Customer Care *</label>
-                <input type="text" name="customer_care" value="<?= $airline ? htmlspecialchars($airline['customer_care']) : '' ?>" 
+                <input type="text" name="customer_care" id="editCustomerCare"
                        class="w-full px-3 py-2 rounded-lg bg-gray-800 text-gray-300 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
                        required>
-              </div>
-              <div>
+            </div>
+            <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Contact URL *</label>
-                <input type="url" name="contact_url" value="<?= $airline ? htmlspecialchars($airline['contact_url']) : '' ?>" 
+                <input type="url" name="contact_url" id="editContactUrl"
                        class="w-full px-3 py-2 rounded-lg bg-gray-800 text-gray-300 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
                        required>
-              </div>
-              <div>
+            </div>
+            <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Website</label>
-                <input type="url" name="website" value="<?= $airline ? htmlspecialchars($airline['website']) : '' ?>" 
+                <input type="url" name="website" id="editWebsite"
                        class="w-full px-3 py-2 rounded-lg bg-gray-800 text-gray-300 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              </div>
-              <div class="col-span-2">
+            </div>
+            <div class="col-span-2">
                 <label class="block text-sm font-medium text-gray-300 mb-1">Status *</label>
-                <select name="active" class="w-full px-3 py-2 rounded-lg bg-gray-800 text-gray-300 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
-                  <option value="1" <?= $airline && $airline['active'] ? 'selected' : '' ?>>Active</option>
-                  <option value="0" <?= $airline && !$airline['active'] ? 'selected' : '' ?>>Inactive</option>
+                <select name="active" id="editActive" class="w-full px-3 py-2 rounded-lg bg-gray-800 text-gray-300 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                    <option value="1">Active</option>
+                    <option value="0">Inactive</option>
                 </select>
-              </div>
             </div>
-            <div class="flex justify-end mt-4">
-              <button type="submit" name="<?= $airline ? 'edit_airline' : 'add_airline' ?>" 
-                      class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <?= $airline ? 'Update Airline' : 'Add Airline' ?>
-              </button>
-            </div>
-          </form>
         </div>
+        <div class="flex justify-end mt-4 space-x-2">
+            <button type="button" onclick="hideAirlineForm()" class="px-4 py-2 border border-gray-600 rounded">
+                <i class="fas fa-times mr-2"></i> Cancel
+            </button>
+            <button type="submit" name="add_airline" id="airlineSubmitBtn"
+                    class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <i class="fas fa-save mr-2"></i> Add Airline
+            </button>
+        </div>
+    </form>
+</div>
 
         <!-- Airlines Table -->
         <div class="overflow-x-auto">
@@ -763,7 +766,14 @@ if (isset($_GET['delete_user'])) {
                 </td>
                 <td class="p-3">
                   <div class="flex space-x-2">
-                    <button onclick="editAirline(<?= json_encode($airline) ?>)" class="text-blue-400 hover:text-blue-300">
+                    <button onclick="editAirline(
+                      '<?= $airline['airline_id'] ?>',
+                      '<?= htmlspecialchars($airline['airline_name'], ENT_QUOTES) ?>',
+                      '<?= htmlspecialchars($airline['customer_care'], ENT_QUOTES) ?>',
+                      '<?= htmlspecialchars($airline['contact_url'], ENT_QUOTES) ?>',
+                      '<?= htmlspecialchars($airline['website'], ENT_QUOTES) ?>',
+                      '<?= $airline['active'] ?>'
+                    )" class="text-blue-400 hover:text-blue-300">
                       <i class="fas fa-edit"></i>
                     </button>
                     <a href="?section=airlines&delete_airline=<?= $airline['airline_id'] ?>" 
@@ -966,18 +976,7 @@ function setupEventListeners() {
   if (cancelFlightBtn) {
     cancelFlightBtn.addEventListener('click', hideFlightForm);
   }
-  
-  // Airline form buttons
-  const addAirlineBtn = document.querySelector('.add-airline-btn');
-  if (addAirlineBtn) {
-    addAirlineBtn.addEventListener('click', showAirlineForm);
-  }
-  
-  const cancelAirlineBtn = document.querySelector('.cancel-airline-btn');
-  if (cancelAirlineBtn) {
-    cancelAirlineBtn.addEventListener('click', hideAirlineForm);
-  }
-  
+
   // Confirm all delete actions
   document.querySelectorAll('a[href*="delete_"]').forEach(link => {
     link.addEventListener('click', function(e) {
@@ -1004,11 +1003,6 @@ function setupEventListeners() {
     flightForm.addEventListener('submit', validateFlightForm);
   }
   
-  // Airline form validation
-  const airlineForm = document.getElementById('airlineFormElement');
-  if (airlineForm) {
-    airlineForm.addEventListener('submit', validateAirlineForm);
-  }
   
   // Add date and time validation to departure/arrival inputs
   const departureInput = document.querySelector('input[name="departure_time"]');
@@ -1064,43 +1058,168 @@ function editFlight(flightId, airlineId, flightNumber, origin, destination, depa
     document.getElementById('flightForm').scrollIntoView({ behavior: 'smooth' });
   }
 }
-// Airline Form Functions
+// FIXED Airline Form Functions
 function showAirlineForm() {
-  const form = document.getElementById('airlineForm');
-  if (form) {
-    form.classList.remove('hidden');
-    document.getElementById('airlineFormTitle').textContent = 'Add New Airline';
-    document.getElementById('airlineFormElement').reset();
-    document.getElementById('editAirlineId').value = '';
-    form.scrollIntoView({ behavior: 'smooth' });
-  }
+    const form = document.getElementById('airlineForm');
+    const formElement = document.getElementById('airlineFormElement');
+    const submitBtn = document.getElementById('airlineSubmitBtn');
+    
+    if (form && formElement) {
+        // Show form
+        form.classList.remove('hidden');
+        
+        // Reset form title and button for adding new airline
+        document.getElementById('airlineFormTitle').innerHTML = '<i class="fas fa-building mr-2"></i> Add New Airline';
+        
+        // Reset form fields
+        formElement.reset();
+        document.getElementById('editAirlineId').value = '';
+        
+        // Update submit button for adding
+        if (submitBtn) {
+            submitBtn.setAttribute('name', 'add_airline');
+            submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i> Add Airline';
+        }
+        
+        // Scroll to form
+        form.scrollIntoView({ behavior: 'smooth' });
+    }
 }
 
 function hideAirlineForm() {
-  const form = document.getElementById('airlineForm');
-  if (form) form.classList.add('hidden');
+    const form = document.getElementById('airlineForm');
+    if (form) {
+        form.classList.add('hidden');
+    }
 }
 
-function editAirline(airlineId, airlineName, customerCare, contactUrl, active) {
-  showAirlineForm();
-  const form = document.getElementById('airlineFormElement');
-  if (form) {
-    document.getElementById('airlineFormTitle').textContent = 'Edit Airline';
-    document.getElementById('editAirlineId').value = airlineId;
-    form.querySelector('input[name="airline_name"]').value = airlineName;
-    form.querySelector('input[name="customer_care"]').value = customerCare;
-    form.querySelector('input[name="contact_url"]').value = contactUrl;
+function editAirline(airlineId, airlineName, customerCare, contactUrl, website, active) {
+    const form = document.getElementById('airlineForm');
+    const formElement = document.getElementById('airlineFormElement');
+    const submitBtn = document.getElementById('airlineSubmitBtn');
     
-    // Handle active/inactive status
-    const activeCheckbox = form.querySelector('input[name="active"]');
-    if (activeCheckbox) {
-      activeCheckbox.checked = active === '1';
+    if (form && formElement) {
+        // Show form
+        form.classList.remove('hidden');
+        
+        // Update form title for editing
+        document.getElementById('airlineFormTitle').innerHTML = '<i class="fas fa-edit mr-2"></i> Edit Airline';
+        
+        // Populate form fields
+        document.getElementById('editAirlineId').value = airlineId;
+        document.getElementById('editAirlineName').value = airlineName;
+        document.getElementById('editCustomerCare').value = customerCare;
+        document.getElementById('editContactUrl').value = contactUrl;
+        document.getElementById('editWebsite').value = website || '';
+        document.getElementById('editActive').value = active;
+        
+        // Update submit button for editing
+        if (submitBtn) {
+            submitBtn.setAttribute('name', 'edit_airline');
+            submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i> Update Airline';
+        }
+        
+        // Scroll to form
+        form.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// FIXED Form validation for airlines
+function validateAirlineForm(e) {
+    const form = e.target;
+    let isValid = true;
+    
+    // Required fields
+    const requiredFields = ['airline_name', 'customer_care', 'contact_url'];
+    
+    requiredFields.forEach(field => {
+        const input = form.querySelector(`[name="${field}"]`);
+        if (!input || !input.value.trim()) {
+            isValid = false;
+            highlightError(input, 'This field is required');
+        } else {
+            removeError(input);
+        }
+    });
+    
+    // Validate URL format for contact_url and website
+    const contactUrl = form.querySelector('[name="contact_url"]');
+    if (contactUrl && contactUrl.value.trim()) {
+        const urlRegex = /^https?:\/\/.+/;
+        if (!urlRegex.test(contactUrl.value.trim())) {
+            isValid = false;
+            highlightError(contactUrl, 'Please enter a valid URL starting with http:// or https://');
+        }
     }
     
-    document.getElementById('airlineForm').scrollIntoView({ behavior: 'smooth' });
-  }
+    const website = form.querySelector('[name="website"]');
+    if (website && website.value.trim()) {
+        const urlRegex = /^https?:\/\/.+/;
+        if (!urlRegex.test(website.value.trim())) {
+            isValid = false;
+            highlightError(website, 'Please enter a valid URL starting with http:// or https://');
+        }
+    }
+    
+    if (!isValid) {
+        e.preventDefault();
+    }
+    
+    return isValid;
 }
 
+// Updated setupEventListeners function to include airline form events
+function setupEventListeners() {
+  // Flight form buttons
+  const addFlightBtn = document.querySelector('button[onclick="showFlightForm()"]');
+  if (addFlightBtn) {
+    addFlightBtn.addEventListener('click', showFlightForm);
+  }
+  
+ 
+  
+  // Confirm all delete actions
+  document.querySelectorAll('a[href*="delete_"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+      let confirmMessage = 'Are you sure you want to delete this item?';
+      
+      // Customize message based on what's being deleted
+      if (link.href.includes('delete_airline')) {
+        confirmMessage = 'Are you sure you want to delete this airline? This cannot be undone.';
+      } else if (link.href.includes('delete_flight')) {
+        confirmMessage = 'Are you sure you want to delete this flight? This cannot be undone.';
+      } else if (link.href.includes('delete_user')) {
+        confirmMessage = 'Are you sure you want to delete this user? This cannot be undone.';
+      }
+      
+      if (!confirm(confirmMessage)) {
+        e.preventDefault();
+      }
+    });
+  });
+  
+  // Flight form validation
+  const flightForm = document.getElementById('flightFormElement');
+  if (flightForm) {
+    flightForm.addEventListener('submit', validateFlightForm);
+  }
+  
+
+  
+  // Add date and time validation to departure/arrival inputs
+  const departureInput = document.querySelector('input[name="departure_time"]');
+  const arrivalInput = document.querySelector('input[name="arrival_time"]');
+  
+  if (departureInput && arrivalInput) {
+    departureInput.addEventListener('change', function() {
+      validateFlightTimes();
+    });
+    
+    arrivalInput.addEventListener('change', function() {
+      validateFlightTimes();
+    });
+  }
+}
 // Form Validation
 function validateFlightForm(e) {
   const form = e.target;
@@ -1188,41 +1307,6 @@ function validateFlightTimes() {
   }
 }
 
-function validateAirlineForm(e) {
-  const form = e.target;
-  let isValid = true;
-  
-  // Validate required fields
-  const requiredFields = ['airline_name', 'customer_care'];
-  
-  requiredFields.forEach(field => {
-    const input = form.querySelector(`[name="${field}"]`);
-    if (!input || !input.value.trim()) {
-      isValid = false;
-      highlightError(input, 'This field is required');
-    } else {
-      removeError(input);
-    }
-  });
-  
-  // Validate URL format if provided
-  const contactUrlInput = form.querySelector('[name="contact_url"]');
-  if (contactUrlInput && contactUrlInput.value.trim()) {
-    try {
-      new URL(contactUrlInput.value);
-      removeError(contactUrlInput);
-    } catch (e) {
-      isValid = false;
-      highlightError(contactUrlInput, 'Please enter a valid URL (e.g., https://example.com)');
-    }
-  }
-  
-  if (!isValid) {
-    e.preventDefault();
-  }
-  
-  return isValid;
-}
 
 // Form helper functions
 function highlightError(input, message) {
