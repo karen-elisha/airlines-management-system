@@ -28,6 +28,9 @@ $message = '';
 $error = '';
 $booking = null;
 $show_refund_processing = false;
+$flight_number='';
+$origin_airport='';
+$destination_airport='';
 
 // Function to add notification
 function addNotification($pdo, $user_id, $message, $type = 'info') {
@@ -76,14 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search_booking'])) {
             if (!$booking) {
                 $error = "Booking not found or you don't have permission to cancel this booking.";
             } else {
-                // Check if booking can be cancelled (24 hours before departure)
-                $departure_time = new DateTime($booking['departure_time']);
-                $current_time = new DateTime();
-                $hours_until_departure = ($departure_time->getTimestamp() - $current_time->getTimestamp()) / 3600;
-                
-                if ($hours_until_departure <= 24) {
-                    $error = "Cannot cancel booking. Cancellation is only allowed up to 24 hours before departure.";
-                } elseif (strtolower($booking['booking_status']) === 'cancelled') {
+                // Check if booking is already cancelled
+                if (strtolower($booking['booking_status']) === 'cancelled') {
                     $error = "This booking has already been cancelled.";
                 } else {
                     $step = 'confirm';
@@ -99,10 +96,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search_booking'])) {
 // Handle cancellation form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_cancel'])) {
     $booking_reference = $_POST['booking_reference'];
-    $cancellation_reason = $_POST['cancellation_reason'] ?? '';
+    $cancellation_reason = $_POST['cancellation_reason'] ?? 'User requested cancellation';
     
     // Fetch booking again for security
-    $query = "SELECT b.*, f.flight_id, f.departure_time FROM bookings b 
+    $query = "SELECT b.*, f.flight_id FROM bookings b 
               LEFT JOIN flights f ON b.flight_id = f.flight_id 
               WHERE b.booking_reference = :booking_reference AND b.user_id = :user_id";
     
@@ -114,92 +111,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_cancel'])) {
         $booking = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($booking && strtolower($booking['booking_status']) !== 'cancelled') {
-            // Double-check timing constraint
-            $departure_time = new DateTime($booking['departure_time']);
-            $current_time = new DateTime();
-            $hours_until_departure = ($departure_time->getTimestamp() - $current_time->getTimestamp()) / 3600;
-            
-            if ($hours_until_departure <= 24) {
-                $error = "Cannot cancel booking. Cancellation is only allowed up to 24 hours before departure.";
-            } else {
-                try {
-                    $pdo->beginTransaction();
-                    
-                    // Update booking status
-                    $update_booking = "UPDATE bookings SET 
-                        booking_status = 'cancelled',
-                        cancellation_reason = :reason,
-                        updated_at = NOW()
-                        WHERE booking_reference = :booking_reference AND user_id = :user_id";
-                    
-                    $stmt = $pdo->prepare($update_booking);
-                    $stmt->bindParam(':reason', $cancellation_reason);
-                    $stmt->bindParam(':booking_reference', $booking_reference);
-                    $stmt->bindParam(':user_id', $user_id);
-                    
-                    if (!$stmt->execute()) {
-                        throw new Exception("Failed to update booking status");
-                    }
-                    
-                    // Update ticket status to 'refunded'
-                    $update_tickets = "UPDATE tickets SET 
-                        status = 'refunded',
-                        updated_at = NOW()
-                        WHERE booking_id = (SELECT booking_id FROM bookings WHERE booking_reference = :booking_reference AND user_id = :user_id)";
-                    
-                    $stmt = $pdo->prepare($update_tickets);
-                    $stmt->bindParam(':booking_reference', $booking_reference);
-                    $stmt->bindParam(':user_id', $user_id);
-                    
-                    if (!$stmt->execute()) {
-                        throw new Exception("Failed to update ticket status");
-                    }
-                    
-                    // Update available seats in flights table
-                    $update_seats = "UPDATE flights SET 
-                        available_seats = available_seats + :num_passengers
-                        WHERE flight_id = :flight_id";
-                    
-                    $stmt = $pdo->prepare($update_seats);
-                    $stmt->bindParam(':num_passengers', $booking['num_passengers']);
-                    $stmt->bindParam(':flight_id', $booking['flight_id']);
-                    
-                    if (!$stmt->execute()) {
-                        throw new Exception("Failed to update available seats");
-                    }
-                    
-                    // Add notification about successful cancellation and refund
-                    $notification_message = "Your booking (Reference: {$booking_reference}) has been successfully cancelled. Refund of ₹" . number_format($booking['total_amount']) . " has been processed and will be credited to your account within 7-10 business days.";
-                    
-                    addNotification($pdo, $user_id, $notification_message, 'success');
-                    
-                    // Add another notification about refund status
-                    $refund_notification = "Refund Status Update: Your refund of ₹" . number_format($booking['total_amount']) . " for booking {$booking_reference} is being processed. You will receive the amount in your original payment method within 7-10 business days.";
-                    
-                    addNotification($pdo, $user_id, $refund_notification, 'info');
-                    
-                    // Create refund record for tracking
-                    $refund_query = "INSERT INTO refunds (user_id, booking_reference, refund_amount, refund_status, refund_reason, created_at) 
-                                    VALUES (:user_id, :booking_reference, :refund_amount, 'processing', :refund_reason, NOW())";
-                    
-                    $stmt = $pdo->prepare($refund_query);
-                    $stmt->bindParam(':user_id', $user_id);
-                    $stmt->bindParam(':booking_reference', $booking_reference);
-                    $stmt->bindParam(':refund_amount', $booking['total_amount']);
-                    $stmt->bindParam(':refund_reason', $cancellation_reason);
-                    $stmt->execute();
-                    
-                    $pdo->commit();
-                    
-                    $show_refund_processing = true;
-                    $step = 'processing';
-                    $message = "Booking cancelled successfully. Refund is being processed.";
-                    
-                } catch (Exception $e) {
-                    $pdo->rollback();
-                    $error = "An error occurred while cancelling your booking. Please try again or contact support.";
-                    error_log("Booking cancellation error: " . $e->getMessage());
+            try {
+                $pdo->beginTransaction();
+                
+                // Update booking status to cancelled
+                $update_booking = "UPDATE bookings SET 
+                    booking_status = 'cancelled',
+                    updated_at = NOW()
+                    WHERE booking_reference = :booking_reference AND user_id = :user_id";
+                
+                $stmt = $pdo->prepare($update_booking);
+                $stmt->bindParam(':booking_reference', $booking_reference);
+                $stmt->bindParam(':user_id', $user_id);
+                
+                if (!$stmt->execute()) {
+                    throw new Exception("Failed to update booking status");
                 }
+                
+                // Update ticket status to 'refunded'
+                $update_tickets = "UPDATE tickets SET 
+                    status = 'refunded'
+                    WHERE user_id = :user_id AND flight_id = :flight_id";
+                
+                $stmt = $pdo->prepare($update_tickets);
+                $stmt->bindParam(':user_id', $user_id);
+                $stmt->bindParam(':flight_id', $booking['flight_id']);
+                
+                if (!$stmt->execute()) {
+                    throw new Exception("Failed to update ticket status");
+                }
+                
+                // Add notification about successful cancellation and refund
+                $notification_message = "Your booking (Reference: {$booking_reference}) has been successfully cancelled. Refund of ₹" . number_format($booking['total_amount']) . " will be processed and credited to your account within 7-10 business days.";
+                
+                addNotification($pdo, $user_id, $notification_message, 'success');
+                
+                $pdo->commit();
+                
+                $show_refund_processing = true;
+                $step = 'processing';
+                $message = "Booking cancelled successfully. Refund notification has been sent.";
+                
+            } catch (Exception $e) {
+                $pdo->rollback();
+                $error = "An error occurred while cancelling your booking. Please try again or contact support.";
+                error_log("Booking cancellation error: " . $e->getMessage());
             }
         } else {
             $error = "Invalid booking reference or booking has already been cancelled.";
@@ -390,6 +346,7 @@ function getAirportName($code) {
                                         <?php echo getAirportName($booking['origin_airport']) . ' to ' . getAirportName($booking['destination_airport']); ?>
                                     </span>
                                 </div>
+                                <?php if ($booking['departure_time']): ?>
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Departure:</span>
                                     <span class="font-medium">
@@ -399,6 +356,7 @@ function getAirportName($code) {
                                         ?>
                                     </span>
                                 </div>
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -438,83 +396,47 @@ function getAirportName($code) {
                     </div>
                 </div>
 
-                <!-- Cancellation Policy -->
-                <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
-                    <h3 class="font-semibold text-yellow-800 mb-3">
-                        <i class="fas fa-info-circle mr-2"></i>Cancellation Policy & Refund Information
+                <!-- Simple Refund Information -->
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                    <h3 class="font-semibold text-blue-800 mb-3">
+                        <i class="fas fa-info-circle mr-2"></i>Refund Information
                     </h3>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <ul class="text-sm text-yellow-700 space-y-2">
-                            <li><i class="fas fa-check mr-2"></i>Free cancellation up to 24 hours before departure</li>
-                            <li><i class="fas fa-check mr-2"></i>Full refund of ₹<?php echo number_format($booking['total_amount']); ?> will be processed</li>
-                            <li><i class="fas fa-clock mr-2"></i>Refund processing time: 7-10 business days</li>
-                        </ul>
-                        <ul class="text-sm text-yellow-700 space-y-2">
-                            <li><i class="fas fa-credit-card mr-2"></i>Refund to original payment method</li>
-                            <li><i class="fas fa-bell mr-2"></i>You'll receive email and dashboard notifications</li>
-                            <li><i class="fas fa-phone mr-2"></i>Support available for any queries</li>
-                        </ul>
+                    <div class="text-sm text-blue-700 space-y-2">
+                        <p><i class="fas fa-check mr-2"></i>Full refund of ₹<?php echo number_format($booking['total_amount']); ?> will be processed</p>
+                        <p><i class="fas fa-clock mr-2"></i>Refund processing time: 7-10 business days</p>
+                        <p><i class="fas fa-bell mr-2"></i>You'll receive a notification once cancelled</p>
                     </div>
                 </div>
 
-                <!-- Warning and Confirmation Form -->
+                <!-- Confirmation Form -->
                 <div class="bg-white rounded-xl shadow-md p-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">
-                        <i class="fas fa-exclamation-triangle mr-2 text-red-500"></i>Confirm Cancellation
+                        <i class="fas fa-times-circle mr-2 text-red-500"></i>Confirm Cancellation
                     </h3>
-                    
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                        <div class="flex items-start">
-                            <i class="fas fa-exclamation-triangle text-red-500 mt-1 mr-3"></i>
-                            <div>
-                                <h4 class="font-medium text-red-800">Important Warning</h4>
-                                <p class="text-red-700 text-sm mt-1">
-                                    This action cannot be undone. Once cancelled, you will need to make a new booking for your travel. 
-                                    All associated tickets and services will be cancelled immediately.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
 
-                    <form method="POST" onsubmit="return confirmCancellation();">
+                    <form method="POST">
                         <input type="hidden" name="booking_reference" value="<?php echo htmlspecialchars($booking['booking_reference']); ?>">
                         
                         <div class="mb-6">
                             <label for="cancellation_reason" class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-comment mr-1"></i>Reason for Cancellation *
+                                <i class="fas fa-comment mr-1"></i>Reason for Cancellation (Optional)
                             </label>
-                            <select name="cancellation_reason" id="cancellation_reason" required 
+                            <select name="cancellation_reason" id="cancellation_reason" 
                                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500">
-                                <option value="">Please select a reason</option>
-                                <option value="change_of_plans">Change of Plans</option>
-                                <option value="medical_emergency">Medical Emergency</option>
-                                <option value="work_related">Work Related</option>
-                                <option value="family_emergency">Family Emergency</option>
-                                <option value="weather_concerns">Weather Concerns</option>
-                                <option value="flight_rescheduled">Flight Rescheduled by Airline</option>
-                                <option value="other">Other</option>
+                                <option value="User requested cancellation">Select a reason (optional)</option>
+                                <option value="Change of Plans">Change of Plans</option>
+                                <option value="Medical Emergency">Medical Emergency</option>
+                                <option value="Work Related">Work Related</option>
+                                <option value="Family Emergency">Family Emergency</option>
+                                <option value="Other">Other</option>
                             </select>
-                        </div>
-
-                        <div class="mb-6">
-                            <label class="flex items-start space-x-3 cursor-pointer">
-                                <input type="checkbox" id="confirm_terms" required class="mt-1 text-red-600 focus:ring-red-500">
-                                <span class="text-sm text-gray-700">
-                                    I understand and acknowledge that:
-                                    <ul class="mt-2 ml-4 space-y-1 text-xs">
-                                        <li>• This cancellation is permanent and cannot be reversed</li>
-                                        <li>• All tickets and services associated with this booking will be cancelled</li>
-                                        <li>• Refund of ₹<?php echo number_format($booking['total_amount']); ?> will be processed within 7-10 business days</li>
-                                        <li>• I will receive confirmation via email and dashboard notification</li>
-                                    </ul>
-                                </span>
-                            </label>
                         </div>
 
                         <div class="flex flex-col sm:flex-row gap-4">
                             <button type="submit" name="confirm_cancel" value="1" 
-                                    class="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200 font-medium transition-colors">
-                                <i class="fas fa-times mr-2"></i>Cancel Booking & Process Refund
+                                    class="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200 font-medium transition-colors"
+                                    onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                <i class="fas fa-times mr-2"></i>Cancel Booking
                             </button>
                             <button type="button" onclick="window.location.href='?'" 
                                    class="flex-1 bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 font-medium transition-colors">
@@ -553,7 +475,7 @@ function getAirportName($code) {
                             <i class="fas fa-check text-2xl text-green-600"></i>
                         </div>
                         <h2 class="text-2xl font-bold text-gray-800 mb-2">Booking Successfully Cancelled!</h2>
-                        <p class="text-gray-600">Your refund has been processed and you'll receive confirmation shortly.</p>
+                        <p class="text-gray-600">Your refund notification has been sent to your dashboard.</p>
                     </div>
 
                     <?php if ($booking): ?>
@@ -563,7 +485,6 @@ function getAirportName($code) {
                             <div>• Booking Reference: <span class="font-mono"><?php echo htmlspecialchars($booking['booking_reference']); ?></span></div>
                             <div>• Flight: <?php echo htmlspecialchars($booking['flight_number']); ?> (<?php echo strtoupper($booking['origin_airport']) . ' → ' . strtoupper($booking['destination_airport']); ?>)</div>
                             <div>• Refund Amount: ₹<?php echo number_format($booking['total_amount']); ?></div>
-                            <div>• Processing Time: 7-10 business days</div>
                             <div>• Notification sent to your dashboard</div>
                         </div>
                     </div>
@@ -578,48 +499,20 @@ function getAirportName($code) {
                         </a>
                     </div>
                 </div>
-
-                <!-- Refund Information -->
-                <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
-                    <h3 class="font-semibold text-blue-800 mb-3">
-                        <i class="fas fa-info-circle mr-2"></i>What Happens Next?
-                    </h3>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <h4 class="font-medium text-blue-700 mb-2">Immediate Actions:</h4>
-                            <ul class="text-sm text-blue-600 space-y-1">
-                                <li>• Booking status changed to "Cancelled"</li>
-                                <li>• Tickets marked as "Refunded"</li>
-                                <li>• Seats released for other passengers</li>
-                                <li>• Notifications sent to your account</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-medium text-blue-700 mb-2">Refund Process:</h4>
-                            <ul class="text-sm text-blue-600 space-y-1">
-                                <li>• Refund initiated automatically</li>
-                                <li>• Amount: ₹<?php echo isset($booking) ? number_format($booking['total_amount']) : '0'; ?></li>
-                                <li>• Processing time: 7-10 business days</li>
-                                <li>• Credited to original payment method</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <script>
-                // Auto-hide processing section and show success after 3 seconds
+                // Auto-hide processing section and show success after 2 seconds
                 setTimeout(function() {
                     document.getElementById('processing-section').style.display = 'none';
                     document.getElementById('success-section').style.display = 'block';
-                }, 3000);
+                }, 2000);
 
                 // Update status text during processing
                 let statusMessages = [
                     "Cancelling booking...",
                     "Updating ticket status...",
-                    "Processing refund...",
-                    "Sending notifications...",
+                    "Sending notification...",
                     "Finalizing cancellation..."
                 ];
                 
@@ -631,7 +524,7 @@ function getAirportName($code) {
                     } else {
                         clearInterval(statusInterval);
                     }
-                }, 600);
+                }, 500);
             </script>
         <?php endif; ?>
 
@@ -673,10 +566,6 @@ function getAirportName($code) {
     </footer>
 
     <script>
-        function confirmCancellation() {
-            return confirm('Are you absolutely sure you want to cancel this booking? This action cannot be undone and your refund will take 7-10 business days to process.');
-        }
-
         // Auto-focus on booking reference input
         document.addEventListener('DOMContentLoaded', function() {
             const bookingInput = document.getElementById('booking_reference');
