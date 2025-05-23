@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 22, 2025 at 07:03 PM
+-- Generation Time: May 23, 2025 at 08:13 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -137,8 +137,6 @@ CREATE TABLE `bookings` (
 --
 
 INSERT INTO `bookings` (`booking_id`, `booking_reference`, `user_id`, `flight_id`, `booking_date`, `travel_date`, `num_passengers`, `total_amount`, `contact_email`, `contact_phone`, `booking_status`, `payment_status`, `payment_method`, `created_at`, `updated_at`, `payment_details`) VALUES
-(1, 'BK-6828826CBB4A5', 5, 1002, '2025-05-17 14:34:52', '2025-05-20', 1, 5369.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(2, 'BK-6828840541211', 5, 1002, '2025-05-17 14:41:41', '2025-05-20', 1, 5369.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 (3, 'BK-682884366150F', 5, 1002, '2025-05-17 14:42:30', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 (4, 'BK-6828851F17E88', 5, 1002, '2025-05-17 14:46:23', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 (5, 'BK-68288535D8E82', 5, 1002, '2025-05-17 14:46:45', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
@@ -174,7 +172,9 @@ INSERT INTO `bookings` (`booking_id`, `booking_reference`, `user_id`, `flight_id
 (38, 'BK-682F167A0973E', 10, 1003, '2025-05-22 14:20:10', '2025-05-29', 1, 6253.00, 'chezanand@gmail.com', '9886026336', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 17:50:18', 'kevin@okaxis'),
 (39, 'BK-682F1E1C9D99A', 10, 1049, '2025-05-22 14:52:44', '2025-05-23', 1, 6549.00, 'harry@gmail.com', '9591553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 18:22:56', 'harry@okaxis'),
 (40, 'BK-682F20098FC45', 10, 1049, '2025-05-22 15:00:57', '2025-05-23', 1, 6549.00, 'medamritvik@gmail.com', '7013631447', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 18:31:03', 'karen@okaxis'),
-(41, 'BK-682F52C759C3C', 10, 1685, '2025-05-22 18:37:27', '2025-05-28', 1, 3835.00, 'harry@gmail.com', '9591553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 22:07:32', 'harry@okaxis');
+(41, 'BK-682F52C759C3C', 10, 1685, '2025-05-22 18:37:27', '2025-05-28', 1, 3835.00, 'harry@gmail.com', '9591553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 22:07:32', 'harry@okaxis'),
+(42, 'BK-682FFC0A17426', 10, 1046, '2025-05-23 06:39:38', '2025-05-23', 1, 3953.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 10:09:46', 'karen@okaxis'),
+(43, 'BK-6830105F39445', 11, 1706, '2025-05-23 08:06:23', '2025-05-30', 1, 5487.00, 'dhanya@gmail.com', '7013631447', 'Cancelled', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 11:38:31', 'dhanya@okaxis');
 
 -- --------------------------------------------------------
 
@@ -382,6 +382,13 @@ CREATE TABLE `notifications` (
   `created_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `notification_type`, `is_read`, `created_at`) VALUES
+(13, 11, 'Your booking (Reference: BK-6830105F39445) has been successfully cancelled. Refund of ₹5,487 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-23 06:08:31');
+
 -- --------------------------------------------------------
 
 --
@@ -407,7 +414,9 @@ INSERT INTO `passengers` (`passenger_id`, `booking_id`, `first_name`, `last_name
 (2, 38, 'Chezhiyan', 'Anandaraj', 'male', 51, '11A,Window'),
 (3, 39, 'Harry ', 'Potter', 'male', 236, '12A'),
 (4, 40, 'Medam ', 'Ritvik', 'male', 18, '9A'),
-(5, 41, 'Harry ', 'Anandaraj', 'male', 26, '12A');
+(5, 41, 'Harry ', 'Anandaraj', 'male', 26, '12A'),
+(6, 42, 'Karen', 'Elisha', 'female', 19, '9A'),
+(7, 43, 'Dhanya', 'Reddy', 'female', 23, '9A');
 
 -- --------------------------------------------------------
 
@@ -423,6 +432,23 @@ CREATE TABLE `promotions` (
   `valid_from` date NOT NULL,
   `valid_until` date NOT NULL,
   `active` tinyint(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `refunds`
+--
+
+CREATE TABLE `refunds` (
+  `refund_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `booking_reference` varchar(20) NOT NULL,
+  `refund_amount` decimal(10,2) NOT NULL,
+  `refund_status` varchar(20) NOT NULL,
+  `refund_reason` text DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `processed_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -475,7 +501,9 @@ INSERT INTO `tickets` (`ticket_id`, `user_id`, `flight_id`, `airline_name`, `num
 (31, 10, 1049, 'FlyBig', 1, 5550.00, '2025-05-22 18:21:53', 'pending'),
 (32, 10, 1049, 'FlyBig', 1, 5550.00, '2025-05-22 18:22:06', 'pending'),
 (33, 10, 1049, 'FlyBig', 1, 5550.00, '2025-05-22 18:30:23', 'pending'),
-(34, 10, 1685, 'Go First', 1, 3250.00, '2025-05-22 22:07:03', 'pending');
+(34, 10, 1685, 'Go First', 1, 3250.00, '2025-05-22 22:07:03', 'pending'),
+(35, 10, 1046, 'Alliance Air', 1, 3350.00, '2025-05-23 10:09:08', 'pending'),
+(36, 11, 1706, 'Alliance Air', 1, 4650.00, '2025-05-23 11:35:03', '');
 
 -- --------------------------------------------------------
 
@@ -575,6 +603,13 @@ ALTER TABLE `promotions`
   ADD UNIQUE KEY `promo_code` (`promo_code`);
 
 --
+-- Indexes for table `refunds`
+--
+ALTER TABLE `refunds`
+  ADD PRIMARY KEY (`refund_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `tickets`
 --
 ALTER TABLE `tickets`
@@ -603,7 +638,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `feedback`
@@ -621,13 +656,13 @@ ALTER TABLE `flights`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `passengers`
 --
 ALTER TABLE `passengers`
-  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `promotions`
@@ -636,10 +671,16 @@ ALTER TABLE `promotions`
   MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `refunds`
+--
+ALTER TABLE `refunds`
+  MODIFY `refund_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -683,6 +724,12 @@ ALTER TABLE `notifications`
 --
 ALTER TABLE `passengers`
   ADD CONSTRAINT `passengers_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`booking_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `refunds`
+--
+ALTER TABLE `refunds`
+  ADD CONSTRAINT `refunds_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `tickets`
