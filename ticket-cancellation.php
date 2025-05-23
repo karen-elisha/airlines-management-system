@@ -28,9 +28,6 @@ $message = '';
 $error = '';
 $booking = null;
 $show_refund_processing = false;
-$flight_number='';
-$origin_airport='';
-$destination_airport='';
 
 // Function to add notification
 function addNotification($pdo, $user_id, $message, $type = 'info') {
@@ -48,6 +45,29 @@ function addNotification($pdo, $user_id, $message, $type = 'info') {
     }
 }
 
+// Function to get complete booking details with flight info
+function getBookingWithFlightDetails($pdo, $booking_reference, $user_id) {
+    $query = "SELECT 
+        b.*,
+        f.flight_number,
+        f.airline_id,
+        f.origin_airport,
+        f.destination_airport,
+        f.departure_time,
+        f.arrival_time,
+        a.airline_name
+    FROM bookings b
+    LEFT JOIN flights f ON b.flight_id = f.flight_id
+    LEFT JOIN airlines a ON f.airline_id = a.airline_id
+    WHERE b.booking_reference = :booking_reference AND b.user_id = :user_id";
+    
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':booking_reference', $booking_reference);
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
 // Search for booking by reference number
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search_booking'])) {
     $booking_reference = trim($_POST['booking_reference']);
@@ -55,26 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search_booking'])) {
     if (empty($booking_reference)) {
         $error = "Please enter a booking reference number.";
     } else {
-        $query = "SELECT 
-            b.*,
-            f.flight_number,
-            f.airline_id,
-            f.origin_airport,
-            f.destination_airport,
-            f.departure_time,
-            f.arrival_time,
-            a.airline_name
-        FROM bookings b
-        LEFT JOIN flights f ON b.flight_id = f.flight_id
-        LEFT JOIN airlines a ON f.airline_id = a.airline_id
-        WHERE b.booking_reference = :booking_reference AND b.user_id = :user_id";
-        
         try {
-            $stmt = $pdo->prepare($query);
-            $stmt->bindParam(':booking_reference', $booking_reference);
-            $stmt->bindParam(':user_id', $user_id);
-            $stmt->execute();
-            $booking = $stmt->fetch(PDO::FETCH_ASSOC);
+            $booking = getBookingWithFlightDetails($pdo, $booking_reference, $user_id);
             
             if (!$booking) {
                 $error = "Booking not found or you don't have permission to cancel this booking.";
@@ -98,17 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_cancel'])) {
     $booking_reference = $_POST['booking_reference'];
     $cancellation_reason = $_POST['cancellation_reason'] ?? 'User requested cancellation';
     
-    // Fetch booking again for security
-    $query = "SELECT b.*, f.flight_id FROM bookings b 
-              LEFT JOIN flights f ON b.flight_id = f.flight_id 
-              WHERE b.booking_reference = :booking_reference AND b.user_id = :user_id";
-    
+    // Fetch booking again for security - WITH FULL FLIGHT DETAILS
     try {
-        $stmt = $pdo->prepare($query);
-        $stmt->bindParam(':booking_reference', $booking_reference);
-        $stmt->bindParam(':user_id', $user_id);
-        $stmt->execute();
-        $booking = $stmt->fetch(PDO::FETCH_ASSOC);
+        $booking = getBookingWithFlightDetails($pdo, $booking_reference, $user_id);
         
         if ($booking && strtolower($booking['booking_status']) !== 'cancelled') {
             try {
@@ -478,17 +472,25 @@ function getAirportName($code) {
                         <p class="text-gray-600">Your refund notification has been sent to your dashboard.</p>
                     </div>
 
-                    <?php if ($booking): ?>
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 text-left">
-                        <h4 class="font-semibold text-green-800 mb-2">Cancellation Summary:</h4>
-                        <div class="text-sm text-green-700 space-y-1">
-                            <div>• Booking Reference: <span class="font-mono"><?php echo htmlspecialchars($booking['booking_reference']); ?></span></div>
-                            <div>• Flight: <?php echo htmlspecialchars($booking['flight_number']); ?> (<?php echo strtoupper($booking['origin_airport']) . ' → ' . strtoupper($booking['destination_airport']); ?>)</div>
-                            <div>• Refund Amount: ₹<?php echo number_format($booking['total_amount']); ?></div>
-                            <div>• Notification sent to your dashboard</div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
+                    <?php if ($booking && $step === 'processing'): ?>
+    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 text-left">
+        <h4 class="font-semibold text-green-800 mb-2">Cancellation Summary:</h4>
+        <div class="text-sm text-green-700 space-y-1">
+            <div>• Booking Reference: <span class="font-mono"><?php echo htmlspecialchars($booking['booking_reference'] ?? 'N/A'); ?></span></div>
+            <div>• Flight: 
+                <?php 
+                $flight_display = htmlspecialchars($booking['flight_number'] ?? 'N/A');
+                if (isset($booking['origin_airport']) && isset($booking['destination_airport'])) {
+                    $flight_display .= ' (' . strtoupper($booking['origin_airport']) . ' → ' . strtoupper($booking['destination_airport']) . ')';
+                }
+                echo $flight_display;
+                ?>
+            </div>
+            <div>• Refund Amount: ₹<?php echo number_format($booking['total_amount'] ?? 0); ?></div>
+            <div>• Notification sent to your dashboard</div>
+        </div>
+    </div>
+<?php endif; ?>
 
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
                         <a href="bookings.php" class="bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 font-medium transition-colors">
