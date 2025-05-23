@@ -1,17 +1,12 @@
 <?php
 session_start();
-// Assuming user is logged in and user_id is stored in session
-// For demo, let's set a dummy user_id if not set
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['user_id'] = 1; // replace with actual login user id logic
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // DB connection setup
-    $servername = "localhost";  // change if needed
-    $username = "root";         // change as per your DB
-    $password = "";             // change as per your DB
-    $dbname = "airlines";  // change to your database name
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "airlines";
 
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -22,15 +17,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Prepare and sanitize input
-    $user_id = intval($_SESSION['user_id']);
+    $user_id = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : NULL;
     $name = $conn->real_escape_string(trim($_POST['name']));
     $email = $conn->real_escape_string(trim($_POST['email']));
     $rating = intval($_POST['rating']);
     $message = $conn->real_escape_string(trim($_POST['message']));
     $created_at = date('Y-m-d H:i:s');
 
-    // Insert query
-    $sql = "INSERT INTO feedback (user_id, name, email, rating, message, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+    // Debugging: Print the values to check they're correct
+    /*
+    echo "<pre>";
+    print_r([
+        'user_id' => $user_id,
+        'name' => $name,
+        'email' => $email,
+        'rating' => $rating,
+        'message' => $message,
+        'created_at' => $created_at
+    ]);
+    echo "</pre>";
+    */
+
+    // Insert query - modified to handle NULL user_id
+    $sql = "INSERT INTO feedback (user_id, name, email, rating, message, created_at) 
+            VALUES (?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("isssis", $user_id, $name, $email, $rating, $message, $created_at);
@@ -41,6 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     } else {
         $feedback_msg = "Error: " . $stmt->error;
+        // For debugging - show the full error:
+        // $feedback_msg = "Error: " . $stmt->error . " SQL: " . $sql;
     }
 
     $stmt->close();
