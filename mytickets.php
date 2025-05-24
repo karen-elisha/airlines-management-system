@@ -233,9 +233,7 @@ function formatDuration($duration) {
       </nav>
       <div class="flex items-center space-x-4">
         <span class="text-indigo-200 text-sm">Welcome, <?php echo htmlspecialchars($user_info['full_name']); ?></span>
-        <a href="bookings.php" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md transition-colors text-sm">
-          <i class="fas fa-list mr-2"></i>All Bookings
-        </a>
+        
       </div>
     </div>
   </header>

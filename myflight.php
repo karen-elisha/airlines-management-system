@@ -257,7 +257,7 @@ function getStatusClass($status) {
                   <?php echo (strtolower($booking['booking_status']) === 'cancelled') ? 'Cancelled' : 'Cancel'; ?>
                 </a>
                 <div class="mt-1">
-                  <a href="booking-details.php?booking_id=<?php echo $booking['booking_id']; ?>" 
+                  <a href="mytickets.php?booking_id=<?php echo $booking['booking_id']; ?>" 
                      class="text-xs text-indigo-600 hover:text-indigo-800">
                     <i class="fas fa-eye mr-1"></i>View Details
                   </a>

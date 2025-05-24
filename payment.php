@@ -314,26 +314,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-gray-50 font-sans">
 
   <!-- Header -->
- <header class="bg-gray-800 text-white shadow-md">
+<!-- Header -->
+<header class="bg-gray-800 text-white shadow-md">
   <div class="container mx-auto px-4 py-4 flex items-center justify-between">
     <div class="flex items-center space-x-2">
       <i class="fas fa-plane text-white text-xl"></i>
       <a href="index.php" class="text-xl font-bold">BookMyFlight</a>
     </div>
-    <a href="user-dashboard.php" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
-      <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
-    </a>
-  </div>
-</header>
-      <div class="ml-auto">
-        <?php if(isset($_SESSION['username'])): ?>
-        <div class="text-sm">
+    
+    <div class="flex items-center space-x-4">
+      <a href="user-dashboard.php" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
+        <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+      </a>
+      
+      <a href="logout.php" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 flex items-center">
+        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+      </a>
+      
+      <?php if(isset($_SESSION['username'])): ?>
+        <div class="hidden md:block text-sm">
           <span>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></span>
         </div>
-        <?php endif; ?>
-      </div>
+      <?php endif; ?>
     </div>
-  </header>
+  </div>
+</header>
 
   <!-- Main Content -->
   <?php if ($payment_processed): ?>

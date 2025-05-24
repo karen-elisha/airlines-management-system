@@ -183,7 +183,7 @@ $recommendation   = isset($_POST['q10']) ? $_POST['q10'] : null;
           </div>
         <?php endif; ?>
 
-        <form method="post" action="index.php" class="space-y-4">
+        <form method="post" action="feedback.php" class="space-y-4">
           <div>
             <label for="passenger_name" class="block mb-2 text-sm">Passenger Name</label>
             <input type="text" id="passenger_name" name="passenger_name" required

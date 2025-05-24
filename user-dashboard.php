@@ -443,7 +443,7 @@ if (isset($mysqli)) {
               <?php endif; ?>
             </div>
             <div class="p-2 border-t border-gray-700 text-center">
-              <a href="notifications.php" class="text-xs text-indigo-400 hover:text-indigo-300">View all notifications</a>
+              
             </div>
           </div>
         </div>
@@ -464,10 +464,8 @@ if (isset($mysqli)) {
               <a href="#" onclick="showSection('profile'); closeAllDropdowns();" class="block px-4 py-2 text-sm hover:bg-gray-700">
                 <i class="fas fa-user-circle mr-2"></i> My Profile
               </a>
-              <a href="settings.php" class="block px-4 py-2 text-sm hover:bg-gray-700">
-                <i class="fas fa-cog mr-2"></i> Settings
-              </a>
-              <a href="support.php" class="block px-4 py-2 text-sm hover:bg-gray-700">
+          
+              <a href="feedback.php" class="block px-4 py-2 text-sm hover:bg-gray-700">
                 <i class="fas fa-question-circle mr-2"></i> Help & Support
               </a>
             </div>
