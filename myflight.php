@@ -156,11 +156,9 @@ function getStatusClass($status) {
       </div>
       <nav class="hidden md:flex space-x-6">
         <a href="user-dashboard.php" class="hover:text-indigo-200"><i class="fas fa-home mr-1"></i> Dashboard</a>
-        <a href="#" class="text-indigo-300 font-medium"><i class="fas fa-ticket-alt mr-1"></i> My Bookings</a>
+        <a href="mytickets.php" class="text-indigo-300 font-medium"><i class="fas fa-ticket-alt mr-1"></i> My Tickets</a>
       </nav>
-      <a href="user-dashboard.php" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md transition-colors">
-        <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
-      </a>
+     
     </div>
   </header>
 
