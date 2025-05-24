@@ -58,7 +58,8 @@ function getAirlineLogo($airline_name) {
         'Air India' => 'https://logo.clearbit.com/airindia.in',
         'Vistara' => 'https://logo.clearbit.com/airvistara.com',
         'SpiceJet' => 'https://logo.clearbit.com/spicejet.com',
-        'GoAir' => 'https://logo.clearbit.com/goair.in'
+        'GoAir' => 'https://logo.clearbit.com/goair.in',
+        'Go First' => 'https://logo.clearbit.com/goair.in'
     ];
     return isset($logos[$airline_name]) ? $logos[$airline_name] : '/api/placeholder/40/40';
 }

@@ -493,7 +493,7 @@ function getAirportName($code) {
 <?php endif; ?>
 
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="bookings.php" class="bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 font-medium transition-colors">
+                        <a href="mytickets.php" class="bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 font-medium transition-colors">
                             <i class="fas fa-ticket-alt mr-2"></i>View My Bookings
                         </a>
                         <a href="user-dashboard.php" class="bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 font-medium transition-colors">
