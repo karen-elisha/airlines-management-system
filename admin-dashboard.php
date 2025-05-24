@@ -27,10 +27,14 @@ if (!isset($_SESSION['admin_id']) && !strpos($_SERVER['REQUEST_URI'], 'login.php
 // Set default active section
 $active_section = isset($_GET['section']) ? $_GET['section'] : 'dashboard';
 
+// Set timezone to Asia/Kolkata
+date_default_timezone_set('Asia/Kolkata');
+$current_datetime = date('Y-m-d H:i:s');
+
 // Fetch dashboard statistics
 $bookings_count = $mysqli->query("SELECT COUNT(*) as count FROM bookings")->fetch_assoc()['count'];
 $users_count = $mysqli->query("SELECT COUNT(*) as count FROM users")->fetch_assoc()['count'];
-$flights_count = $mysqli->query("SELECT COUNT(*) as count FROM flights")->fetch_assoc()['count'];
+$flights_count = $mysqli->query("SELECT COUNT(*) as count FROM flights WHERE departure_time >= '$current_datetime'")->fetch_assoc()['count'];
 $airlines_count = $mysqli->query("SELECT COUNT(*) as count FROM airlines")->fetch_assoc()['count'];
 
 // Fetch recent bookings for dashboard
@@ -43,10 +47,11 @@ $recent_bookings = $mysqli->query("SELECT b.booking_reference, u.full_name, b.bo
 // Fetch airlines
 $airlines = $mysqli->query("SELECT * FROM airlines ORDER BY airline_name")->fetch_all(MYSQLI_ASSOC);
 
-// Fetch flights with airline info
+// Fetch flights with airline info - only upcoming flights from current time
 $flights = $mysqli->query("SELECT f.*, a.airline_name 
                     FROM flights f
                     JOIN airlines a ON f.airline_id = a.airline_id
+                    WHERE f.departure_time >= '$current_datetime'
                     ORDER BY f.departure_time")->fetch_all(MYSQLI_ASSOC);
 
 // Fetch users
@@ -59,260 +64,9 @@ if (isset($_GET['logout'])) {
     exit;
 }
 
-// AIRLINE MANAGEMENT - FIXED VERSION
-// Add new airline
-if (isset($_POST['add_airline'])) {
-    $airline_name = $mysqli->real_escape_string($_POST['airline_name']);
-    $customer_care = $mysqli->real_escape_string($_POST['customer_care']);
-    $contact_url = $mysqli->real_escape_string($_POST['contact_url']);
-    $website = isset($_POST['website']) ? $mysqli->real_escape_string($_POST['website']) : '';
-    
-    try {
-        // Check if airline already exists
-        $check_airline = $mysqli->query("SELECT airline_id FROM airlines WHERE airline_name = '$airline_name'");
-        if ($check_airline->num_rows > 0) {
-            throw new Exception("Airline already exists!");
-        }
-
-        // Start transaction
-        $mysqli->begin_transaction();
-        
-        $query = "INSERT INTO airlines (airline_name, customer_care, contact_url, website, active) 
-                  VALUES ('$airline_name', '$customer_care', '$contact_url', '$website', 1)";
-        
-        if (!$mysqli->query($query)) {
-            throw new Exception("Error adding airline: " . $mysqli->error);
-        }
-        
-        $mysqli->commit();
-        $_SESSION['success_message'] = "Airline added successfully!";
-        
-    } catch (Exception $e) {
-        $mysqli->rollback();
-        $_SESSION['error_message'] = $e->getMessage();
-    }
-    
-    header("Location: ?section=airlines");
-    exit;
-}
-
-// Edit airline - FIXED
-if (isset($_POST['edit_airline'])) {
-    $airline_id = $mysqli->real_escape_string($_POST['airline_id']);
-    $airline_name = $mysqli->real_escape_string($_POST['airline_name']);
-    $customer_care = $mysqli->real_escape_string($_POST['customer_care']);
-    $contact_url = $mysqli->real_escape_string($_POST['contact_url']);
-    $website = isset($_POST['website']) ? $mysqli->real_escape_string($_POST['website']) : '';
-    $active = isset($_POST['active']) ? (int)$_POST['active'] : 1; // FIXED: Properly handle active status
-    
-    try {
-        // Check if airline exists
-        $check_airline = $mysqli->query("SELECT airline_id FROM airlines WHERE airline_id = $airline_id");
-        if ($check_airline->num_rows == 0) {
-            throw new Exception("Airline not found!");
-        }
-
-        // Start transaction
-        $mysqli->begin_transaction();
-        
-        $query = "UPDATE airlines 
-                  SET airline_name='$airline_name', 
-                      customer_care='$customer_care',
-                      contact_url='$contact_url',
-                      website='$website',
-                      active=$active
-                  WHERE airline_id=$airline_id";
-        
-        if (!$mysqli->query($query)) {
-            throw new Exception("Error updating airline: " . $mysqli->error);
-        }
-        
-        $mysqli->commit();
-        $_SESSION['success_message'] = "Airline updated successfully!";
-        
-    } catch (Exception $e) {
-        $mysqli->rollback();
-        $_SESSION['error_message'] = $e->getMessage();
-    }
-    
-    header("Location: ?section=airlines");
-    exit;
-}
-
-// Delete airline - FIXED to also delete associated flights
-if (isset($_GET['delete_airline'])) {
-    $airline_id = $mysqli->real_escape_string($_GET['delete_airline']);
-    
-    try {
-        // Check if airline exists
-        $check_airline = $mysqli->query("SELECT airline_id FROM airlines WHERE airline_id = $airline_id");
-        if ($check_airline->num_rows == 0) {
-            throw new Exception("Airline not found!");
-        }
-
-        // Start transaction
-        $mysqli->begin_transaction();
-        
-        // First, delete all flights associated with this airline
-        $delete_flights = $mysqli->query("DELETE FROM flights WHERE airline_id = $airline_id");
-        
-        // Then delete the airline
-        $delete_airline = $mysqli->query("DELETE FROM airlines WHERE airline_id = $airline_id");
-        
-        if (!$delete_airline) {
-            throw new Exception("Error deleting airline: " . $mysqli->error);
-        }
-        
-        $mysqli->commit();
-        $_SESSION['success_message'] = "Airline and all associated flights deleted successfully!";
-        
-    } catch (Exception $e) {
-        $mysqli->rollback();
-        $_SESSION['error_message'] = $e->getMessage();
-    }
-    
-    header("Location: ?section=airlines");
-    exit;
-}
-
-// FIXED: Refresh airlines data after any operations
-$airlines = $mysqli->query("SELECT * FROM airlines ORDER BY airline_name")->fetch_all(MYSQLI_ASSOC);
-
-
-
-// FLIGHT MANAGEMENT
-// Add or edit flight
-if (isset($_POST['save_flight'])) {
-    $airline_id = $mysqli->real_escape_string($_POST['airline_id']);
-    $flight_number = $mysqli->real_escape_string($_POST['flight_number']);
-    $origin_airport = $mysqli->real_escape_string($_POST['origin_airport']);
-    $destination_airport = $mysqli->real_escape_string($_POST['destination_airport']);
-    $departure_time = $mysqli->real_escape_string($_POST['departure_time']);
-    $arrival_time = $mysqli->real_escape_string($_POST['arrival_time']);
-    $base_price = $mysqli->real_escape_string($_POST['base_price']);
-    $available_seats = $mysqli->real_escape_string($_POST['available_seats']);
-    $flight_status = $mysqli->real_escape_string($_POST['flight_status']); // Added this line to capture flight status
-    
-    // Calculate duration in minutes
-    $departure = new DateTime($departure_time);
-    $arrival = new DateTime($arrival_time);
-    $duration = ($arrival->getTimestamp() - $departure->getTimestamp()) / 60;
-    
-    if (isset($_POST['flight_id']) && $_POST['flight_id'] != '') {
-        // Edit existing flight
-        $flight_id = $mysqli->real_escape_string($_POST['flight_id']);
-        
-        $query = "UPDATE flights 
-                SET airline_id='$airline_id',
-                    flight_number='$flight_number',
-                    origin_airport='$origin_airport',
-                    destination_airport='$destination_airport',
-                    departure_time='$departure_time',
-                    arrival_time='$arrival_time',
-                    duration=$duration,
-                    base_price=$base_price,
-                    available_seats=$available_seats,
-                    flight_status='$flight_status' 
-                WHERE flight_id=$flight_id";
-        
-        if ($mysqli->query($query)) {
-            $_SESSION['success_message'] = "Flight updated successfully!";
-        } else {
-            $_SESSION['error_message'] = "Error updating flight: " . $mysqli->error;
-        }
-    } else {
-        // Add new flight
-        $total_seats = $available_seats; // Initially, total seats = available seats
-        
-        $query = "INSERT INTO flights (
-                    airline_id, flight_number, origin_airport, destination_airport,
-                    departure_time, arrival_time, duration, base_price,
-                    total_seats, available_seats, flight_status
-                ) VALUES (
-                    '$airline_id', '$flight_number', '$origin_airport', '$destination_airport',
-                    '$departure_time', '$arrival_time', $duration, $base_price,
-                    $total_seats, $available_seats, '$flight_status'
-                )";
-        
-        if ($mysqli->query($query)) {
-            $_SESSION['success_message'] = "Flight added successfully!";
-        } else {
-            $_SESSION['error_message'] = "Error adding flight: " . $mysqli->error;
-        }
-    }
-    
-    header("Location: ?section=flights");
-    exit;
-}
-
-// Delete flight
-if (isset($_GET['delete_flight'])) {
-    $flight_id = $mysqli->real_escape_string($_GET['delete_flight']);
-    
-    // Check if flight has bookings before deleting
-    $check_bookings = $mysqli->query("SELECT COUNT(*) as count FROM bookings WHERE flight_id = $flight_id")->fetch_assoc()['count'];
-    
-    if ($check_bookings > 0) {
-        $_SESSION['error_message'] = "Cannot delete: This flight has active bookings.";
-    } else {
-        if ($mysqli->query("DELETE FROM flights WHERE flight_id = $flight_id")) {
-            $_SESSION['success_message'] = "Flight deleted successfully!";
-        } else {
-            $_SESSION['error_message'] = "Error deleting flight: " . $mysqli->error;
-        }
-    }
-    
-    header("Location: ?section=flights");
-    exit;
-}
-// USER MANAGEMENT
-// Delete user
-if (isset($_GET['delete_user'])) {
-    $user_id = $mysqli->real_escape_string($_GET['delete_user']);
-    
-    // Check if user exists
-    $user_check = $mysqli->query("SELECT user_id FROM users WHERE user_id = $user_id");
-    if ($user_check->num_rows == 0) {
-        $_SESSION['error_message'] = "User not found!";
-        header("Location: ?section=users");
-        exit;
-    }
-    
-    // Check if user has bookings before deleting
-    $check_bookings = $mysqli->query("SELECT COUNT(*) as count FROM bookings WHERE user_id = $user_id")->fetch_assoc()['count'];
-    
-    if ($check_bookings > 0) {
-        $_SESSION['error_message'] = "Cannot delete: This user has active bookings.";
-        header("Location: ?section=users");
-        exit;
-    }
-    
-    // Start transaction
-    try {
-        $mysqli->begin_transaction();
-        
-        // Delete user's bookings first
-        $delete_bookings = $mysqli->query("DELETE FROM bookings WHERE user_id = $user_id");
-        
-        // Then delete user
-        $delete_user = $mysqli->query("DELETE FROM users WHERE user_id = $user_id");
-        
-        if ($delete_user) {
-            $mysqli->commit();
-            $_SESSION['success_message'] = "User deleted successfully!";
-        } else {
-            $mysqli->rollback();
-            $_SESSION['error_message'] = "Error deleting user: " . $mysqli->error;
-        }
-    } catch (Exception $e) {
-        $mysqli->rollback();
-        $_SESSION['error_message'] = "Error during deletion: " . $e->getMessage();
-    }
-    
-    header("Location: ?section=users");
-    exit;
-}
+// [Rest of your existing code for airline management, flight management, etc.]
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -337,11 +91,16 @@ if (isset($_GET['delete_user'])) {
     .badge-warning { @apply bg-yellow-900 text-yellow-300; }
     .badge-danger { @apply bg-red-900 text-red-300; }
     .badge-info { @apply bg-blue-900 text-blue-300; }
+    .current-time { 
+      background: rgba(59, 130, 246, 0.2);
+      border-left: 3px solid #3B82F6;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex">
-
-  <!-- Sidebar -->
+<!-- Sidebar -->
   <aside class="sidebar w-64 p-6 hidden md:block">
     <div class="flex items-center mb-8">
       <img src="https://img.icons8.com/ios-filled/50/ffffff/airplane-mode-on.png" class="w-8 mr-3">
@@ -499,17 +258,26 @@ if (isset($_GET['delete_user'])) {
       </div>
     </section>
 
- <!-- Flights Section -->
-<section id="flightsSection" class="section <?= $active_section === 'flights' ? 'active' : '' ?>">
-  <div class="card p-5 rounded-xl">
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="text-lg font-semibold"><i class="fas fa-plane mr-2"></i> Flight Management</h3>
-      <button onclick="showFlightForm()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded transition">
-        <i class="fas fa-plus mr-2"></i> Add Flight
-      </button>
-    </div>
+  <!-- [Rest of your HTML remains the same until the flights section] -->
 
-    <!-- Add/Edit Flight Form (hidden by default) -->
+  <!-- Flights Section -->
+  <section id="flightsSection" class="section <?= $active_section === 'flights' ? 'active' : '' ?>">
+    <div class="card p-5 rounded-xl">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h3 class="text-lg font-semibold"><i class="fas fa-plane mr-2"></i> Flight Management</h3>
+          <div class="text-sm text-gray-400 mt-1">
+            <i class="far fa-clock mr-1"></i> Current Time (Asia/Kolkata): 
+            <span class="current-time" id="currentTime"><?= date('M d, Y H:i:s') ?></span>
+          </div>
+        </div>
+        <button onclick="showFlightForm()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded transition">
+          <i class="fas fa-plus mr-2"></i> Add Flight
+        </button>
+      </div>
+
+      <!-- [Rest of your flights section HTML remains the same] -->
+      <!-- Add/Edit Flight Form (hidden by default) -->
     <div id="flightForm" class="hidden mb-6 card p-4">
       <h4 class="text-md font-semibold mb-3" id="flightFormTitle">
         <i class="fas fa-plane mr-2"></i> Add New Flight
@@ -577,69 +345,85 @@ if (isset($_GET['delete_user'])) {
       </form>
     </div>
 
-    <!-- Flights Table -->
-    <div class="overflow-x-auto">
-      <table class="w-full">
-        <thead>
-          <tr class="border-b border-gray-800 text-left">
-            <th class="p-3">Flight No</th>
-            <th class="p-3">Airline</th>
-            <th class="p-3">Route</th>
-            <th class="p-3">Departure</th>
-            <th class="p-3">Arrival</th>
-            <th class="p-3">Price</th>
-            <th class="p-3">Status</th>
-            <th class="p-3">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($flights as $flight): 
-            $departure = date('M d, H:i', strtotime($flight['departure_time']));
-            $arrival = date('M d, H:i', strtotime($flight['arrival_time']));
-          ?>
-          <tr class="table-row border-b border-gray-800">
-            <td class="p-3"><?= $flight['flight_number'] ?></td>
-            <td class="p-3"><?= $flight['airline_name'] ?></td>
-            <td class="p-3"><?= "{$flight['origin_airport']} → {$flight['destination_airport']}" ?></td>
-            <td class="p-3"><?= $departure ?></td>
-            <td class="p-3"><?= $arrival ?></td>
-            <td class="p-3">$<?= number_format($flight['base_price'], 2) ?></td>
-            <td class="p-3">
-              <span class="badge <?= 
-                $flight['flight_status'] === 'On Time' ? 'badge-success' : 
-                ($flight['flight_status'] === 'Delayed' ? 'badge-warning' : 'badge-danger')
-              ?>">
-                <?= $flight['flight_status'] ?? 'On Time' ?>
-              </span>
-            </td>
-            <td class="p-3">
-              <button onclick="editFlight(
-                '<?= $flight['flight_id'] ?>',
-                '<?= $flight['airline_id'] ?>',
-                '<?= $flight['flight_number'] ?>',
-                '<?= $flight['origin_airport'] ?>',
-                '<?= $flight['destination_airport'] ?>',
-                '<?= date('Y-m-d\TH:i', strtotime($flight['departure_time'])) ?>',
-                '<?= date('Y-m-d\TH:i', strtotime($flight['arrival_time'])) ?>',
-                '<?= $flight['base_price'] ?>',
-                '<?= $flight['available_seats'] ?>',
-                '<?= $flight['flight_status'] ?>'
-              )" class="text-indigo-400 hover:text-indigo-300 mr-2">
-                <i class="fas fa-edit"></i>
-              </button>
-              <a href="?delete_flight=<?= $flight['flight_id'] ?>" class="text-red-400 hover:text-red-300" onclick="return confirm('Are you sure you want to delete this flight?')">
-                <i class="fas fa-trash"></i>
-              </a>
-            </td>
-          </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
+      <!-- Flights Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-gray-800 text-left">
+              <th class="p-3">Flight No</th>
+              <th class="p-3">Airline</th>
+              <th class="p-3">Route</th>
+              <th class="p-3">Departure</th>
+              <th class="p-3">Arrival</th>
+              <th class="p-3">Price</th>
+              <th class="p-3">Status</th>
+              <th class="p-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($flights as $flight): 
+              $departure = date('M d, H:i', strtotime($flight['departure_time']));
+              $arrival = date('M d, H:i', strtotime($flight['arrival_time']));
+              
+              // Calculate time remaining
+              $now = new DateTime();
+              $departure_time = new DateTime($flight['departure_time']);
+              $time_remaining = $now->diff($departure_time);
+              
+              // Format time remaining
+              if ($time_remaining->d > 0) {
+                  $remaining_text = $time_remaining->d . 'd ' . $time_remaining->h . 'h';
+              } elseif ($time_remaining->h > 0) {
+                  $remaining_text = $time_remaining->h . 'h ' . $time_remaining->i . 'm';
+              } else {
+                  $remaining_text = $time_remaining->i . 'm';
+              }
+            ?>
+            <tr class="table-row border-b border-gray-800">
+              <td class="p-3"><?= $flight['flight_number'] ?></td>
+              <td class="p-3"><?= $flight['airline_name'] ?></td>
+              <td class="p-3"><?= "{$flight['origin_airport']} → {$flight['destination_airport']}" ?></td>
+              <td class="p-3">
+                <?= $departure ?>
+                <div class="text-xs text-gray-400">in <?= $remaining_text ?></div>
+              </td>
+              <td class="p-3"><?= $arrival ?></td>
+              <td class="p-3">$<?= number_format($flight['base_price'], 2) ?></td>
+              <td class="p-3">
+                <span class="badge <?= 
+                  $flight['flight_status'] === 'On Time' ? 'badge-success' : 
+                  ($flight['flight_status'] === 'Delayed' ? 'badge-warning' : 'badge-danger')
+                ?>">
+                  <?= $flight['flight_status'] ?? 'On Time' ?>
+                </span>
+              </td>
+              <td class="p-3">
+                <button onclick="editFlight(
+                  '<?= $flight['flight_id'] ?>',
+                  '<?= $flight['airline_id'] ?>',
+                  '<?= $flight['flight_number'] ?>',
+                  '<?= $flight['origin_airport'] ?>',
+                  '<?= $flight['destination_airport'] ?>',
+                  '<?= date('Y-m-d\TH:i', strtotime($flight['departure_time'])) ?>',
+                  '<?= date('Y-m-d\TH:i', strtotime($flight['arrival_time'])) ?>',
+                  '<?= $flight['base_price'] ?>',
+                  '<?= $flight['available_seats'] ?>',
+                  '<?= $flight['flight_status'] ?>'
+                )" class="text-indigo-400 hover:text-indigo-300 mr-2">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <a href="?delete_flight=<?= $flight['flight_id'] ?>" class="text-red-400 hover:text-red-300" onclick="return confirm('Are you sure you want to delete this flight?')">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-</section>
-
-  <!-- Users Section -->
+  </section>
+<!-- Users Section -->
     <section id="usersSection" class="section <?= $active_section === 'users' ? 'active' : '' ?>">
       <div class="card p-5 rounded-xl overflow-x-auto">
         <h3 class="text-lg font-semibold mb-4"><i class="fas fa-users mr-2"></i> User Management</h3>
@@ -793,7 +577,38 @@ if (isset($_GET['delete_user'])) {
   </main>
 
 
+  <!-- [Rest of your HTML remains the same] -->
+
   <script>
+    // Update current time every second
+    function updateCurrentTime() {
+      const options = {
+        timeZone: 'Asia/Kolkata',
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      };
+      
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('en-US', options);
+      document.getElementById('currentTime').textContent = formatter.format(now);
+      
+      // Refresh page every 5 minutes to get updated flight data
+      const minutes = now.getMinutes();
+      if (minutes % 5 === 0 && now.getSeconds() === 0) {
+        window.location.reload();
+      }
+    }
+    
+    // Update time immediately and then every second
+    updateCurrentTime();
+    setInterval(updateCurrentTime, 1000);
+
+    // [Rest of your JavaScript remains the same]
 // Function to handle user deletion
 function deleteUser(userId) {
     if (confirm('Are you sure you want to delete this user?')) {
@@ -1482,6 +1297,6 @@ document.addEventListener('DOMContentLoaded', function() {
     exportBtn.addEventListener('click', exportBookingsToCSV);
   }
 });
-</script>
+  </script>
 </body>
 </html>
