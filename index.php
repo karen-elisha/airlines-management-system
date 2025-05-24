@@ -2,28 +2,58 @@
 // Start session for user management
 session_start();
 
-// Database connection - make sure db_connect.php uses MySQLi
+// Database connection
 require_once 'db_connect.php';
 
 // Fetch airports for dropdowns
 $query = "SELECT city, airport_code FROM airports ORDER BY city";
-
-// Execute query
 $result = $mysqli->query($query);
 
-// Check for errors
 if (!$result) {
     die("Database error: " . $mysqli->error);
 }
 
-// Fetch results
 $airports = [];
 while ($row = $result->fetch_assoc()) {
     $airports[] = $row;
 }
-
-// Free result set
 $result->free();
+
+// Fetch trending routes (most booked routes in the last 7 days)
+$trendingQuery = "
+    SELECT 
+        f.origin_airport AS from_code,
+        f.destination_airport AS to_code,
+        a1.city AS from_city,
+        a2.city AS to_city,
+        a1.airport_name AS from_airport,
+        a2.airport_name AS to_airport,
+        COUNT(b.booking_id) AS bookings_count,
+        MIN(f.base_price) AS min_price
+    FROM 
+        bookings b
+    JOIN 
+        flights f ON b.flight_id = f.flight_id
+    JOIN 
+        airports a1 ON f.origin_airport = a1.airport_code
+    JOIN 
+        airports a2 ON f.destination_airport = a2.airport_code
+    WHERE 
+        b.booking_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+    GROUP BY 
+        f.origin_airport, f.destination_airport
+    ORDER BY 
+        bookings_count DESC
+    LIMIT 4";
+
+$trendingResult = $mysqli->query($trendingQuery);
+$trendingRoutes = [];
+if ($trendingResult) {
+    while ($row = $trendingResult->fetch_assoc()) {
+        $trendingRoutes[] = $row;
+    }
+    $trendingResult->free();
+}
 
 // Set current date as minimum date for departure
 $today = date('Y-m-d');
@@ -39,17 +69,29 @@ $today = date('Y-m-d');
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .hero-bg {
-      background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+      background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
                         url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
       background-size: cover;
       background-position: center;
+      background-attachment: fixed;
     }
     .card-hover:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+      transition: all 0.3s ease;
     }
     .swap-btn:hover {
       transform: scale(1.05);
+      transition: transform 0.2s ease;
+    }
+    .destination-card {
+      transition: all 0.3s ease;
+    }
+    .destination-card:hover .destination-image {
+      transform: scale(1.05);
+    }
+    .destination-image {
+      transition: transform 0.5s ease;
     }
   </style>
 </head>
@@ -63,19 +105,17 @@ $today = date('Y-m-d');
       <span class="text-xl font-bold">BOOKMYFLIGHT</span>
     </div>
     <nav class="hidden md:flex items-center space-x-8">
-      <a href="airline-details.html" class="hover:text-indigo-300 transition">Airlines</a>
+      <a href="airline-details.php" class="hover:text-indigo-300 transition">Airlines</a>
       <a href="feedback.php" class="hover:text-indigo-300 transition">Feedback</a>
       <a href="#destinations" class="hover:text-indigo-300 transition">Destinations</a>
       <div class="relative">
-        
-          <button onclick="toggleDropdown()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md flex items-center">
-            <i class="fas fa-user-circle mr-2"></i> Login
-          </button>
-          <div id="loginDropdown" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-xl hidden">
-            <a href="login.php" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-user mr-2"></i>User Login</a>
-            <a href="admin-login.php" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-lock mr-2"></i>Admin Login</a>
-          </div>
-       
+        <button onclick="toggleDropdown()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md flex items-center">
+          <i class="fas fa-user-circle mr-2"></i> Login
+        </button>
+        <div id="loginDropdown" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-xl hidden">
+          <a href="login.php" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-user mr-2"></i>User Login</a>
+          <a href="admin-login.php" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-lock mr-2"></i>Admin Login</a>
+        </div>
       </div>
     </nav>
     <button class="md:hidden text-2xl" onclick="toggleMobileMenu()">
@@ -111,89 +151,81 @@ $today = date('Y-m-d');
       </h1>
       <p class="text-center text-gray-600 mb-8">Compare prices across 50+ airlines for the best deals</p>
       
-      <!-- Update the form action to search-flights.php -->
-<form action="search_flights.php" method="POST" class="space-y-6" onsubmit="return validateForm()">
-  <div class="flex justify-center space-x-6">
-    <label class="inline-flex items-center">
-      <input type="radio" name="trip" value="oneway" checked class="h-5 w-5 text-indigo-600" onchange="toggleReturnDate()">
-      <span class="ml-2 text-gray-700">One Way</span>
-    </label>
-    <label class="inline-flex items-center">
-      <input type="radio" name="trip" value="roundtrip" class="h-5 w-5 text-indigo-600" onchange="toggleReturnDate()">
-      <span class="ml-2 text-gray-700">Round Trip</span>
-    </label>
-  </div>
+      <form action="search_flights.php" method="POST" class="space-y-6" onsubmit="return validateForm()">
+        <div class="flex justify-center space-x-6">
+          <label class="inline-flex items-center">
+            <input type="radio" name="trip" value="oneway" checked class="h-5 w-5 text-indigo-600" onchange="toggleReturnDate()">
+            <span class="ml-2 text-gray-700">One Way</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="radio" name="trip" value="roundtrip" class="h-5 w-5 text-indigo-600" onchange="toggleReturnDate()">
+            <span class="ml-2 text-gray-700">Round Trip</span>
+          </label>
+        </div>
 
-  <div class="flex flex-col md:flex-row gap-4 items-end">
-    <div class="flex-1">
-      <label class="block text-gray-700 mb-1">From</label>
-      <select name="from" id="from" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
-        <option value="">Select City</option>
-        <?php foreach($airports as $airport): ?>
-          <option value="<?php echo $airport['airport_code']; ?>"><?php echo $airport['city'] . ' (' . $airport['airport_code'] . ')'; ?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <button type="button" onclick="swapLocations()" class="swap-btn bg-indigo-600 text-white p-3 rounded-lg transition duration-200 hover:bg-indigo-700">
-      <i class="fas fa-exchange-alt"></i>
-    </button>
+        <div class="flex flex-col md:flex-row gap-4 items-end">
+          <div class="flex-1">
+            <label class="block text-gray-700 mb-1">From</label>
+            <select name="from" id="from" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+              <option value="">Select City</option>
+              <?php foreach($airports as $airport): ?>
+                <option value="<?php echo $airport['airport_code']; ?>"><?php echo $airport['city'] . ' (' . $airport['airport_code'] . ')'; ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <button type="button" onclick="swapLocations()" class="swap-btn bg-indigo-600 text-white p-3 rounded-lg transition duration-200 hover:bg-indigo-700">
+            <i class="fas fa-exchange-alt"></i>
+          </button>
 
-    <div class="flex-1">
-      <label class="block text-gray-700 mb-1">To</label>
-      <select name="to" id="to" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
-        <option value="">Select City</option>
-        <?php foreach($airports as $airport): ?>
-          <option value="<?php echo $airport['airport_code']; ?>"><?php echo $airport['city'] . ' (' . $airport['airport_code'] . ')'; ?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-  </div>
-
-  <div class="flex flex-col md:flex-row gap-4">
-    <div class="flex-1">
-      <label class="block text-gray-700 mb-1">Departure</label>
-      <input type="date" name="departure_date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" min="<?php echo $today; ?>" required>
-    </div>
-    <div class="flex-1">
-      <label class="block text-gray-700 mb-1">Return</label>
-      <input type="date" name="return_date" id="returnDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-100" min="<?php echo $today; ?>" disabled>
-    </div>
-  </div>
-
-  <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-    <div class="flex-1">
-      <label class="block text-gray-700 mb-1">Passengers</label>
-      <div class="flex items-center border border-gray-300 rounded-lg p-1">
-        <button type="button" onclick="adjustPassengers(-1)" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">
-          <i class="fas fa-minus"></i>
-        </button>
-        <input type="number" name="tickets" value="1" min="1" max="9" class="w-16 text-center border-0 focus:ring-0">
-        <button type="button" onclick="adjustPassengers(1)" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">
-          <i class="fas fa-plus"></i>
-        </button>
-      </div>
-    </div>
-    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200 w-full md:w-auto">
-      <i class="fas fa-search mr-2"></i> Search Flights
-    </button>
-  </div>
-</form>
-
-<!-- Add error message display if there's a validation error -->
-<?php if(isset($_SESSION['error_message'])): ?>
-  <div class="mt-4 p-3 bg-red-100 text-red-700 rounded-md">
-    <?php 
-      echo $_SESSION['error_message']; 
-      unset($_SESSION['error_message']); // Clear message after displaying
-    ?>
-  </div>
-<?php endif; ?>
+          <div class="flex-1">
+            <label class="block text-gray-700 mb-1">To</label>
+            <select name="to" id="to" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+              <option value="">Select City</option>
+              <?php foreach($airports as $airport): ?>
+                <option value="<?php echo $airport['airport_code']; ?>"><?php echo $airport['city'] . ' (' . $airport['airport_code'] . ')'; ?></option>
+              <?php endforeach; ?>
             </select>
           </div>
         </div>
 
-        
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <label class="block text-gray-700 mb-1">Departure</label>
+            <input type="date" name="departure_date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" min="<?php echo $today; ?>" required>
+          </div>
+          <div class="flex-1">
+            <label class="block text-gray-700 mb-1">Return</label>
+            <input type="date" name="return_date" id="returnDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-100" min="<?php echo $today; ?>" disabled>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div class="flex-1">
+            <label class="block text-gray-700 mb-1">Passengers</label>
+            <div class="flex items-center border border-gray-300 rounded-lg p-1">
+              <button type="button" onclick="adjustPassengers(-1)" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">
+                <i class="fas fa-minus"></i>
+              </button>
+              <input type="number" name="tickets" value="1" min="1" max="9" class="w-16 text-center border-0 focus:ring-0">
+              <button type="button" onclick="adjustPassengers(1)" class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200 w-full md:w-auto">
+            <i class="fas fa-search mr-2"></i> Search Flights
+          </button>
+        </div>
       </form>
+
+      <?php if(isset($_SESSION['error_message'])): ?>
+        <div class="mt-4 p-3 bg-red-100 text-red-700 rounded-md">
+          <?php 
+            echo $_SESSION['error_message']; 
+            unset($_SESSION['error_message']);
+          ?>
+        </div>
+      <?php endif; ?>
     </div>
   </div>
 </main>
@@ -207,9 +239,9 @@ $today = date('Y-m-d');
     </div>
 
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-      <div class="card-hover bg-white rounded-xl overflow-hidden shadow-md transition duration-300">
-        <div class="relative h-48">
-          <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Delhi" class="w-full h-full object-cover">
+      <div class="destination-card bg-white rounded-xl overflow-hidden shadow-md transition duration-300">
+        <div class="relative h-48 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Delhi" class="destination-image w-full h-full object-cover">
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70"></div>
           <div class="absolute bottom-0 left-0 p-4 text-white">
             <h3 class="font-bold text-xl">Delhi</h3>
@@ -225,9 +257,9 @@ $today = date('Y-m-d');
         </div>
       </div>
 
-      <div class="card-hover bg-white rounded-xl overflow-hidden shadow-md transition duration-300">
-        <div class="relative h-48">
-          <img src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1498&q=80" alt="Mumbai" class="w-full h-full object-cover">
+      <div class="destination-card bg-white rounded-xl overflow-hidden shadow-md transition duration-300">
+        <div class="relative h-48 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1498&q=80" alt="Mumbai" class="destination-image w-full h-full object-cover">
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70"></div>
           <div class="absolute bottom-0 left-0 p-4 text-white">
             <h3 class="font-bold text-xl">Mumbai</h3>
@@ -243,9 +275,9 @@ $today = date('Y-m-d');
         </div>
       </div>
 
-      <div class="card-hover bg-white rounded-xl overflow-hidden shadow-md transition duration-300">
-        <div class="relative h-48">
-          <img src="https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1527&q=80" alt="Goa" class="w-full h-full object-cover">
+      <div class="destination-card bg-white rounded-xl overflow-hidden shadow-md transition duration-300">
+        <div class="relative h-48 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1527&q=80" alt="Goa" class="destination-image w-full h-full object-cover">
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70"></div>
           <div class="absolute bottom-0 left-0 p-4 text-white">
             <h3 class="font-bold text-xl">Goa</h3>
@@ -261,9 +293,9 @@ $today = date('Y-m-d');
         </div>
       </div>
 
-      <div class="card-hover bg-white rounded-xl overflow-hidden shadow-md transition duration-300">
-        <div class="relative h-48">
-          <img src="https://assets.onecompiler.app/42xkraykw/42xktaxnq/JAI.png" alt="Jaipur" class="w-full h-full object-cover">
+      <div class="destination-card bg-white rounded-xl overflow-hidden shadow-md transition duration-300">
+        <div class="relative h-48 overflow-hidden">
+          <img src="https://assets.onecompiler.app/42xkraykw/42xktaxnq/JAI.png" alt="Jaipur" class="destination-image w-full h-full object-cover">
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70"></div>
           <div class="absolute bottom-0 left-0 p-4 text-white">
             <h3 class="font-bold text-xl">Jaipur</h3>
@@ -291,61 +323,82 @@ $today = date('Y-m-d');
     </div>
 
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition duration-200">
-        <div class="flex items-center justify-between mb-3">
-          <div>
-            <h4 class="font-semibold">Delhi → Mumbai</h4>
-            <p class="text-sm text-gray-500">Indira Gandhi → Chhatrapati Shivaji</p>
+      <?php if(!empty($trendingRoutes)): ?>
+        <?php foreach($trendingRoutes as $route): ?>
+          <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition duration-200">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <h4 class="font-semibold"><?php echo $route['from_city']; ?> → <?php echo $route['to_city']; ?></h4>
+                <p class="text-sm text-gray-500"><?php echo $route['from_airport']; ?> → <?php echo $route['to_airport']; ?></p>
+              </div>
+              <i class="fas fa-plane text-indigo-500"></i>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-indigo-600 font-bold">₹<?php echo number_format($route['min_price']); ?></span>
+              <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">
+                <?php echo $route['bookings_count']; ?> bookings
+              </span>
+            </div>
           </div>
-          <i class="fas fa-plane text-indigo-500"></i>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="text-indigo-600 font-bold">₹2,499</span>
-          <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">6 flights/day</span>
-        </div>
-      </div>
-
-      <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition duration-200">
-        <div class="flex items-center justify-between mb-3">
-          <div>
-            <h4 class="font-semibold">Bangalore → Goa</h4>
-            <p class="text-sm text-gray-500">Kempegowda → Dabolim</p>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <!-- Fallback content if no trending routes found -->
+        <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition duration-200">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h4 class="font-semibold">Delhi → Mumbai</h4>
+              <p class="text-sm text-gray-500">Indira Gandhi → Chhatrapati Shivaji</p>
+            </div>
+            <i class="fas fa-plane text-indigo-500"></i>
           </div>
-          <i class="fas fa-plane text-indigo-500"></i>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="text-indigo-600 font-bold">₹1,999</span>
-          <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">4 flights/day</span>
-        </div>
-      </div>
-
-      <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition duration-200">
-        <div class="flex items-center justify-between mb-3">
-          <div>
-            <h4 class="font-semibold">Hyderabad → Chennai</h4>
-            <p class="text-sm text-gray-500">Rajiv Gandhi → Meenambakkam</p>
+          <div class="flex justify-between items-center">
+            <span class="text-indigo-600 font-bold">₹2,499</span>
+            <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">6 flights/day</span>
           </div>
-          <i class="fas fa-plane text-indigo-500"></i>
         </div>
-        <div class="flex justify-between items-center">
-          <span class="text-indigo-600 font-bold">₹2,299</span>
-          <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">5 flights/day</span>
-        </div>
-      </div>
-
-      <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition duration-200">
-        <div class="flex items-center justify-between mb-3">
-          <div>
-            <h4 class="font-semibold">Kolkata → Delhi</h4>
-            <p class="text-sm text-gray-500">Netaji Subhash → Indira Gandhi</p>
+        
+        <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition duration-200">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h4 class="font-semibold">Bangalore → Goa</h4>
+              <p class="text-sm text-gray-500">Kempegowda → Dabolim</p>
+            </div>
+            <i class="fas fa-plane text-indigo-500"></i>
           </div>
-          <i class="fas fa-plane text-indigo-500"></i>
+          <div class="flex justify-between items-center">
+            <span class="text-indigo-600 font-bold">₹1,999</span>
+            <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">4 flights/day</span>
+          </div>
         </div>
-        <div class="flex justify-between items-center">
-          <span class="text-indigo-600 font-bold">₹2,999</span>
-          <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">7 flights/day</span>
+        
+        <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition duration-200">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h4 class="font-semibold">Hyderabad → Chennai</h4>
+              <p class="text-sm text-gray-500">Rajiv Gandhi → Meenambakkam</p>
+            </div>
+            <i class="fas fa-plane text-indigo-500"></i>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-indigo-600 font-bold">₹2,299</span>
+            <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">5 flights/day</span>
+          </div>
         </div>
-      </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition duration-200">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h4 class="font-semibold">Kolkata → Delhi</h4>
+              <p class="text-sm text-gray-500">Netaji Subhash → Indira Gandhi</p>
+            </div>
+            <i class="fas fa-plane text-indigo-500"></i>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-indigo-600 font-bold">₹2,999</span>
+            <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">7 flights/day</span>
+          </div>
+        </div>
+      <?php endif; ?>
     </div>
   </div>
 </section>
@@ -430,27 +483,25 @@ $today = date('Y-m-d');
   }
 
   // Validate form before submission
-// Validate form before submission
-function validateForm() {
-  const from = document.getElementById('from').value;
-  const to = document.getElementById('to').value;
-  
-  if (!from || !to) {
-    alert('Please select both departure and arrival cities.');
-    return false;
+  function validateForm() {
+    const from = document.getElementById('from').value;
+    const to = document.getElementById('to').value;
+    
+    if (!from || !to) {
+      alert('Please select both departure and arrival cities.');
+      return false;
+    }
+    
+    if (from === to) {
+      alert('Departure and arrival cities cannot be the same. Please select different cities.');
+      return false;
+    }
+    
+    return true;
   }
-  
-  if (from === to) {
-    alert('Departure and arrival cities cannot be the same. Please select different cities.');
-    return false;
-  }
-  
-  return true;
-}
 
   // Swap locations
-// Swap locations
-function swapLocations() {
+  function swapLocations() {
     const fromSelect = document.getElementById('from');
     const toSelect = document.getElementById('to');
     const tempValue = fromSelect.value;
@@ -465,7 +516,8 @@ function swapLocations() {
         fromSelect.options[fromSelect.selectedIndex].text = toSelect.options[toSelect.selectedIndex].text;
         toSelect.options[toSelect.selectedIndex].text = tempText;
     }
-}
+  }
+
   // Adjust passenger count
   function adjustPassengers(change) {
     const input = document.querySelector('input[name="tickets"]');

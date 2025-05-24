@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 24, 2025 at 08:43 AM
+-- Generation Time: May 24, 2025 at 09:17 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -491,22 +491,6 @@ INSERT INTO `passengers` (`passenger_id`, `booking_id`, `first_name`, `last_name
 -- --------------------------------------------------------
 
 --
--- Table structure for table `promotions`
---
-
-CREATE TABLE `promotions` (
-  `promo_id` int(11) NOT NULL,
-  `promo_code` varchar(20) NOT NULL,
-  `description` text DEFAULT NULL,
-  `discount_percent` decimal(5,2) DEFAULT NULL,
-  `valid_from` date NOT NULL,
-  `valid_until` date NOT NULL,
-  `active` tinyint(1) DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `tickets`
 --
 
@@ -672,13 +656,6 @@ ALTER TABLE `passengers`
   ADD KEY `booking_id` (`booking_id`);
 
 --
--- Indexes for table `promotions`
---
-ALTER TABLE `promotions`
-  ADD PRIMARY KEY (`promo_id`),
-  ADD UNIQUE KEY `promo_code` (`promo_code`);
-
---
 -- Indexes for table `tickets`
 --
 ALTER TABLE `tickets`
@@ -738,12 +715,6 @@ ALTER TABLE `notifications`
 --
 ALTER TABLE `passengers`
   MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
-
---
--- AUTO_INCREMENT for table `promotions`
---
-ALTER TABLE `promotions`
-  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tickets`
