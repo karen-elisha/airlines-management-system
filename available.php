@@ -241,18 +241,10 @@ mysqli_stmt_close($stmt);
         <a href="index.php" class="hover:text-indigo-400 transition">Home</a>
         <a href="feedback.php" class="hover:text-indigo-400 transition">Feedback</a>
         <?php if(isset($_SESSION['user_id'])): ?>
-          <div class="relative">
-            <button onclick="toggleDropdown()" class="flex items-center hover:text-indigo-400 transition">
-              <i class="fas fa-user-circle mr-2"></i>
-              <?php echo $_SESSION['username'] ?? 'My Account'; ?>
-              <i class="fas fa-chevron-down ml-1 text-xs"></i>
-            </button>
-            <div id="loginDropdown" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-xl hidden z-50">
-              <a href="profile.php" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-id-card mr-2"></i>My Profile</a>
-              <a href="my-bookings.php" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-ticket-alt mr-2"></i>My Bookings</a>
-              <a href="logout.php" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
-            </div>
-          </div>
+         <a href="user-dashboard.php" class="hover:text-indigo-200">
+          <i class="fas fa-home mr-1"></i> Dashboard
+        </a>
+    
         <?php else: ?>
           <button onclick="window.location.href='login.php'" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition">
             <i class="fas fa-user mr-2"></i> Login
