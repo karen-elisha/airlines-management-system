@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 23, 2025 at 08:13 AM
+-- Generation Time: May 24, 2025 at 08:04 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -73,7 +73,7 @@ INSERT INTO `airlines` (`airline_id`, `airline_name`, `logo_url`, `website`, `cu
 ('GF', 'Go First', 'https://gofirst.in/logo.png', 'https://gofirst.in', '1800-210-0999', 'https://gofirst.in/contact', 1),
 ('SA', 'Star Air', 'https://starair.in/logo.png', 'https://starair.in', '1800-425-1111', 'https://starair.in/contact', 1),
 ('SG', 'SpiceJet', 'logos/spicejet.png', NULL, NULL, NULL, 1),
-('TJ', 'TruJet', 'https://trujet.com/logo.png', 'https://trujet.com', '040-67137137', 'https://trujet.com/contact', 1),
+('TJ', 'TruJet', 'https://www.google.com/imgres?q=https%3A%2F%2Ftrujet.in%2Flogo.png&imgurl=https%3A%2F%2Fairhex.com%2Fimages%2Fairline-logos%2Ftrujet.png&imgrefurl=https%3A%2F%2Fairhex.com%2Fairline-logos%2Ftrujet%2F&docid=YauCG4_VdZQY8M&tbnid=YquCLu2TSJ5EiM&vet=12ahUKEwi', 'https://trujet.com', '040-67137137', 'https://trujet.com/contact', 1),
 ('UK', 'Vistara', 'logos/vistara.png', NULL, NULL, NULL, 1);
 
 -- --------------------------------------------------------
@@ -174,7 +174,17 @@ INSERT INTO `bookings` (`booking_id`, `booking_reference`, `user_id`, `flight_id
 (40, 'BK-682F20098FC45', 10, 1049, '2025-05-22 15:00:57', '2025-05-23', 1, 6549.00, 'medamritvik@gmail.com', '7013631447', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 18:31:03', 'karen@okaxis'),
 (41, 'BK-682F52C759C3C', 10, 1685, '2025-05-22 18:37:27', '2025-05-28', 1, 3835.00, 'harry@gmail.com', '9591553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 22:07:32', 'harry@okaxis'),
 (42, 'BK-682FFC0A17426', 10, 1046, '2025-05-23 06:39:38', '2025-05-23', 1, 3953.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 10:09:46', 'karen@okaxis'),
-(43, 'BK-6830105F39445', 11, 1706, '2025-05-23 08:06:23', '2025-05-30', 1, 5487.00, 'dhanya@gmail.com', '7013631447', 'Cancelled', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 11:38:31', 'dhanya@okaxis');
+(43, 'BK-6830105F39445', 11, 1706, '2025-05-23 08:06:23', '2025-05-30', 1, 5487.00, 'dhanya@gmail.com', '7013631447', 'Cancelled', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 11:38:31', 'dhanya@okaxis'),
+(44, 'BK-683027B09C896', 12, 1711, '2025-05-23 09:45:52', '2025-05-30', 1, 3717.00, 'robert@gmail.com', '9591553820', 'Cancelled', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 13:27:25', 'robert@okaxis'),
+(45, 'BK-68304D32A76A0', 12, 1652, '2025-05-23 12:25:54', '2025-05-24', 1, 4307.00, 'karenelisha0204@gmail.com', '7338553820', 'Cancelled', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 16:01:31', 'kevin@okaxis'),
+(46, 'BK-68304F7C62478', 12, 1652, '2025-05-23 12:35:40', '2025-05-24', 1, 4307.00, 'harry@gmail.com', '7338553820', 'Cancelled', 'Pending', 'credit_card', '0000-00-00 00:00:00', '2025-05-23 16:31:40', NULL),
+(47, 'BK-68304FB37C147', 12, 1652, '2025-05-23 12:36:35', '2025-05-24', 1, 4307.00, 'harry@gmail.com', '7338553820', 'Cancelled', 'Pending', 'credit_card', '0000-00-00 00:00:00', '2025-05-23 16:21:24', NULL),
+(48, 'BK-68305284B0AF9', 12, 1656, '2025-05-23 12:48:36', '2025-05-25', 1, 3953.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 16:20:23', 'kevin@okaxis'),
+(49, 'BK-68308C6D9392D', 12, 1656, '2025-05-23 16:55:41', '2025-05-25', 1, 3953.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 20:30:53', 'karen@okaxis'),
+(50, 'BK-68309F8744971', 12, 1656, '2025-05-23 18:17:11', '2025-05-25', 1, 5930.00, 'harry@gmail.com', '7013631447', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 21:48:23', 'karen@okaxis'),
+(51, 'BK-6830A6836E354', 12, 1656, '2025-05-23 18:46:59', '2025-05-25', 1, 5930.00, 'harry@gmail.com', '7013631447', 'Cancelled', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-24 11:10:45', 'karen@okaxis'),
+(52, 'BK-6830A899E9AE3', 12, 1656, '2025-05-23 18:55:53', '2025-05-25', 1, 3953.00, 'harry@gmail.com', '7013631447', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 22:26:00', 'karen@okaxis'),
+(53, 'BK-6830AF46CC883', 12, 1656, '2025-05-23 19:24:22', '2025-05-25', 1, 3953.00, 'harry@gmail.com', '7013631447', 'Cancelled', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-24 10:43:20', 'karen@okaxis');
 
 -- --------------------------------------------------------
 
@@ -184,20 +194,38 @@ INSERT INTO `bookings` (`booking_id`, `booking_reference`, `user_id`, `flight_id
 
 CREATE TABLE `feedback` (
   `feedback_id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `name` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `rating` int(11) NOT NULL,
-  `message` text NOT NULL,
-  `created_at` timestamp NULL DEFAULT current_timestamp()
+  `passenger_name` varchar(100) NOT NULL,
+  `flight_id` int(11) NOT NULL,
+  `flight_number` varchar(20) NOT NULL,
+  `journey_date` date NOT NULL,
+  `overall_rating` int(1) NOT NULL,
+  `punctuality` varchar(20) NOT NULL,
+  `cleanliness` varchar(20) NOT NULL,
+  `staff_behavior` varchar(20) NOT NULL,
+  `seat_comfort` varchar(20) NOT NULL,
+  `cabin_clean` varchar(20) NOT NULL,
+  `food_service` varchar(20) NOT NULL,
+  `safety` varchar(20) NOT NULL,
+  `entertainment` varchar(20) NOT NULL,
+  `security_feeling` varchar(20) NOT NULL,
+  `recommendation` varchar(20) NOT NULL,
+  `additional_feedback` text DEFAULT NULL,
+  `complaint_type` varchar(50) DEFAULT NULL,
+  `complaint_details` text DEFAULT NULL,
+  `contact_info` varchar(100) DEFAULT NULL,
+  `website_experience` varchar(20) NOT NULL,
+  `website_feedback` text DEFAULT NULL,
+  `submission_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `feedback`
 --
 
-INSERT INTO `feedback` (`feedback_id`, `user_id`, `name`, `email`, `rating`, `message`, `created_at`) VALUES
-(1, 5, 'Dhanya', 'dhanya@gmail.com', 2, '0', '2025-05-17 10:22:54');
+INSERT INTO `feedback` (`feedback_id`, `passenger_name`, `flight_id`, `flight_number`, `journey_date`, `overall_rating`, `punctuality`, `cleanliness`, `staff_behavior`, `seat_comfort`, `cabin_clean`, `food_service`, `safety`, `entertainment`, `security_feeling`, `recommendation`, `additional_feedback`, `complaint_type`, `complaint_details`, `contact_info`, `website_experience`, `website_feedback`, `submission_date`) VALUES
+(1, 'Karen', 1043, '6E146', '2025-05-30', 0, 'Yes', '', '', '', '', '', '', '', '', '', 'Good', NULL, NULL, NULL, 'Good', '', '2025-05-23 17:15:01'),
+(2, 'Karen', 1043, '', '2025-05-30', 0, 'Yes', '', '', '', '', '', '', '', '', '', 'Good', NULL, NULL, NULL, 'Good', '', '2025-05-23 17:16:49'),
+(3, 'Karen', 1043, '', '2025-05-30', 0, 'Yes', '', '', '', '', '', '', '', '', '', 'Good', NULL, NULL, NULL, 'Good', '', '2025-05-23 17:20:28');
 
 -- --------------------------------------------------------
 
@@ -370,6 +398,34 @@ INSERT INTO `flights` (`flight_id`, `flight_number`, `airline_id`, `origin_airpo
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `generated_tickets`
+--
+
+CREATE TABLE `generated_tickets` (
+  `ticket_id` int(11) NOT NULL,
+  `booking_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `booking_reference` varchar(20) NOT NULL,
+  `ticket_html` longtext NOT NULL,
+  `flight_details` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`flight_details`)),
+  `passenger_details` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`passenger_details`)),
+  `status` enum('active','cancelled','expired') DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `generated_tickets`
+--
+
+INSERT INTO `generated_tickets` (`ticket_id`, `booking_id`, `user_id`, `booking_reference`, `ticket_html`, `flight_details`, `passenger_details`, `status`, `created_at`, `updated_at`) VALUES
+(1, 51, 12, 'BK-6830A6836E354', '            <div>\r\n              <h2>BookMyFlight Ticket</h2>\r\n              <strong>Booking Reference:</strong> BK-6830A6836E354<br>\r\n              <strong>Flight:</strong> AA-AA1013<br>\r\n              <strong>Date:</strong> 25 May 2025<br>\r\n              <strong>From:</strong> BLR \r\n              <strong>To:</strong> HYD<br>\r\n              <strong>Departure:</strong> 11:00 \r\n              <strong>Arrival:</strong> 12:15<br>\r\n              <strong>Passengers:</strong>\r\n              <ul>\r\n                                  <li>Harry  Potter (Seat: TBA)</li>\r\n                              </ul>\r\n            </div>\r\n            ', '{\"booking_id\":51,\"booking_reference\":\"BK-6830A6836E354\",\"user_id\":12,\"flight_id\":1656,\"booking_date\":\"2025-05-23 18:46:59\",\"travel_date\":\"2025-05-25\",\"num_passengers\":1,\"total_amount\":\"5930.00\",\"contact_email\":\"harry@gmail.com\",\"contact_phone\":\"7013631447\",\"booking_status\":\"Confirmed\",\"payment_status\":\"Completed\",\"payment_method\":\"upi\",\"created_at\":\"0000-00-00 00:00:00\",\"updated_at\":\"2025-05-23 22:17:05\",\"payment_details\":\"karen@okaxis\",\"airline_id\":\"AA\",\"flight_number\":\"AA1013\",\"origin_airport\":\"BLR\",\"destination_airport\":\"HYD\",\"departure_time\":\"2025-05-25 11:00:00\",\"arrival_time\":\"2025-05-25 12:15:00\",\"duration\":75}', '[{\"passenger_id\":15,\"booking_id\":51,\"first_name\":\"Harry \",\"last_name\":\"Potter\",\"gender\":\"male\",\"age\":15,\"seat_number\":\"TBA\"}]', 'active', '2025-05-23 16:47:05', '2025-05-23 16:47:05'),
+(3, 52, 12, 'BK-6830A899E9AE3', '            <div>\r\n              <h2>BookMyFlight Ticket</h2>\r\n              <strong>Booking Reference:</strong> BK-6830A899E9AE3<br>\r\n              <strong>Flight:</strong> AA-AA1013<br>\r\n              <strong>Date:</strong> 25 May 2025<br>\r\n              <strong>From:</strong> BLR \r\n              <strong>To:</strong> HYD<br>\r\n              <strong>Departure:</strong> 11:00 \r\n              <strong>Arrival:</strong> 12:15<br>\r\n              <strong>Passengers:</strong>\r\n              <ul>\r\n                                  <li>Karan Potter (Seat: TBA)</li>\r\n                              </ul>\r\n            </div>\r\n            ', '{\"booking_id\":52,\"booking_reference\":\"BK-6830A899E9AE3\",\"user_id\":12,\"flight_id\":1656,\"booking_date\":\"2025-05-23 18:55:53\",\"travel_date\":\"2025-05-25\",\"num_passengers\":1,\"total_amount\":\"3953.00\",\"contact_email\":\"harry@gmail.com\",\"contact_phone\":\"7013631447\",\"booking_status\":\"Confirmed\",\"payment_status\":\"Completed\",\"payment_method\":\"upi\",\"created_at\":\"0000-00-00 00:00:00\",\"updated_at\":\"2025-05-23 22:26:00\",\"payment_details\":\"karen@okaxis\",\"airline_id\":\"AA\",\"flight_number\":\"AA1013\",\"origin_airport\":\"BLR\",\"destination_airport\":\"HYD\",\"departure_time\":\"2025-05-25 11:00:00\",\"arrival_time\":\"2025-05-25 12:15:00\",\"duration\":75}', '[{\"passenger_id\":16,\"booking_id\":52,\"first_name\":\"Karan\",\"last_name\":\"Potter\",\"gender\":\"male\",\"age\":15,\"seat_number\":\"TBA\"}]', 'active', '2025-05-23 16:56:00', '2025-05-23 16:56:00'),
+(4, 53, 12, 'BK-6830AF46CC883', '            <div>\r\n              <h2>BookMyFlight Ticket</h2>\r\n              <strong>Booking Reference:</strong> BK-6830AF46CC883<br>\r\n              <strong>Flight:</strong> AA-AA1013<br>\r\n              <strong>Date:</strong> 25 May 2025<br>\r\n              <strong>From:</strong> BLR \r\n              <strong>To:</strong> HYD<br>\r\n              <strong>Departure:</strong> 11:00 \r\n              <strong>Arrival:</strong> 12:15<br>\r\n              <strong>Passengers:</strong>\r\n              <ul>\r\n                                  <li>Karan Potter (Seat: TBA)</li>\r\n                              </ul>\r\n            </div>\r\n            ', '{\"booking_id\":53,\"booking_reference\":\"BK-6830AF46CC883\",\"user_id\":12,\"flight_id\":1656,\"booking_date\":\"2025-05-23 19:24:22\",\"travel_date\":\"2025-05-25\",\"num_passengers\":1,\"total_amount\":\"3953.00\",\"contact_email\":\"harry@gmail.com\",\"contact_phone\":\"7013631447\",\"booking_status\":\"Confirmed\",\"payment_status\":\"Completed\",\"payment_method\":\"upi\",\"created_at\":\"0000-00-00 00:00:00\",\"updated_at\":\"2025-05-23 22:54:28\",\"payment_details\":\"karen@okaxis\",\"airline_id\":\"AA\",\"flight_number\":\"AA1013\",\"origin_airport\":\"BLR\",\"destination_airport\":\"HYD\",\"departure_time\":\"2025-05-25 11:00:00\",\"arrival_time\":\"2025-05-25 12:15:00\",\"duration\":75}', '[{\"passenger_id\":17,\"booking_id\":53,\"first_name\":\"Karan\",\"last_name\":\"Potter\",\"gender\":\"male\",\"age\":15,\"seat_number\":\"TBA\"}]', 'active', '2025-05-23 17:24:28', '2025-05-23 17:24:28');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `notifications`
 --
 
@@ -387,7 +443,13 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `notification_type`, `is_read`, `created_at`) VALUES
-(13, 11, 'Your booking (Reference: BK-6830105F39445) has been successfully cancelled. Refund of ₹5,487 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-23 06:08:31');
+(13, 11, 'Your booking (Reference: BK-6830105F39445) has been successfully cancelled. Refund of ₹5,487 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-23 06:08:31'),
+(14, 12, 'Your booking (Reference: BK-683027B09C896) has been successfully cancelled. Refund of ₹3,717 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-23 07:57:25'),
+(15, 12, 'Your booking (Reference: BK-68304D32A76A0) has been successfully cancelled. Refund of ₹4,307 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-23 10:31:31'),
+(16, 12, 'Your booking (Reference: BK-68304FB37C147) has been successfully cancelled. Refund of ₹4,307 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-23 10:51:24'),
+(17, 12, 'Your booking (Reference: BK-68304F7C62478) has been successfully cancelled. Refund of ₹4,307 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-23 11:01:40'),
+(18, 12, 'Your booking (Reference: BK-6830AF46CC883) has been successfully cancelled. Refund of ₹3,953 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-24 05:13:20'),
+(19, 12, 'Your booking (Reference: BK-6830A6836E354) has been successfully cancelled. Refund of ₹5,930 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-24 05:40:45');
 
 -- --------------------------------------------------------
 
@@ -416,7 +478,17 @@ INSERT INTO `passengers` (`passenger_id`, `booking_id`, `first_name`, `last_name
 (4, 40, 'Medam ', 'Ritvik', 'male', 18, '9A'),
 (5, 41, 'Harry ', 'Anandaraj', 'male', 26, '12A'),
 (6, 42, 'Karen', 'Elisha', 'female', 19, '9A'),
-(7, 43, 'Dhanya', 'Reddy', 'female', 23, '9A');
+(7, 43, 'Dhanya', 'Reddy', 'female', 23, '9A'),
+(8, 44, 'Robert ', 'Thompson', 'male', 51, '11A,Window'),
+(9, 45, 'Carolyn', 'Maria', 'female', 11, '12A,Window'),
+(10, 46, 'Tom', 'Anandaraj', 'male', 26, '12A,Window'),
+(11, 47, 'Harry ', 'Anandaraj', 'male', 25, '12A,Window'),
+(12, 48, 'Harry ', 'Potter', 'male', 19, '9A'),
+(13, 49, 'Medam ', 'Ritvik', 'male', 15, '9A'),
+(14, 50, 'Harry ', 'Potter', 'male', 15, 'TBA'),
+(15, 51, 'Harry ', 'Potter', 'male', 15, 'TBA'),
+(16, 52, 'Karan', 'Potter', 'male', 15, 'TBA'),
+(17, 53, 'Karan', 'Potter', 'male', 15, 'TBA');
 
 -- --------------------------------------------------------
 
@@ -432,23 +504,6 @@ CREATE TABLE `promotions` (
   `valid_from` date NOT NULL,
   `valid_until` date NOT NULL,
   `active` tinyint(1) DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `refunds`
---
-
-CREATE TABLE `refunds` (
-  `refund_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `booking_reference` varchar(20) NOT NULL,
-  `refund_amount` decimal(10,2) NOT NULL,
-  `refund_status` varchar(20) NOT NULL,
-  `refund_reason` text DEFAULT NULL,
-  `created_at` datetime NOT NULL,
-  `processed_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -503,7 +558,15 @@ INSERT INTO `tickets` (`ticket_id`, `user_id`, `flight_id`, `airline_name`, `num
 (33, 10, 1049, 'FlyBig', 1, 5550.00, '2025-05-22 18:30:23', 'pending'),
 (34, 10, 1685, 'Go First', 1, 3250.00, '2025-05-22 22:07:03', 'pending'),
 (35, 10, 1046, 'Alliance Air', 1, 3350.00, '2025-05-23 10:09:08', 'pending'),
-(36, 11, 1706, 'Alliance Air', 1, 4650.00, '2025-05-23 11:35:03', '');
+(36, 11, 1706, 'Alliance Air', 1, 4650.00, '2025-05-23 11:35:03', ''),
+(37, 12, 1711, 'TruJet', 1, 3150.00, '2025-05-23 13:12:44', ''),
+(38, 12, 1652, 'AirAsia India', 1, 3650.00, '2025-05-23 15:53:28', ''),
+(39, 12, 1652, 'AirAsia India', 1, 3650.00, '2025-05-23 16:05:14', ''),
+(40, 12, 1652, 'AirAsia India', 1, 3650.00, '2025-05-23 16:06:11', ''),
+(41, 12, 1656, 'Alliance Air', 1, 3350.00, '2025-05-23 16:08:06', ''),
+(42, 12, 1656, 'Alliance Air', 1, 3350.00, '2025-05-23 21:12:53', ''),
+(43, 12, 1656, 'Alliance Air', 1, 3350.00, '2025-05-23 21:18:10', ''),
+(44, 12, 1656, 'Alliance Air', 1, 3350.00, '2025-05-23 21:18:26', '');
 
 -- --------------------------------------------------------
 
@@ -530,7 +593,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `full_name`, `email`, `phone`, `password`, `member_since`, `loyalty_points`, `loyalty_tier`, `created_at`) VALUES
 (5, 'Karen Elisha Chezhiyan', 'karenelisha0204@gmail.com', '9591553820', '$2y$10$xyaSVBEqCkpFzMS/Gf5eg.niz84jwlhqtThIlBiforda.IAvc.Xaq', '2025-04-26 14:36:37', 0, 'Bronze', '2025-04-26 14:36:37'),
 (10, 'Kevin Joseph', 'kevinjoseph@gmail.com', '7338553820', '$2y$10$hYQs4dQVDFvxBulZTqKJoeZ60Cm9vSfdnhXm3V13wB9TdnkNlu/XC', '2025-05-22 07:16:22', 0, 'Bronze', '2025-05-22 07:16:22'),
-(11, 'Dhanya', 'dhanya@gmail.com', '6363976507', '$2y$10$pH6NEjxVyjV1mZ7rnPHhqux4S/CQ5rz8oL.gyo/FJb/frDuOo.55m', '2025-05-22 07:16:40', 0, 'Bronze', '2025-05-22 07:16:40');
+(11, 'Dhanya', 'dhanya@gmail.com', '6363976507', '$2y$10$pH6NEjxVyjV1mZ7rnPHhqux4S/CQ5rz8oL.gyo/FJb/frDuOo.55m', '2025-05-22 07:16:40', 0, 'Bronze', '2025-05-22 07:16:40'),
+(12, 'Robert Thompson', 'robert@gmail.com', '9591553820', '$2y$10$FcHYelLpB/zKBkjdu./VlOLomZZ5OjvvhZ.hc5.qmrJfYPRh9Cjsm', '2025-05-23 07:24:49', 0, 'Bronze', '2025-05-23 07:24:49');
 
 --
 -- Indexes for dumped tables
@@ -570,7 +634,7 @@ ALTER TABLE `bookings`
 --
 ALTER TABLE `feedback`
   ADD PRIMARY KEY (`feedback_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `flight_id` (`flight_id`);
 
 --
 -- Indexes for table `flights`
@@ -580,6 +644,18 @@ ALTER TABLE `flights`
   ADD KEY `airline_id` (`airline_id`),
   ADD KEY `origin_airport` (`origin_airport`),
   ADD KEY `destination_airport` (`destination_airport`);
+
+--
+-- Indexes for table `generated_tickets`
+--
+ALTER TABLE `generated_tickets`
+  ADD PRIMARY KEY (`ticket_id`),
+  ADD UNIQUE KEY `unique_booking_ticket` (`booking_id`),
+  ADD KEY `idx_user_id` (`user_id`),
+  ADD KEY `idx_booking_reference` (`booking_reference`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_user_created` (`user_id`,`created_at`),
+  ADD KEY `idx_status_created` (`status`,`created_at`);
 
 --
 -- Indexes for table `notifications`
@@ -601,13 +677,6 @@ ALTER TABLE `passengers`
 ALTER TABLE `promotions`
   ADD PRIMARY KEY (`promo_id`),
   ADD UNIQUE KEY `promo_code` (`promo_code`);
-
---
--- Indexes for table `refunds`
---
-ALTER TABLE `refunds`
-  ADD PRIMARY KEY (`refund_id`),
-  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `tickets`
@@ -638,13 +707,13 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT for table `feedback`
 --
 ALTER TABLE `feedback`
-  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `flights`
@@ -653,16 +722,22 @@ ALTER TABLE `flights`
   MODIFY `flight_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1713;
 
 --
+-- AUTO_INCREMENT for table `generated_tickets`
+--
+ALTER TABLE `generated_tickets`
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `passengers`
 --
 ALTER TABLE `passengers`
-  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `promotions`
@@ -671,22 +746,16 @@ ALTER TABLE `promotions`
   MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `refunds`
---
-ALTER TABLE `refunds`
-  MODIFY `refund_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables
@@ -703,7 +772,7 @@ ALTER TABLE `bookings`
 -- Constraints for table `feedback`
 --
 ALTER TABLE `feedback`
-  ADD CONSTRAINT `feedback_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+  ADD CONSTRAINT `feedback_ibfk_1` FOREIGN KEY (`flight_id`) REFERENCES `flights` (`flight_id`);
 
 --
 -- Constraints for table `flights`
@@ -712,6 +781,13 @@ ALTER TABLE `flights`
   ADD CONSTRAINT `flights_ibfk_1` FOREIGN KEY (`airline_id`) REFERENCES `airlines` (`airline_id`),
   ADD CONSTRAINT `flights_ibfk_2` FOREIGN KEY (`origin_airport`) REFERENCES `airports` (`airport_id`),
   ADD CONSTRAINT `flights_ibfk_3` FOREIGN KEY (`destination_airport`) REFERENCES `airports` (`airport_id`);
+
+--
+-- Constraints for table `generated_tickets`
+--
+ALTER TABLE `generated_tickets`
+  ADD CONSTRAINT `generated_tickets_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`booking_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `generated_tickets_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `notifications`
@@ -724,12 +800,6 @@ ALTER TABLE `notifications`
 --
 ALTER TABLE `passengers`
   ADD CONSTRAINT `passengers_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`booking_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `refunds`
---
-ALTER TABLE `refunds`
-  ADD CONSTRAINT `refunds_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `tickets`
