@@ -193,7 +193,7 @@ function getStatusClass($status) {
             <i class="fas fa-plane-slash text-4xl text-gray-300 mb-4"></i>
             <h3 class="text-xl font-medium text-gray-700">No Bookings Found</h3>
             <p class="text-gray-500 mt-2">You haven't booked any flights yet. Start your journey with us!</p>
-            <a href="search-flights.php" class="mt-4 inline-block bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700">
+            <a href="user-dashboard.php" class="mt-4 inline-block bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700">
               Book a Flight
             </a>
           </div>
