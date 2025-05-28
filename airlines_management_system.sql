@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 24, 2025 at 04:22 PM
+-- Generation Time: May 28, 2025 at 12:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -137,37 +137,6 @@ CREATE TABLE `bookings` (
 --
 
 INSERT INTO `bookings` (`booking_id`, `booking_reference`, `user_id`, `flight_id`, `booking_date`, `travel_date`, `num_passengers`, `total_amount`, `contact_email`, `contact_phone`, `booking_status`, `payment_status`, `payment_method`, `created_at`, `updated_at`, `payment_details`) VALUES
-(3, 'BK-682884366150F', 5, 1002, '2025-05-17 14:42:30', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(4, 'BK-6828851F17E88', 5, 1002, '2025-05-17 14:46:23', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(5, 'BK-68288535D8E82', 5, 1002, '2025-05-17 14:46:45', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(6, 'BK-682885660283A', 5, 1002, '2025-05-17 14:47:34', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(7, 'BK-6828857E01EE9', 5, 1002, '2025-05-17 14:47:58', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(8, 'BK-682885CBB90FF', 5, 1002, '2025-05-17 14:49:15', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '9591553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(9, 'BK-682886D663E37', 5, 1002, '2025-05-17 14:53:42', '2025-05-21', 1, 5369.00, 'chezanand@gmail.com', '9886026336', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(10, 'BK-682887660CB21', 5, 1001, '2025-05-17 14:56:06', '2025-05-19', 1, 4719.00, 'suresh@gmail.com', '7013631447', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(11, 'BK-68288792784B6', 5, 1001, '2025-05-17 14:56:50', '2025-05-19', 1, 4719.00, 'suresh@gmail.com', '7013631447', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(12, 'BK-68288AEA9B403', 5, 1001, '2025-05-17 15:11:06', '2025-05-23', 1, 4719.00, 'karenelisha0204@gmail.com', '7013631447', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(13, 'BK-68288BBD23F8F', 5, 1001, '2025-05-17 15:14:37', '2025-05-23', 1, 4719.00, 'karenelisha0204@gmail.com', '7013631447', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(14, 'BK-68288CB62F8CC', 5, 1001, '2025-05-17 15:18:46', '2025-05-23', 1, 4719.00, 'robert@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(15, 'BK-68288D6BA268E', 5, 1001, '2025-05-17 15:21:47', '2025-05-23', 1, 4719.00, 'robert@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(16, 'BK-68288DDEADE53', 5, 1001, '2025-05-17 15:23:42', '2025-05-23', 1, 4719.00, 'tom@gmail.com', '9849973543', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(17, 'BK-68288E312F7FF', 5, 1001, '2025-05-17 15:25:05', '2025-05-23', 1, 4719.00, 'tom@gmail.com', '9849973543', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(18, 'BK-68288E730C5A4', 5, 1001, '2025-05-17 15:26:11', '2025-05-23', 1, 4719.00, 'sony@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(20, 'BK-682895B2D25CA', 5, 1001, '2025-05-17 15:57:06', '2025-05-23', 1, 4719.00, 'carolyn@gmail.com', '9886026336', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(21, 'BK-682895F5411E1', 5, 1001, '2025-05-17 15:58:13', '2025-05-23', 1, 4719.00, 'carolyn@gmail.com', '9886026336', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(22, 'BK-682899A8900AC', 5, 1001, '2025-05-17 16:14:00', '2025-05-23', 1, 4719.00, 'carolyn@gmail.com', '9886026336', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(25, 'BK-6828A7F252B81', 5, 1001, '2025-05-17 17:14:58', '2025-05-23', 1, 4719.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(26, 'BK-6828A94061033', 5, 1001, '2025-05-17 17:20:32', '2025-05-23', 1, 4719.00, 'chezanand@gmail.com', '7013631447', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(27, 'BK-6828AA4FCB117', 5, 1001, '2025-05-17 17:25:03', '2025-05-23', 1, 4719.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(28, 'BK-6828AC8374FD9', 5, 1001, '2025-05-17 17:34:27', '2025-05-23', 1, 4719.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-17 21:04:42', NULL),
-(29, 'BK-6828AEBE03E2A', 5, 1001, '2025-05-17 17:43:58', '2025-05-23', 1, 4719.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-17 21:18:01', NULL),
-(30, 'BK-6828AFC8A980E', 5, 1001, '2025-05-17 17:48:24', '2025-05-23', 1, 4719.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Completed', 'card', '0000-00-00 00:00:00', '2025-05-17 21:24:55', NULL),
-(31, 'BK-6829D3BACEC9D', 5, 1002, '2025-05-18 14:34:02', '2025-05-21', 1, 5369.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-18 18:09:11', NULL),
-(32, 'BK-6829D4FF5EAF5', 5, 1002, '2025-05-18 14:39:27', '2025-05-21', 1, 5369.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
-(33, 'BK-6829EED040C89', 5, 1002, '2025-05-18 16:29:36', '2025-05-21', 1, 5369.00, 'medamritvik@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-18 20:01:14', 'karen@okaxis'),
-(34, 'BK-6829EFD83459E', 5, 1002, '2025-05-18 16:34:00', '2025-05-21', 1, 5369.00, 'medamritvik@gmail.com', '7338553820', 'Confirmed', 'Completed', 'card', '0000-00-00 00:00:00', '2025-05-18 20:04:33', 'xxxx-xxxx-xxxx-5678'),
-(35, 'BK-6829F12CE2169', 5, 1002, '2025-05-18 16:39:40', '2025-05-21', 1, 5369.00, 'medamritvik@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-18 20:09:50', 'karen@okaxis'),
-(36, 'BK-6829FC912D49F', 5, 1002, '2025-05-18 17:28:17', '2025-05-20', 1, 5369.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-18 20:58:54', 'karen@okaxis'),
 (37, 'BK-682F016E4EE54', 10, 1001, '2025-05-22 12:50:22', '2025-05-30', 1, 4719.00, 'kevinjoseph@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 16:20:36', 'kevin@okaxis'),
 (38, 'BK-682F167A0973E', 10, 1003, '2025-05-22 14:20:10', '2025-05-29', 1, 6253.00, 'chezanand@gmail.com', '9886026336', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 17:50:18', 'kevin@okaxis'),
 (39, 'BK-682F1E1C9D99A', 10, 1049, '2025-05-22 14:52:44', '2025-05-23', 1, 6549.00, 'harry@gmail.com', '9591553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-22 18:22:56', 'harry@okaxis'),
@@ -221,7 +190,8 @@ INSERT INTO `feedback` (`feedback_id`, `passenger_name`, `flight_id`, `flight_nu
 (1, 'Karen', 1043, '6E146', '2025-05-30', 0, 'Yes', 'Good', NULL, NULL, NULL, 'Good', '', '2025-05-23 17:15:01'),
 (2, 'Karen', 1043, '', '2025-05-30', 0, 'Yes', 'Good', NULL, NULL, NULL, 'Good', '', '2025-05-23 17:16:49'),
 (3, 'Karen', 1043, '', '2025-05-30', 0, 'Yes', 'Good', NULL, NULL, NULL, 'Good', '', '2025-05-23 17:20:28'),
-(4, 'Ritvik', 1694, '6E1051', '2025-05-26', 0, 'Yes', '', NULL, NULL, NULL, 'Good', '', '2025-05-24 06:37:53');
+(4, 'Ritvik', 1694, '6E1051', '2025-05-26', 0, 'Yes', '', NULL, NULL, NULL, 'Good', '', '2025-05-24 06:37:53'),
+(5, 'John', 1019, '6E717', '2025-05-21', 4, 'Yes', NULL, NULL, NULL, NULL, 'Excellent', 'Great', '2025-05-28 09:22:01');
 
 -- --------------------------------------------------------
 
@@ -365,8 +335,8 @@ INSERT INTO `flights` (`flight_id`, `flight_number`, `airline_id`, `origin_airpo
 (1685, 'GF1042', 'GF', 'BLR', 'HYD', '2025-05-28 09:30:00', '2025-05-28 10:45:00', 75, 3250.00, 144, 89, 'Scheduled'),
 (1686, 'AA1043', 'AA', 'HYD', 'DEL', '2025-05-28 11:00:00', '2025-05-28 13:15:00', 135, 4650.00, 186, 101, 'Scheduled'),
 (1687, 'UK1044', 'UK', 'DEL', 'GOI', '2025-05-28 12:30:00', '2025-05-28 14:45:00', 135, 6150.00, 144, 73, 'Scheduled'),
-(1688, 'SG1045', 'SG', 'GOI', 'BOM', '2025-05-28 14:00:00', '2025-05-28 15:15:00', 75, 3850.00, 180, 125, 'Scheduled'),
-(1689, 'FB1046', 'FB', 'BOM', 'CCU', '2025-05-28 15:30:00', '2025-05-28 18:00:00', 150, 5450.00, 160, 90, 'Scheduled'),
+(1688, 'SG1045', 'SG', 'GOI', 'BOM', '2025-05-28 14:00:00', '2025-05-28 15:15:00', 75, 3850.00, 180, 125, 'Delayed'),
+(1689, 'FB1046', 'FB', 'BOM', 'CCU', '2025-05-28 15:30:00', '2025-05-28 18:00:00', 150, 5000.00, 160, 90, 'Cancelled'),
 (1690, 'SA1047', 'SA', 'CCU', 'MAA', '2025-05-28 17:00:00', '2025-05-28 19:30:00', 150, 5950.00, 144, 64, 'Scheduled'),
 (1691, 'TJ1048', 'TJ', 'MAA', 'COK', '2025-05-28 18:30:00', '2025-05-28 19:45:00', 75, 3150.00, 186, 139, 'Scheduled'),
 (1692, 'AAI1049', 'AAI', 'COK', 'AMD', '2025-05-28 20:00:00', '2025-05-28 21:30:00', 90, 3650.00, 160, 115, 'Scheduled'),
@@ -389,7 +359,8 @@ INSERT INTO `flights` (`flight_id`, `flight_number`, `airline_id`, `origin_airpo
 (1709, 'FB1066', 'FB', 'BOM', 'CCU', '2025-05-30 15:30:00', '2025-05-30 18:00:00', 150, 5450.00, 160, 89, 'Scheduled'),
 (1710, 'SA1067', 'SA', 'CCU', 'MAA', '2025-05-30 17:00:00', '2025-05-30 19:30:00', 150, 5950.00, 144, 63, 'Scheduled'),
 (1711, 'TJ1068', 'TJ', 'MAA', 'COK', '2025-05-30 18:30:00', '2025-05-30 19:45:00', 75, 3150.00, 186, 138, 'Scheduled'),
-(1712, 'AAI1069', 'AAI', 'COK', 'AMD', '2025-05-30 20:00:00', '2025-05-30 21:30:00', 90, 3650.00, 160, 114, 'Scheduled');
+(1712, 'AAI1069', 'AAI', 'COK', 'AMD', '2025-05-30 20:00:00', '2025-05-30 21:30:00', 90, 3650.00, 160, 114, 'Scheduled'),
+(1716, 'SG2000', '', 'BLR', 'DEL', '2025-05-29 15:27:00', '2025-05-29 19:27:00', 0, 4000.00, 0, 50, 'Delayed');
 
 -- --------------------------------------------------------
 
@@ -498,6 +469,21 @@ INSERT INTO `passengers` (`passenger_id`, `booking_id`, `first_name`, `last_name
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `password_resets`
+--
+
+CREATE TABLE `password_resets` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `used` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tickets`
 --
 
@@ -575,19 +561,21 @@ CREATE TABLE `users` (
   `member_since` timestamp NOT NULL DEFAULT current_timestamp(),
   `loyalty_points` int(11) DEFAULT 0,
   `loyalty_tier` enum('Bronze','Silver','Gold','Platinum') DEFAULT 'Bronze',
-  `created_at` timestamp NULL DEFAULT current_timestamp()
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `reset_code` varchar(255) DEFAULT NULL,
+  `reset_expiry` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `full_name`, `email`, `phone`, `password`, `member_since`, `loyalty_points`, `loyalty_tier`, `created_at`) VALUES
-(5, 'Karen Elisha Chezhiyan', 'karenelisha0204@gmail.com', '9591553820', '$2y$10$xyaSVBEqCkpFzMS/Gf5eg.niz84jwlhqtThIlBiforda.IAvc.Xaq', '2025-04-26 14:36:37', 0, 'Bronze', '2025-04-26 14:36:37'),
-(10, 'Kevin Joseph', 'kevinjoseph@gmail.com', '7338553820', '$2y$10$hYQs4dQVDFvxBulZTqKJoeZ60Cm9vSfdnhXm3V13wB9TdnkNlu/XC', '2025-05-22 07:16:22', 0, 'Bronze', '2025-05-22 07:16:22'),
-(11, 'Dhanya', 'dhanya@gmail.com', '6363976507', '$2y$10$pH6NEjxVyjV1mZ7rnPHhqux4S/CQ5rz8oL.gyo/FJb/frDuOo.55m', '2025-05-22 07:16:40', 0, 'Bronze', '2025-05-22 07:16:40'),
-(12, 'Robert Thompson', 'robert@gmail.com', '9591553820', '$2y$10$FcHYelLpB/zKBkjdu./VlOLomZZ5OjvvhZ.hc5.qmrJfYPRh9Cjsm', '2025-05-23 07:24:49', 0, 'Bronze', '2025-05-23 07:24:49'),
-(13, 'Jayden D\'Souza', 'jayden@gmail.com', '9886026336', '$2y$10$dJSeLDeqhPOM85rRYjXerOn7k7aw5lZy6SHJruHIgD70j5aK5Ccd6', '2025-05-24 07:29:53', 0, 'Bronze', '2025-05-24 07:29:53');
+INSERT INTO `users` (`user_id`, `full_name`, `email`, `phone`, `password`, `member_since`, `loyalty_points`, `loyalty_tier`, `created_at`, `reset_code`, `reset_expiry`) VALUES
+(5, 'Karen Elisha Chezhiyan', 'karenelisha0204@gmail.com', '9591553820', '$2y$10$xyaSVBEqCkpFzMS/Gf5eg.niz84jwlhqtThIlBiforda.IAvc.Xaq', '2025-04-26 14:36:37', 0, 'Bronze', '2025-04-26 14:36:37', NULL, NULL),
+(10, 'Kevin Joseph', 'kevinjoseph@gmail.com', '7338553820', '$2y$10$hYQs4dQVDFvxBulZTqKJoeZ60Cm9vSfdnhXm3V13wB9TdnkNlu/XC', '2025-05-22 07:16:22', 0, 'Bronze', '2025-05-22 07:16:22', NULL, NULL),
+(11, 'Dhanya', 'dhanya@gmail.com', '6363976507', '$2y$10$pH6NEjxVyjV1mZ7rnPHhqux4S/CQ5rz8oL.gyo/FJb/frDuOo.55m', '2025-05-22 07:16:40', 0, 'Bronze', '2025-05-22 07:16:40', NULL, NULL),
+(12, 'Robert Thompson', 'robert@gmail.com', '9591553820', '$2y$10$FcHYelLpB/zKBkjdu./VlOLomZZ5OjvvhZ.hc5.qmrJfYPRh9Cjsm', '2025-05-23 07:24:49', 0, 'Bronze', '2025-05-23 07:24:49', NULL, NULL),
+(13, 'Jayden', 'jaydensouza@gmail.com', '9886026336', '$2y$10$dJSeLDeqhPOM85rRYjXerOn7k7aw5lZy6SHJruHIgD70j5aK5Ccd6', '2025-05-24 07:29:53', 0, 'Bronze', '2025-05-24 07:29:53', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -665,6 +653,16 @@ ALTER TABLE `passengers`
   ADD KEY `booking_id` (`booking_id`);
 
 --
+-- Indexes for table `password_resets`
+--
+ALTER TABLE `password_resets`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `token` (`token`),
+  ADD KEY `idx_email` (`email`),
+  ADD KEY `idx_token` (`token`),
+  ADD KEY `idx_expires` (`expires_at`);
+
+--
 -- Indexes for table `tickets`
 --
 ALTER TABLE `tickets`
@@ -699,13 +697,13 @@ ALTER TABLE `bookings`
 -- AUTO_INCREMENT for table `feedback`
 --
 ALTER TABLE `feedback`
-  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `flights`
 --
 ALTER TABLE `flights`
-  MODIFY `flight_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1713;
+  MODIFY `flight_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1717;
 
 --
 -- AUTO_INCREMENT for table `generated_tickets`
@@ -726,6 +724,12 @@ ALTER TABLE `passengers`
   MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
+-- AUTO_INCREMENT for table `password_resets`
+--
+ALTER TABLE `password_resets`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
@@ -735,7 +739,7 @@ ALTER TABLE `tickets`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- Constraints for dumped tables
