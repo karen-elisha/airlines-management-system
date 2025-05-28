@@ -1,10 +1,7 @@
 <?php
 // Start session for user management
 session_start();
-
-// Set timezone to Asia/Kolkata for all date/time operations
 date_default_timezone_set('Asia/Kolkata');
-
 // Database connection
 require_once 'db_connect.php';
 
@@ -39,11 +36,9 @@ if (empty($departure_date) || !strtotime($departure_date)) {
 
 // Format date for display
 $display_date = date('d F Y', strtotime($departure_date));
-
 // Get current date and time in Asia/Kolkata timezone
 $current_datetime = date('Y-m-d H:i:s');
 $current_date = date('Y-m-d');
-
 // Store search parameters in session
 $_SESSION['flight_search'] = [
     'from' => $origin,
@@ -90,9 +85,7 @@ if(isset($_POST['book_flight']) && isset($_SESSION['user_id'])) {
     }
 }
 
-// Modified query to show only flights after current time
-// If searching for today's flights, filter by current datetime
-// If searching for future dates, show all flights for that date
+// Fetch flight data from database with complete flight information
 $flights_query = "
     SELECT 
         f.flight_id,
@@ -152,25 +145,24 @@ $flights_result = mysqli_stmt_get_result($stmt);
 $flights = [];
 if ($flights_result && mysqli_num_rows($flights_result) > 0) {
     while ($row = mysqli_fetch_assoc($flights_result)) {
-        // Additional client-side check for current time (double safety)
+    // Additional client-side check for current time (double safety)
         $flight_departure = strtotime($row['departure_time']);
         $current_timestamp = time();
         
         // Only include flights that haven't departed yet
-        if ($flight_departure > $current_timestamp) {
-            // Use provided duration or calculate it if not available
-            if (empty($row['duration'])) {
-                $row['duration'] = $row['calculated_duration'];
-            }
-            
-            // Ensure we have airline name, use airline_id as fallback
-            if (empty($row['airline_name'])) {
-                $row['airline_name'] = $row['airline_id'];
-            }
-            
-            $flights[] = $row;
+        if ($flight_departure > $current_timestamp) {        // Use provided duration or calculate it if not available
+        if (empty($row['duration'])) {
+            $row['duration'] = $row['calculated_duration'];
         }
-    }
+        
+        // Ensure we have airline name, use airline_id as fallback
+        if (empty($row['airline_name'])) {
+            $row['airline_name'] = $row['airline_id'];
+        }
+        
+        $flights[] = $row;
+            }
+              }
 } else {
     // If no flights found in database, show message instead of demo data
     $no_flights_found = true;
@@ -185,8 +177,9 @@ function formatDuration($duration) {
         return;
     }
 
-    echo $duration;
+    echo $duration ;
 }
+
 
 function getStatusClass($status) {
     if (empty($status)) {
@@ -195,21 +188,20 @@ function getStatusClass($status) {
     }
     
     $status = strtolower(trim($status));
-    
-    // Add time-based status for flights departing soon
     echo "<span style='color: black;'>" . ucfirst($status) . "</span>";
 }
 
+// Helper function to format time
 // Helper function to format time with timezone awareness
 function formatTime($time) {
     return date('H:i', strtotime($time));
 }
 
+
 // Helper function to format price
 function formatPrice($price) {
     return '₹' . number_format((float)$price, 0);
 }
-
 // Helper function to check if flight is departing soon (within 2 hours)
 function isFlightDepartingSoon($departure_time) {
     $departure_timestamp = strtotime($departure_time);
@@ -219,7 +211,6 @@ function isFlightDepartingSoon($departure_time) {
     // Return true if flight departs within 2 hours (7200 seconds)
     return $time_diff <= 7200 && $time_diff > 0;
 }
-
 // Get airport names for display
 $airport_query = "SELECT airport_code, airport_name, city FROM airports WHERE airport_code IN (?, ?)";
 $stmt = mysqli_prepare($mysqli, $airport_query);
@@ -260,15 +251,14 @@ mysqli_stmt_close($stmt);
       font-weight: bold;
       font-size: 12px;
     }
-    .departing-soon {
+  .departing-soon {
       animation: pulse 2s infinite;
       border-left: 4px solid #f59e0b;
     }
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.8; }
-    }
-  </style>
+    }  </style>
 </head>
 <body class="bg-gradient-to-b from-gray-800 to-gray-700 min-h-screen text-white">
 
@@ -282,11 +272,10 @@ mysqli_stmt_close($stmt);
       <nav class="flex items-center space-x-6">
         <a href="index.php" class="hover:text-indigo-400 transition">Home</a>
         <a href="feedback.php" class="hover:text-indigo-400 transition">Feedback</a>
-        <?php if(isset($_SESSION['user_id'])): ?>
-         <a href="user-dashboard.php" class="hover:text-indigo-200">
+        <?php if(isset($_SESSION['user_id'])): ?><a href="user-dashboard.php" class="hover:text-indigo-200">
           <i class="fas fa-home mr-1"></i> Dashboard
         </a>
-    
+         
         <?php else: ?>
           <button onclick="window.location.href='login.php'" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition">
             <i class="fas fa-user mr-2"></i> Login
@@ -295,8 +284,7 @@ mysqli_stmt_close($stmt);
       </nav>
     </div>
   </header>
-
-  <!-- Current Time Display -->
+<!-- Current Time Display -->
   <div class="container mx-auto px-4 pt-4">
     <div class="bg-indigo-900 bg-opacity-50 rounded-lg p-3 text-center">
       <div class="flex items-center justify-center space-x-4">
@@ -306,7 +294,6 @@ mysqli_stmt_close($stmt);
       </div>
     </div>
   </div>
-
   <!-- Error/Success Messages -->
   <?php if(isset($_SESSION['error_message'])): ?>
     <div class="container mx-auto px-4 mt-4">
@@ -357,12 +344,12 @@ mysqli_stmt_close($stmt);
         <div class="text-right">
           <div class="text-lg font-semibold"><?php echo $display_date; ?></div>
           <div class="text-gray-600"><?php echo $tickets; ?> passenger<?php echo $tickets > 1 ? 's' : ''; ?></div>
-          <?php if ($departure_date === $current_date): ?>
+<?php if ($departure_date === $current_date): ?>
             <div class="text-xs text-amber-600 font-medium mt-1">
               <i class="fas fa-clock mr-1"></i>Showing live flights only
             </div>
           <?php endif; ?>
-        </div>
+                </div>
       </div>
     </div>
 
@@ -372,20 +359,18 @@ mysqli_stmt_close($stmt);
         <i class="fas fa-plane-slash text-6xl text-gray-300 mb-4"></i>
         <h3 class="text-xl font-bold mb-2">No Available Flights</h3>
         <p class="text-gray-600 mb-4">
-          <?php if ($departure_date === $current_date): ?>
+<?php if ($departure_date === $current_date): ?>
             Sorry, no more flights are available from <?php echo $origin; ?> to <?php echo $destination; ?> today.
-          <?php else: ?>
-            Sorry, we couldn't find any flights from <?php echo $origin; ?> to <?php echo $destination; ?> on <?php echo $display_date; ?>.
-          <?php endif; ?>
-        </p>
+          <?php else: ?>        
+              Sorry, we couldn't find any flights from <?php echo $origin; ?> to <?php echo $destination; ?> on <?php echo $display_date; ?>.
+<?php endif; ?>        </p>
         <div class="space-y-2 text-sm text-gray-500">
           <p>• Try selecting a different date</p>
           <p>• Check if the route is available</p>
           <p>• Consider nearby airports</p>
-          <?php if ($departure_date === $current_date): ?>
+<?php if ($departure_date === $current_date): ?>
             <p>• All flights for today may have already departed</p>
-          <?php endif; ?>
-        </div>
+          <?php endif; ?>        </div>
         <button onclick="history.back()" class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded transition">
           <i class="fas fa-arrow-left mr-2"></i>Modify Search
         </button>
@@ -423,21 +408,22 @@ mysqli_stmt_close($stmt);
           </thead>
           <tbody>
             <?php foreach($flights as $flight): ?>
-              <tr class="flight-row border-b border-gray-100 hover:bg-gray-50 transition-all duration-200 <?php echo isFlightDepartingSoon($flight['departure_time']) ? 'departing-soon' : ''; ?>">
-                <td class="p-4">
-                  <div class="flex items-center space-x-3">
+<tr class="flight-row border-b border-gray-100 hover:bg-gray-50 transition-all duration-200 <?php echo isFlightDepartingSoon($flight['departure_time']) ? 'departing-soon' : ''; ?>">
+         <td class="p-4">
+
+            <div class="flex items-center space-x-3">
                     <div class="airline-logo">
                       <?php echo substr($flight['airline_id'], 0, 2); ?>
                     </div>
                     <div>
                       <div class="font-semibold"><?php echo htmlspecialchars($flight['airline_name']); ?></div>
                       <div class="text-sm text-gray-500"><?php echo htmlspecialchars($flight['airline_id'] . '-' . $flight['flight_number']); ?></div>
-                      <?php if (isFlightDepartingSoon($flight['departure_time'])): ?>
+
+ <?php if (isFlightDepartingSoon($flight['departure_time'])): ?>
                         <div class="text-xs text-amber-600 font-medium">
                           <i class="fas fa-clock mr-1"></i>Boarding Soon
                         </div>
-                      <?php endif; ?>
-                    </div>
+                      <?php endif; ?>                    </div>
                   </div>
                 </td>
                 <td class="p-4">
@@ -558,9 +544,7 @@ mysqli_stmt_close($stmt);
 
     // Update time immediately and then every second
     updateCurrentTime();
-    setInterval(updateCurrentTime, 1000);
-
-    // Toggle login dropdown
+    setInterval(updateCurrentTime, 1000);    // Toggle login dropdown
     function toggleDropdown() {
       const dropdown = document.getElementById('loginDropdown');
       dropdown.classList.toggle('hidden');
@@ -588,8 +572,7 @@ mysqli_stmt_close($stmt);
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            // Note: localStorage is not available in Claude artifacts
-            // In actual implementation, this would store data in localStorage
+            // Store flight details to browser's localStorage
             const flightDetails = {
               flight_id: flightId,
               ticket_id: data.ticket_id,
@@ -604,7 +587,8 @@ mysqli_stmt_close($stmt);
               total_price: basePrice * passengers
             };
             
-            // In actual implementation: localStorage.setItem('flightDetails', JSON.stringify(flightDetails));
+            // Store data in localStorage
+            localStorage.setItem('flightDetails', JSON.stringify(flightDetails));
             
             // Redirect to booking forms page
             window.location.href = 'booking-forms.php';
@@ -637,7 +621,7 @@ mysqli_stmt_close($stmt);
       }
     });
 
-    // Auto-refresh flight status every 30 seconds for today's flights
+    // Auto-refresh flight status every 5 minutes
     <?php if ($departure_date === $current_date): ?>
     setInterval(function() {
       const urlParams = new URLSearchParams(window.location.search);
@@ -661,7 +645,7 @@ mysqli_stmt_close($stmt);
           window.location.reload();
         }
       }
-    }, 300000); // 5 minutes for future flights
+    }, 300000); // 5 minutesfor future flights
     <?php endif; ?>
 
     // Add notification for flights departing soon

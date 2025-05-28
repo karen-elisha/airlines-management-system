@@ -566,10 +566,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <span>Booking Reference:</span>
             <span class="font-medium"><?php echo htmlspecialchars($booking_reference); ?></span>
           </div>
-          <div class="flex justify-between text-sm mb-1">
-            <span>Passengers:</span>
-            <span class="font-medium"><?php echo htmlspecialchars($num_passengers); ?></span>
-          </div>
+       
           <div class="flex justify-between text-sm mb-1">
             <span>Payment Method:</span>
             <span class="font-medium capitalize"><?php echo htmlspecialchars($payment_method); ?></span>
@@ -693,10 +690,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <span>Booking Reference:</span>
             <span class="font-medium"><?php echo htmlspecialchars($booking_reference); ?></span>
           </div>
-          <div class="flex justify-between text-sm mb-1">
-            <span>Passengers:</span>
-            <span class="font-medium"><?php echo htmlspecialchars($num_passengers); ?></span>
-          </div>
+         
           <div class="flex justify-between font-semibold text-base border-t border-gray-200 pt-2 mt-2">
             <span>Total Amount:</span>
             <span>₹<?php echo number_format($total_amount, 2); ?></span>

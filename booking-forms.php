@@ -84,6 +84,7 @@ $user_id = $_SESSION['user_id'];
       <div id="flightSummary" class="mb-6 border-b border-gray-200 pb-6">
         <h3 class="text-lg font-semibold mb-4">Flight Details</h3>
         <div id="flightDetailsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Flight details will be populated by JavaScript -->
           <div class="flex items-center">
             <i class="fas fa-plane-departure text-indigo-600 mr-3 text-lg"></i>
             <div>
@@ -154,12 +155,17 @@ $user_id = $_SESSION['user_id'];
           <!-- Payment Summary -->
           <div class="mt-6 border-t border-gray-200 pt-6">
             <h4 class="font-semibold mb-4">Payment Summary</h4>
-            <div id="fareBreakdown">
-              <!-- Fare breakdown will be populated by JavaScript -->
+            <div class="flex justify-between items-center mb-2">
+              <span>Base Fare</span>
+              <span id="baseFare">₹0</span>
             </div>
-            <div class="flex justify-between items-center text-lg mt-4 pt-4 border-t">
-              <span class="font-semibold">Total Amount</span>
-              <span id="totalAmount" class="font-bold text-indigo-600">₹0</span>
+            <div class="flex justify-between items-center mb-2">
+              <span>Taxes & Fees</span>
+              <span id="taxesFees">₹0</span>
+            </div>
+            <div class="flex justify-between items-center font-semibold text-lg mt-2 pt-2 border-t">
+              <span>Total Amount</span>
+              <span id="totalAmount">₹0</span>
             </div>
           </div>
           
@@ -221,12 +227,9 @@ $user_id = $_SESSION['user_id'];
       return date.toLocaleDateString('en-US', options);
     }
     
-    // Variable to track passenger count and pricing
+    // Variable to track passenger count
     let passengerCount = 0;
     let maxPassengers = 0;
-    let baseEconomyPrice = 0;
-    const businessClassMultiplier = 1.5; // 50% more than economy
-    const firstClassMultiplier = 2.5;    // 150% more than economy
     
     // Add passenger function
     function addPassenger() {
@@ -297,11 +300,15 @@ $user_id = $_SESSION['user_id'];
           </div>
           <div>
             <label for="passenger_class_${index}" class="block text-gray-700 mb-1">Class</label>
-            <select id="passenger_class_${index}" name="passenger_class[]" class="w-full border border-gray-300 rounded px-3 py-2 passenger-class-select" required onchange="updatePaymentSummary()">
-              <option value="economy">Economy (₹${baseEconomyPrice.toLocaleString()})</option>
-              <option value="business">Business (₹${Math.round(baseEconomyPrice * businessClassMultiplier).toLocaleString()})</option>
-              <option value="first">First Class (₹${Math.round(baseEconomyPrice * firstClassMultiplier).toLocaleString()})</option>
+            <select id="passenger_class_${index}" name="passenger_class[]" class="w-full border border-gray-300 rounded px-3 py-2" required>
+              <option value="economy">Economy</option>
+              <option value="business">Business</option>
+              <option value="first">First Class</option>
             </select>
+          </div>
+          <div>
+            <label for="passenger_seat_${index}" class="block text-gray-700 mb-1">Seat Preference</label>
+            <input type="text" id="passenger_seat_${index}" name="passenger_seat[]" placeholder="e.g. 12A, Window, Aisle" class="w-full border border-gray-300 rounded px-3 py-2">
           </div>
         </div>
       `;
@@ -310,77 +317,20 @@ $user_id = $_SESSION['user_id'];
     
     // Update payment summary based on passenger count and flight details
     function updatePaymentSummary() {
-      // Get all passenger class selections
-      const classSelects = document.querySelectorAll('.passenger-class-select');
-      let economyCount = 0;
-      let businessCount = 0;
-      let firstCount = 0;
-      let totalBaseFare = 0;
+      // Get stored flight details
+      const flightDetailsJson = localStorage.getItem('flightDetails');
+      if (!flightDetailsJson) return;
       
-      classSelects.forEach(select => {
-        switch(select.value) {
-          case 'economy':
-            economyCount++;
-            totalBaseFare += baseEconomyPrice;
-            break;
-          case 'business':
-            businessCount++;
-            totalBaseFare += baseEconomyPrice * businessClassMultiplier;
-            break;
-          case 'first':
-            firstCount++;
-            totalBaseFare += baseEconomyPrice * firstClassMultiplier;
-            break;
-        }
-      });
+      const flightDetails = JSON.parse(flightDetailsJson);
       
-      // Calculate taxes (18% of base fare)
-      const taxesFees = Math.round(totalBaseFare * 0.18);
-      const totalAmount = totalBaseFare + taxesFees;
+      // Calculate costs
+      const baseFare = flightDetails.base_price * passengerCount;
+      const taxesFees = Math.round(baseFare * 0.18); // 18% tax
+      const totalAmount = baseFare + taxesFees;
       
-      // Update fare breakdown display
-      const fareBreakdown = document.getElementById('fareBreakdown');
-      fareBreakdown.innerHTML = '';
-      
-      if (economyCount > 0) {
-        const economyTotal = baseEconomyPrice * economyCount;
-        fareBreakdown.innerHTML += `
-          <div class="flex justify-between items-center mb-2">
-            <span>Economy Class × ${economyCount}</span>
-            <span>₹${economyTotal.toLocaleString()}</span>
-          </div>
-        `;
-      }
-      
-      if (businessCount > 0) {
-        const businessTotal = baseEconomyPrice * businessClassMultiplier * businessCount;
-        fareBreakdown.innerHTML += `
-          <div class="flex justify-between items-center mb-2">
-            <span>Business Class × ${businessCount}</span>
-            <span>₹${businessTotal.toLocaleString()}</span>
-          </div>
-        `;
-      }
-      
-      if (firstCount > 0) {
-        const firstTotal = baseEconomyPrice * firstClassMultiplier * firstCount;
-        fareBreakdown.innerHTML += `
-          <div class="flex justify-between items-center mb-2">
-            <span>First Class × ${firstCount}</span>
-            <span>₹${firstTotal.toLocaleString()}</span>
-          </div>
-        `;
-      }
-      
-      // Add taxes line
-      fareBreakdown.innerHTML += `
-        <div class="flex justify-between items-center mb-2">
-          <span>Taxes & Fees (18%)</span>
-          <span>₹${taxesFees.toLocaleString()}</span>
-        </div>
-      `;
-      
-      // Update total amount display
+      // Update display
+      document.getElementById('baseFare').textContent = `₹${baseFare.toLocaleString()}`;
+      document.getElementById('taxesFees').textContent = `₹${taxesFees.toLocaleString()}`;
       document.getElementById('totalAmount').textContent = `₹${totalAmount.toLocaleString()}`;
       
       // Update hidden field
@@ -400,12 +350,12 @@ $user_id = $_SESSION['user_id'];
       }
       
       const flightDetails = JSON.parse(flightDetailsJson);
-      baseEconomyPrice = flightDetails.base_price;
       
       // Update hidden form fields
       document.getElementById('flight_id').value = flightDetails.flight_id;
       document.getElementById('departure_date').value = flightDetails.departure_date;
       document.getElementById('num_passengers').value = flightDetails.passengers;
+      document.getElementById('total_price').value = flightDetails.total_price;
       
       // Update flight summary
       document.getElementById('airlineName').textContent = `${flightDetails.airline_name} (${flightDetails.airline_id}-${flightDetails.flight_number})`;
