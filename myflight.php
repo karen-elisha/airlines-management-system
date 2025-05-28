@@ -37,13 +37,12 @@ $query = "SELECT
     f.destination_airport,
     f.departure_time,
     f.arrival_time,
-    t.airline_name,
-    t.ticket_id,
-    t.status as ticket_status
+    t.airline_name
 FROM bookings b
 LEFT JOIN flights f ON b.flight_id = f.flight_id
 LEFT JOIN tickets t ON b.user_id = t.user_id AND b.flight_id = t.flight_id
 WHERE b.user_id = :user_id
+GROUP BY b.booking_id
 ORDER BY b.travel_date DESC";
 
 $stmt = $pdo->prepare($query);
@@ -251,19 +250,20 @@ function getStatusClass($status) {
               </div>
               
               <!-- Action -->
-              <div class="col-span-2 md:col-span-2">
-                <a href="ticket-cancellation.php?booking_id=<?php echo $booking['booking_id']; ?>&ticket_id=<?php echo $booking['ticket_id']; ?>" 
-                   class="cancel-btn <?php echo (strtolower($booking['booking_status']) === 'cancelled') ? 'disabled' : ''; ?>">
-                  <i class="fas fa-times mr-1"></i>
-                  <?php echo (strtolower($booking['booking_status']) === 'cancelled') ? 'Cancelled' : 'Cancel'; ?>
-                </a>
-                <div class="mt-1">
-                  <a href="mytickets.php?booking_id=<?php echo $booking['booking_id']; ?>" 
-                     class="text-xs text-indigo-600 hover:text-indigo-800">
-                    <i class="fas fa-eye mr-1"></i>View Details
-                  </a>
-                </div>
-              </div>
+             
+             <div class="col-span-2 md:col-span-2">
+    <a href="ticket-cancellation.php?booking_id=<?php echo htmlspecialchars($booking['booking_id']); ?>" 
+       class="cancel-btn <?php echo (strtolower($booking['booking_status']) === 'cancelled') ? 'disabled' : ''; ?>">
+      <i class="fas fa-times mr-1"></i>
+      <?php echo (strtolower($booking['booking_status']) === 'cancelled') ? 'Cancelled' : 'Cancel'; ?>
+    </a>
+    <div class="mt-1">
+      <a href="mytickets.php?booking_id=<?php echo htmlspecialchars($booking['booking_id']); ?>" 
+         class="text-xs text-indigo-600 hover:text-indigo-800">
+        <i class="fas fa-eye mr-1"></i>View Details
+      </a>
+    </div>
+</div>
             </div>
           <?php endforeach; ?>
         <?php endif; ?>

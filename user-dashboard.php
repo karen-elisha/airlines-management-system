@@ -1,7 +1,8 @@
 <?php
 // Start the session
 session_start();
-
+// Set default timezone to Asia/Kolkata (IST)
+date_default_timezone_set('Asia/Kolkata');
 // Error reporting
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -172,18 +173,22 @@ $total_flights = $total_flights_result->fetch_assoc()['total'];
     }
 
     // Get live flight schedule with real-time updates
-    $live_flights_query = "SELECT f.flight_number, f.departure_time, f.arrival_time, 
-                          origin.airport_code AS origin_code, dest.airport_code AS dest_code,
-                          origin.city AS origin_city, dest.city AS destination_city,
-                          f.flight_status, a.airline_name,
-                          f.available_seats, f.total_seats
-                          FROM flights f
-                          JOIN airports origin ON f.origin_airport = origin.airport_id
-                          JOIN airports dest ON f.destination_airport = dest.airport_id
-                          JOIN airlines a ON f.airline_id = a.airline_id
-                          WHERE f.departure_time BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 12 HOUR)
-                          ORDER BY f.departure_time ASC
-                          LIMIT 10";
+// Replace your existing live_flights_query with this:
+$live_flights_query = "SELECT f.flight_number, f.departure_time, f.arrival_time, 
+                      origin.airport_code AS origin_code, dest.airport_code AS dest_code,
+                      origin.city AS origin_city, dest.city AS destination_city,
+                      f.flight_status, a.airline_name,
+                      f.available_seats, f.total_seats
+                      FROM flights f
+                      JOIN airports origin ON f.origin_airport = origin.airport_id
+                      JOIN airports dest ON f.destination_airport = dest.airport_id
+                      JOIN airlines a ON f.airline_id = a.airline_id
+                      WHERE ch
+                        -- Convert departure_time to IST and check if it's today
+                        CONVERT_TZ(f.departure_time, '+00:00', '+05:30') >= CONVERT_TZ(NOW(), '+00:00', '+05:30')
+                        AND DATE(CONVERT_TZ(f.departure_time, '+00:00', '+05:30')) = DATE(CONVERT_TZ(NOW(), '+00:00', '+05:30'))
+                      ORDER BY f.departure_time ASC
+                      LIMIT 10";
                           
     if (!$live_flights_result = $mysqli->query($live_flights_query)) {
         throw new Exception("Query failed: " . $mysqli->error);
@@ -409,7 +414,6 @@ if (isset($mysqli)) {
 </div>
 <span class="text-xs text-gray-400 ml-3">Last updated: <span id="lastUpdated">
   <?php 
-    date_default_timezone_set('Asia/Kolkata'); // Set to IST
     echo date('H:i:s'); // Now shows IST time
   ?>
 </span></span>
@@ -1095,6 +1099,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+// Add this to your script section
+// Update the last updated time every second
+setInterval(function() {
+  const now = new Date();
+  const options = { 
+    timeZone: 'Asia/Kolkata',
+    hour: '2-digit', 
+    minute: '2-digit', 
+    second: '2-digit',
+    hour12: false
+  };
+  document.getElementById('lastUpdated').textContent = now.toLocaleTimeString('en-IN', options);
+}, 1000);
     </script>
   </main>
 </div>
