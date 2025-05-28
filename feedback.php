@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 
@@ -17,9 +16,10 @@ if ($conn->connect_error) {
 }
 
 // Get all flights from the database
-$flightsQuery = "SELECT f.flight_id, f.flight_number, f.airline_id, 
+$flightsQuery = "SELECT f.flight_id, f.flight_number, al.airline_name, 
                 a1.airport_name as source, a2.airport_name as destination 
                 FROM flights f 
+                JOIN airlines al ON f.airline_id = al.airline_id
                 JOIN airports a1 ON f.origin_airport = a1.airport_id 
                 JOIN airports a2 ON f.destination_airport = a2.airport_id
                 ORDER BY f.airline_id";
@@ -34,62 +34,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get user ID if logged in
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : NULL;
     
-    // Get form data
-    $passenger_name = $_POST['passenger_name'];
-    $flight_id = $_POST['flight_id'];
-    $flight_number = $_POST['flight_number'];
-    $journey_date = $_POST['journey_date'];
-    $overall_rating = intval(substr($_POST['overall_rating'], 0, 1)); // Extract the number of stars
-   $punctuality      = isset($_POST['q1']) ? $_POST['q1'] : null;
-$cleanliness      = isset($_POST['q2']) ? $_POST['q2'] : null;
-$staff_behavior   = isset($_POST['q3']) ? $_POST['q3'] : null;
-$seat_comfort     = isset($_POST['q4']) ? $_POST['q4'] : null;
-$cabin_clean      = isset($_POST['q5']) ? $_POST['q5'] : null;
-$food_service     = isset($_POST['q6']) ? $_POST['q6'] : null;
-$safety           = isset($_POST['q7']) ? $_POST['q7'] : null;
-$entertainment    = isset($_POST['q8']) ? $_POST['q8'] : null;
-$security_feeling = isset($_POST['q9']) ? $_POST['q9'] : null;
-$recommendation   = isset($_POST['q10']) ? $_POST['q10'] : null;
-
-    $additional_feedback = !empty($_POST['additional_feedback']) ? $_POST['additional_feedback'] : '';
-    $complaint_type = !empty($_POST['complaint_type']) ? $_POST['complaint_type'] : NULL;
-    $complaint_details = !empty($_POST['complaint_details']) ? $_POST['complaint_details'] : NULL;
-    $contact_info = !empty($_POST['contact_info']) ? $_POST['contact_info'] : NULL;
-    $website_experience = $_POST['website_experience'];
-    $website_feedback = !empty($_POST['website_feedback']) ? $_POST['website_feedback'] : '';
+    // Get and sanitize form data
+    $passenger_name = $conn->real_escape_string($_POST['passenger_name']);
+    $flight_id = intval($_POST['flight_id']);
+    $flight_number = $conn->real_escape_string($_POST['flight_number']);
+    $journey_date = $conn->real_escape_string($_POST['journey_date']);
+    $overall_rating = intval(substr($_POST['overall_rating'], 0, 1));
     
-    // Insert query
+    // Survey questions
+    $punctuality = isset($_POST['q1']) ? $conn->real_escape_string($_POST['q1']) : NULL;
+    $additional_feedback = !empty($_POST['additional_feedback']) ? $conn->real_escape_string($_POST['additional_feedback']) : NULL;
+    $complaint_type = !empty($_POST['complaint_type']) ? $conn->real_escape_string($_POST['complaint_type']) : NULL;
+    $complaint_details = !empty($_POST['complaint_details']) ? $conn->real_escape_string($_POST['complaint_details']) : NULL;
+    $contact_info = !empty($_POST['contact_info']) ? $conn->real_escape_string($_POST['contact_info']) : NULL;
+    $website_experience = $conn->real_escape_string($_POST['website_experience']);
+    $website_feedback = !empty($_POST['website_feedback']) ? $conn->real_escape_string($_POST['website_feedback']) : NULL;
+    
+    // Insert query using prepared statement
     try {
-        $sql = "INSERT INTO feedback (
-                    passenger_name, flight_id, flight_number, journey_date, 
-                    overall_rating, punctuality, cleanliness, staff_behavior, seat_comfort, 
-                    cabin_clean, food_service, safety, entertainment, security_feeling, 
-                    recommendation, additional_feedback, complaint_type, complaint_details, 
-                    contact_info, website_experience, website_feedback
-                ) VALUES (
-                    '$passenger_name', $flight_id, '$flight_number', '$journey_date', 
-                    $overall_rating, '$punctuality', '$cleanliness', '$staff_behavior', '$seat_comfort', 
-                    '$cabin_clean', '$food_service', '$safety', '$entertainment', '$security_feeling', 
-                    '$recommendation', '$additional_feedback', " . 
-                    ($complaint_type ? "'$complaint_type'" : "NULL") . ", " . 
-                    ($complaint_details ? "'$complaint_details'" : "NULL") . ", " . 
-                    ($contact_info ? "'$contact_info'" : "NULL") . ", " . 
-                    "'$website_experience', '$website_feedback'
-                )";
-                
-        if ($conn->query($sql)) {
+        $stmt = $conn->prepare("INSERT INTO feedback (
+            passenger_name, flight_id, flight_number, journey_date, 
+            overall_rating, punctuality, additional_feedback, complaint_type, 
+            complaint_details, contact_info, website_experience, website_feedback
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        
+        $stmt->bind_param(
+            "sissssssssss", 
+            $passenger_name, $flight_id, $flight_number, $journey_date, 
+            $overall_rating, $punctuality, $additional_feedback, $complaint_type, 
+            $complaint_details, $contact_info, $website_experience, $website_feedback
+        );
+        
+        if ($stmt->execute()) {
             $success = true;
             $message = "Thank you for your feedback! Your input helps us improve our services.";
             
             // Send email to admin
             $admin_email = "admin@airlines-team.com";
             $subject = "New Flight Review Submission";
-            
-            // Get flight details
-            $flightQuery = "SELECT flight_number, airline_id FROM flights WHERE flight_id = $flight_id";
-            $flightResult = $conn->query($flightQuery);
-            $flightRow = $flightResult->fetch_assoc();
-            $flight_name = $flightRow['airline_id'] . ' ' . $flightRow['flight_number'];
             
             $email_body = "
                 <html>
@@ -111,15 +93,15 @@ $recommendation   = isset($_POST['q10']) ? $_POST['q10'] : null;
                         </div>
                         <div class='content'>
                             <p><strong>Passenger:</strong> $passenger_name</p>
-                            <p><strong>Flight:</strong> $flight_name</p>
+                            <p><strong>Flight:</strong> $flight_number</p>
                             <p><strong>Journey Date:</strong> $journey_date</p>
                             <p><strong>Overall Rating:</strong> <span class='rating'>$overall_rating ⭐</span></p>
-                            <p><strong>Additional Feedback:</strong> $additional_feedback</p>
+                            <p><strong>Additional Feedback:</strong> " . ($additional_feedback ?: 'N/A') . "</p>
                             " . ($complaint_type ? "<p><strong>Complaint Type:</strong> $complaint_type</p>" : "") . "
                             " . ($complaint_details ? "<p><strong>Complaint Details:</strong> $complaint_details</p>" : "") . "
                             " . ($contact_info ? "<p><strong>Contact Info:</strong> $contact_info</p>" : "") . "
                             <p><strong>Website Experience:</strong> $website_experience</p>
-                            <p><strong>Website Feedback:</strong> $website_feedback</p>
+                            <p><strong>Website Feedback:</strong> " . ($website_feedback ?: 'N/A') . "</p>
                         </div>
                         <div class='footer'>
                             <p>This is an automated message from Airlines Feedback System</p>
@@ -130,6 +112,7 @@ $recommendation   = isset($_POST['q10']) ? $_POST['q10'] : null;
             ";
             
             // Here you would typically add code to send the email
+            // mail($admin_email, $subject, $email_body, "Content-type: text/html; charset=utf-8");
         }
     } catch (Exception $e) {
         $success = false;
@@ -137,7 +120,6 @@ $recommendation   = isset($_POST['q10']) ? $_POST['q10'] : null;
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -196,15 +178,12 @@ $recommendation   = isset($_POST['q10']) ? $_POST['q10'] : null;
                 class="w-full px-4 py-2 rounded bg-gray-600 focus:bg-gray-500 transition text-gray-100">
                 <option value="">Select Flight</option>
                 <?php
-                 if ($flightsResult->num_rows > 0) {
-                while($row = $flightsResult->fetch_assoc()) {
-                    echo '<option value="' . $row["flight_id"] . '" data-number="' . $row["flight_number"] . '">' 
-                        . $row["airline_name"] . ' ' . $row["flight_number"] . ' (' . $row["source"] . ' to ' . $row["destination"] . ')</option>';
+                if ($flightsResult->num_rows > 0) {
+                    while($row = $flightsResult->fetch_assoc()) {
+                        echo '<option value="' . $row["flight_id"] . '" data-number="' . $row["flight_number"] . '">' 
+                            . $row["airline_name"] . ' ' . $row["flight_number"] . ' (' . $row["source"] . ' to ' . $row["destination"] . ')</option>';
+                    }
                 }
-            }
-            ?>
-
-                  // Output flight options as in your PHP logic
                 ?>
               </select>
             </div>
@@ -225,15 +204,15 @@ $recommendation   = isset($_POST['q10']) ? $_POST['q10'] : null;
             <select id="overall_rating" name="overall_rating" required
               class="w-full px-4 py-2 rounded bg-gray-600 focus:bg-gray-500 transition text-gray-100">
               <option value="">Select Rating</option>
-              <option>⭐</option>
-              <option>⭐⭐</option>
-              <option>⭐⭐⭐</option>
-              <option>⭐⭐⭐⭐</option>
-              <option>⭐⭐⭐⭐⭐</option>
+              <option value="1">⭐</option>
+              <option value="2">⭐⭐</option>
+              <option value="3">⭐⭐⭐</option>
+              <option value="4">⭐⭐⭐⭐</option>
+              <option value="5">⭐⭐⭐⭐⭐</option>
             </select>
           </div>
 
-          <!-- Example for one question, repeat for all 10 -->
+          <!-- Survey Questions -->
           <div>
             <label class="block mb-2 text-sm">1. Was the flight punctual?</label>
             <div class="flex space-x-4">
@@ -247,7 +226,6 @@ $recommendation   = isset($_POST['q10']) ? $_POST['q10'] : null;
               </label>
             </div>
           </div>
-          <!-- Repeat similar blocks for q2 to q10 with appropriate options -->
 
           <div>
             <label for="additional_feedback" class="block mb-2 text-sm">Additional Feedback (optional)</label>
@@ -317,7 +295,7 @@ $recommendation   = isset($_POST['q10']) ? $_POST['q10'] : null;
         </form>
       </div>
 
-      <!-- Contact Info (optional, can be replaced with other content) -->
+      <!-- Contact Info -->
       <div class="bg-gray-700 rounded-xl p-6 shadow-lg">
         <h2 class="text-xl font-semibold mb-4 text-indigo-300 flex items-center">
           <i class="fas fa-info-circle mr-2"></i>Our Information
@@ -365,6 +343,7 @@ $recommendation   = isset($_POST['q10']) ? $_POST['q10'] : null;
         window.location.href = "login.php";
       }
     }
+    
     function updateFlightNumber() {
       const flightSelect = document.getElementById('flight_id');
       const flightNumberInput = document.getElementById('flight_number');
@@ -375,6 +354,18 @@ $recommendation   = isset($_POST['q10']) ? $_POST['q10'] : null;
         flightNumberInput.value = '';
       }
     }
+    
+    <?php if ($success): ?>
+    // Clear form fields after successful submission
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        if (form) {
+            form.reset();
+            // Scroll to the message
+            window.scrollTo(0, 0);
+        }
+    });
+    <?php endif; ?>
   </script>
 </body>
 </html>
