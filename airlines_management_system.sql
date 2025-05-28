@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 28, 2025 at 12:08 PM
+-- Generation Time: May 28, 2025 at 06:23 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -148,7 +148,7 @@ INSERT INTO `bookings` (`booking_id`, `booking_reference`, `user_id`, `flight_id
 (45, 'BK-68304D32A76A0', 12, 1652, '2025-05-23 12:25:54', '2025-05-24', 1, 4307.00, 'karenelisha0204@gmail.com', '7338553820', 'Cancelled', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 16:01:31', 'kevin@okaxis'),
 (46, 'BK-68304F7C62478', 12, 1652, '2025-05-23 12:35:40', '2025-05-24', 1, 4307.00, 'harry@gmail.com', '7338553820', 'Cancelled', 'Pending', 'credit_card', '0000-00-00 00:00:00', '2025-05-23 16:31:40', NULL),
 (47, 'BK-68304FB37C147', 12, 1652, '2025-05-23 12:36:35', '2025-05-24', 1, 4307.00, 'harry@gmail.com', '7338553820', 'Cancelled', 'Pending', 'credit_card', '0000-00-00 00:00:00', '2025-05-23 16:21:24', NULL),
-(48, 'BK-68305284B0AF9', 12, 1656, '2025-05-23 12:48:36', '2025-05-25', 1, 3953.00, 'harry@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 16:20:23', 'kevin@okaxis'),
+(48, 'BK-68305284B0AF9', 12, 1656, '2025-05-23 12:48:36', '2025-05-25', 1, 3953.00, 'harry@gmail.com', '7338553820', 'Pending', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 16:20:23', 'kevin@okaxis'),
 (49, 'BK-68308C6D9392D', 12, 1656, '2025-05-23 16:55:41', '2025-05-25', 1, 3953.00, 'karenelisha0204@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 20:30:53', 'karen@okaxis'),
 (50, 'BK-68309F8744971', 12, 1656, '2025-05-23 18:17:11', '2025-05-25', 1, 5930.00, 'harry@gmail.com', '7013631447', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-23 21:48:23', 'karen@okaxis'),
 (51, 'BK-6830A6836E354', 12, 1656, '2025-05-23 18:46:59', '2025-05-25', 1, 5930.00, 'harry@gmail.com', '7013631447', 'Cancelled', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-24 11:10:45', 'karen@okaxis'),
@@ -157,7 +157,14 @@ INSERT INTO `bookings` (`booking_id`, `booking_reference`, `user_id`, `flight_id
 (54, 'BK-68316436A3F44', 11, 1648, '2025-05-24 08:16:22', '2025-05-24', 1, 4543.00, 'dhanya@gmail.com', '7013631447', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-24 11:46:31', 'karen@okaxis'),
 (55, 'BK-68316516ABC50', 11, 1652, '2025-05-24 08:20:06', '2025-05-24', 1, 4307.00, 'medamritvik@gmail.com', '7013631447', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-24 11:50:15', 'karen@okaxis'),
 (56, 'BK-68317D06E612F', 13, 1645, '2025-05-24 10:02:14', '2025-05-24', 1, 3835.00, 'jayden@gmail.com', '9886026336', 'Cancelled', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-24 13:46:26', 'jayden@okaxis'),
-(57, 'BK-68317DA355654', 13, 1645, '2025-05-24 10:04:51', '2025-05-24', 1, 3835.00, 'jayden@gmail.com', '9886026336', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-24 13:35:19', 'robert@okaxis');
+(57, 'BK-68317DA355654', 13, 1645, '2025-05-24 10:04:51', '2025-05-24', 1, 3835.00, 'jayden@gmail.com', '9886026336', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-24 13:35:19', 'robert@okaxis'),
+(58, 'BK-68371BF6D5D83', 5, 1696, '2025-05-28 16:21:42', '2025-05-29', 1, 3953.00, 'chezanand@gmail.com', '7338553820', 'Confirmed', 'Pending', 'credit_card', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
+(59, 'BK-68371BFEC1D53', 5, 1696, '2025-05-28 16:21:50', '2025-05-29', 1, 3953.00, 'chezanand@gmail.com', '7338553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-28 19:51:57', 'karen@okaxis'),
+(60, 'BK-68371CB2A1779', 5, 1696, '2025-05-28 16:24:50', '2025-05-29', 1, 3953.00, 'karenelisha0204@gmail.com', '7013631447', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-28 19:58:21', 'karen@okaxis'),
+(61, 'BK-683720CBD2B5C', 5, 1696, '2025-05-28 16:42:19', '2025-05-29', 1, 3953.00, 'harry@gmail.com', '9591553820', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-28 20:12:34', 'harry@okaxis'),
+(62, 'BK-683721A70303B', 5, 1335, '2025-05-28 16:45:59', '2025-06-01', 1, 3835.00, 'karenelisha0204@gmail.com', '7338553820', 'Cancelled', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-28 21:04:37', 'karen@okaxis'),
+(63, 'BK-683723224FD00', 5, 1335, '2025-05-28 16:52:18', '2025-06-01', 1, 3835.00, 'harry@gmail.com', '9886026336', 'Confirmed', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-28 20:22:29', 'karen@okaxis'),
+(64, 'BK-68372BFF71D86', 5, 1696, '2025-05-28 17:30:07', '2025-05-29', 1, 3953.00, 'harry@gmail.com', '9886026336', 'Cancelled', 'Completed', 'upi', '0000-00-00 00:00:00', '2025-05-28 21:18:59', 'kevin@okaxis');
 
 -- --------------------------------------------------------
 
@@ -392,7 +399,10 @@ INSERT INTO `generated_tickets` (`ticket_id`, `booking_id`, `user_id`, `booking_
 (5, 54, 11, 'BK-68316436A3F44', '            <div>\r\n              <h2>BookMyFlight Ticket</h2>\r\n              <strong>Booking Reference:</strong> BK-68316436A3F44<br>\r\n              <strong>Flight:</strong> SG-SG1005<br>\r\n              <strong>Date:</strong> 24 May 2025<br>\r\n              <strong>From:</strong> GOI \r\n              <strong>To:</strong> BOM<br>\r\n              <strong>Departure:</strong> 14:00 \r\n              <strong>Arrival:</strong> 15:15<br>\r\n              <strong>Passengers:</strong>\r\n              <ul>\r\n                                  <li>Dhanya Reddy (Seat: TBA)</li>\r\n                              </ul>\r\n            </div>\r\n            ', '{\"booking_id\":54,\"booking_reference\":\"BK-68316436A3F44\",\"user_id\":11,\"flight_id\":1648,\"booking_date\":\"2025-05-24 08:16:22\",\"travel_date\":\"2025-05-24\",\"num_passengers\":1,\"total_amount\":\"4543.00\",\"contact_email\":\"dhanya@gmail.com\",\"contact_phone\":\"7013631447\",\"booking_status\":\"Confirmed\",\"payment_status\":\"Completed\",\"payment_method\":\"upi\",\"created_at\":\"0000-00-00 00:00:00\",\"updated_at\":\"2025-05-24 11:46:31\",\"payment_details\":\"karen@okaxis\",\"airline_id\":\"SG\",\"flight_number\":\"SG1005\",\"origin_airport\":\"GOI\",\"destination_airport\":\"BOM\",\"departure_time\":\"2025-05-24 14:00:00\",\"arrival_time\":\"2025-05-24 15:15:00\",\"duration\":75}', '[{\"passenger_id\":18,\"booking_id\":54,\"first_name\":\"Dhanya\",\"last_name\":\"Reddy\",\"gender\":\"female\",\"age\":20,\"seat_number\":\"TBA\"}]', 'active', '2025-05-24 06:16:31', '2025-05-24 06:16:31'),
 (6, 55, 11, 'BK-68316516ABC50', '            <div>\r\n              <h2>BookMyFlight Ticket</h2>\r\n              <strong>Booking Reference:</strong> BK-68316516ABC50<br>\r\n              <strong>Flight:</strong> AAI-AAI1009<br>\r\n              <strong>Date:</strong> 24 May 2025<br>\r\n              <strong>From:</strong> COK \r\n              <strong>To:</strong> AMD<br>\r\n              <strong>Departure:</strong> 20:00 \r\n              <strong>Arrival:</strong> 21:30<br>\r\n              <strong>Passengers:</strong>\r\n              <ul>\r\n                                  <li>Medam  Ritvik (Seat: TBA)</li>\r\n                              </ul>\r\n            </div>\r\n            ', '{\"booking_id\":55,\"booking_reference\":\"BK-68316516ABC50\",\"user_id\":11,\"flight_id\":1652,\"booking_date\":\"2025-05-24 08:20:06\",\"travel_date\":\"2025-05-24\",\"num_passengers\":1,\"total_amount\":\"4307.00\",\"contact_email\":\"medamritvik@gmail.com\",\"contact_phone\":\"7013631447\",\"booking_status\":\"Confirmed\",\"payment_status\":\"Completed\",\"payment_method\":\"upi\",\"created_at\":\"0000-00-00 00:00:00\",\"updated_at\":\"2025-05-24 11:50:15\",\"payment_details\":\"karen@okaxis\",\"airline_id\":\"AAI\",\"flight_number\":\"AAI1009\",\"origin_airport\":\"COK\",\"destination_airport\":\"AMD\",\"departure_time\":\"2025-05-24 20:00:00\",\"arrival_time\":\"2025-05-24 21:30:00\",\"duration\":90}', '[{\"passenger_id\":19,\"booking_id\":55,\"first_name\":\"Medam \",\"last_name\":\"Ritvik\",\"gender\":\"male\",\"age\":18,\"seat_number\":\"TBA\"}]', 'active', '2025-05-24 06:20:15', '2025-05-24 06:20:15'),
 (7, 56, 13, 'BK-68317D06E612F', '            <div>\r\n              <h2>BookMyFlight Ticket</h2>\r\n              <strong>Booking Reference:</strong> BK-68317D06E612F<br>\r\n              <strong>Flight:</strong> GF-GF1002<br>\r\n              <strong>Date:</strong> 24 May 2025<br>\r\n              <strong>From:</strong> BLR \r\n              <strong>To:</strong> HYD<br>\r\n              <strong>Departure:</strong> 09:30 \r\n              <strong>Arrival:</strong> 10:45<br>\r\n              <strong>Passengers:</strong>\r\n              <ul>\r\n                                  <li>Jayden D\'Souza  (Seat: TBA)</li>\r\n                              </ul>\r\n            </div>\r\n            ', '{\"booking_id\":56,\"booking_reference\":\"BK-68317D06E612F\",\"user_id\":13,\"flight_id\":1645,\"booking_date\":\"2025-05-24 10:02:14\",\"travel_date\":\"2025-05-24\",\"num_passengers\":1,\"total_amount\":\"3835.00\",\"contact_email\":\"jayden@gmail.com\",\"contact_phone\":\"9886026336\",\"booking_status\":\"Confirmed\",\"payment_status\":\"Completed\",\"payment_method\":\"upi\",\"created_at\":\"0000-00-00 00:00:00\",\"updated_at\":\"2025-05-24 13:33:44\",\"payment_details\":\"jayden@okaxis\",\"airline_id\":\"GF\",\"flight_number\":\"GF1002\",\"origin_airport\":\"BLR\",\"destination_airport\":\"HYD\",\"departure_time\":\"2025-05-24 09:30:00\",\"arrival_time\":\"2025-05-24 10:45:00\",\"duration\":75}', '[{\"passenger_id\":20,\"booking_id\":56,\"first_name\":\"Jayden\",\"last_name\":\"D\'Souza \",\"gender\":\"male\",\"age\":20,\"seat_number\":\"TBA\"}]', 'active', '2025-05-24 08:03:44', '2025-05-24 08:03:44'),
-(10, 57, 13, 'BK-68317DA355654', '            <div>\r\n              <h2>BookMyFlight Ticket</h2>\r\n              <strong>Booking Reference:</strong> BK-68317DA355654<br>\r\n              <strong>Flight:</strong> GF-GF1002<br>\r\n              <strong>Date:</strong> 24 May 2025<br>\r\n              <strong>From:</strong> BLR \r\n              <strong>To:</strong> HYD<br>\r\n              <strong>Departure:</strong> 09:30 \r\n              <strong>Arrival:</strong> 10:45<br>\r\n              <strong>Passengers:</strong>\r\n              <ul>\r\n                                  <li>Jayden D\'Souza  (Seat: TBA)</li>\r\n                              </ul>\r\n            </div>\r\n            ', '{\"booking_id\":57,\"booking_reference\":\"BK-68317DA355654\",\"user_id\":13,\"flight_id\":1645,\"booking_date\":\"2025-05-24 10:04:51\",\"travel_date\":\"2025-05-24\",\"num_passengers\":1,\"total_amount\":\"3835.00\",\"contact_email\":\"jayden@gmail.com\",\"contact_phone\":\"9886026336\",\"booking_status\":\"Confirmed\",\"payment_status\":\"Completed\",\"payment_method\":\"upi\",\"created_at\":\"0000-00-00 00:00:00\",\"updated_at\":\"2025-05-24 13:35:19\",\"payment_details\":\"robert@okaxis\",\"airline_id\":\"GF\",\"flight_number\":\"GF1002\",\"origin_airport\":\"BLR\",\"destination_airport\":\"HYD\",\"departure_time\":\"2025-05-24 09:30:00\",\"arrival_time\":\"2025-05-24 10:45:00\",\"duration\":75}', '[{\"passenger_id\":21,\"booking_id\":57,\"first_name\":\"Jayden\",\"last_name\":\"D\'Souza \",\"gender\":\"male\",\"age\":20,\"seat_number\":\"TBA\"}]', 'active', '2025-05-24 08:05:19', '2025-05-24 08:05:19');
+(10, 57, 13, 'BK-68317DA355654', '            <div>\r\n              <h2>BookMyFlight Ticket</h2>\r\n              <strong>Booking Reference:</strong> BK-68317DA355654<br>\r\n              <strong>Flight:</strong> GF-GF1002<br>\r\n              <strong>Date:</strong> 24 May 2025<br>\r\n              <strong>From:</strong> BLR \r\n              <strong>To:</strong> HYD<br>\r\n              <strong>Departure:</strong> 09:30 \r\n              <strong>Arrival:</strong> 10:45<br>\r\n              <strong>Passengers:</strong>\r\n              <ul>\r\n                                  <li>Jayden D\'Souza  (Seat: TBA)</li>\r\n                              </ul>\r\n            </div>\r\n            ', '{\"booking_id\":57,\"booking_reference\":\"BK-68317DA355654\",\"user_id\":13,\"flight_id\":1645,\"booking_date\":\"2025-05-24 10:04:51\",\"travel_date\":\"2025-05-24\",\"num_passengers\":1,\"total_amount\":\"3835.00\",\"contact_email\":\"jayden@gmail.com\",\"contact_phone\":\"9886026336\",\"booking_status\":\"Confirmed\",\"payment_status\":\"Completed\",\"payment_method\":\"upi\",\"created_at\":\"0000-00-00 00:00:00\",\"updated_at\":\"2025-05-24 13:35:19\",\"payment_details\":\"robert@okaxis\",\"airline_id\":\"GF\",\"flight_number\":\"GF1002\",\"origin_airport\":\"BLR\",\"destination_airport\":\"HYD\",\"departure_time\":\"2025-05-24 09:30:00\",\"arrival_time\":\"2025-05-24 10:45:00\",\"duration\":75}', '[{\"passenger_id\":21,\"booking_id\":57,\"first_name\":\"Jayden\",\"last_name\":\"D\'Souza \",\"gender\":\"male\",\"age\":20,\"seat_number\":\"TBA\"}]', 'active', '2025-05-24 08:05:19', '2025-05-24 08:05:19'),
+(11, 59, 5, 'BK-68371BFEC1D53', '            <div>\r\n              <h2>BookMyFlight Ticket</h2>\r\n              <strong>Booking Reference:</strong> BK-68371BFEC1D53<br>\r\n              <strong>Flight:</strong> AA-AA1053<br>\r\n              <strong>Date:</strong> 29 May 2025<br>\r\n              <strong>From:</strong> BLR \r\n              <strong>To:</strong> HYD<br>\r\n              <strong>Departure:</strong> 11:00 \r\n              <strong>Arrival:</strong> 12:15<br>\r\n              <strong>Passengers:</strong>\r\n              <ul>\r\n                                  <li>Anandaraj A (Seat: 12A,Window)</li>\r\n                              </ul>\r\n            </div>\r\n            ', '{\"booking_id\":59,\"booking_reference\":\"BK-68371BFEC1D53\",\"user_id\":5,\"flight_id\":1696,\"booking_date\":\"2025-05-28 16:21:50\",\"travel_date\":\"2025-05-29\",\"num_passengers\":1,\"total_amount\":\"3953.00\",\"contact_email\":\"chezanand@gmail.com\",\"contact_phone\":\"7338553820\",\"booking_status\":\"Confirmed\",\"payment_status\":\"Completed\",\"payment_method\":\"upi\",\"created_at\":\"0000-00-00 00:00:00\",\"updated_at\":\"2025-05-28 19:51:57\",\"payment_details\":\"karen@okaxis\",\"airline_id\":\"AA\",\"flight_number\":\"AA1053\",\"origin_airport\":\"BLR\",\"destination_airport\":\"HYD\",\"departure_time\":\"2025-05-29 11:00:00\",\"arrival_time\":\"2025-05-29 12:15:00\",\"duration\":75}', '[{\"passenger_id\":23,\"booking_id\":59,\"first_name\":\"Anandaraj\",\"last_name\":\"A\",\"gender\":\"male\",\"age\":61,\"seat_number\":\"12A,Window\"}]', 'active', '2025-05-28 14:21:57', '2025-05-28 14:21:57'),
+(12, 63, 5, 'BK-683723224FD00', '            <div>\r\n              <h2>BookMyFlight Ticket</h2>\r\n              <strong>Booking Reference:</strong> BK-683723224FD00<br>\r\n              <strong>Flight:</strong> GF-GF370<br>\r\n              <strong>Date:</strong> 01 Jun 2025<br>\r\n              <strong>From:</strong> BLR \r\n              <strong>To:</strong> HYD<br>\r\n              <strong>Departure:</strong> 09:30 \r\n              <strong>Arrival:</strong> 10:45<br>\r\n              <strong>Passengers:</strong>\r\n              <ul>\r\n                                  <li>Harry  Chezhiyan (Seat: TBA)</li>\r\n                              </ul>\r\n            </div>\r\n            ', '{\"booking_id\":63,\"booking_reference\":\"BK-683723224FD00\",\"user_id\":5,\"flight_id\":1335,\"booking_date\":\"2025-05-28 16:52:18\",\"travel_date\":\"2025-06-01\",\"num_passengers\":1,\"total_amount\":\"3835.00\",\"contact_email\":\"harry@gmail.com\",\"contact_phone\":\"9886026336\",\"booking_status\":\"Confirmed\",\"payment_status\":\"Completed\",\"payment_method\":\"upi\",\"created_at\":\"0000-00-00 00:00:00\",\"updated_at\":\"2025-05-28 20:22:29\",\"payment_details\":\"karen@okaxis\",\"airline_id\":\"GF\",\"flight_number\":\"GF370\",\"origin_airport\":\"BLR\",\"destination_airport\":\"HYD\",\"departure_time\":\"2025-06-01 09:30:00\",\"arrival_time\":\"2025-06-01 10:45:00\",\"duration\":75}', '[{\"passenger_id\":27,\"booking_id\":63,\"first_name\":\"Harry \",\"last_name\":\"Chezhiyan\",\"gender\":\"male\",\"age\":19,\"seat_number\":\"TBA\"}]', 'active', '2025-05-28 14:52:29', '2025-05-28 14:52:29'),
+(13, 64, 5, 'BK-68372BFF71D86', '            <div>\r\n              <h2>BookMyFlight Ticket</h2>\r\n              <strong>Booking Reference:</strong> BK-68372BFF71D86<br>\r\n              <strong>Flight:</strong> AA-AA1053<br>\r\n              <strong>Date:</strong> 29 May 2025<br>\r\n              <strong>From:</strong> BLR \r\n              <strong>To:</strong> HYD<br>\r\n              <strong>Departure:</strong> 11:00 \r\n              <strong>Arrival:</strong> 12:15<br>\r\n              <strong>Passengers:</strong>\r\n              <ul>\r\n                                  <li>Harry  Anandaraj (Seat: 9A)</li>\r\n                              </ul>\r\n            </div>\r\n            ', '{\"booking_id\":64,\"booking_reference\":\"BK-68372BFF71D86\",\"user_id\":5,\"flight_id\":1696,\"booking_date\":\"2025-05-28 17:30:07\",\"travel_date\":\"2025-05-29\",\"num_passengers\":1,\"total_amount\":\"3953.00\",\"contact_email\":\"harry@gmail.com\",\"contact_phone\":\"9886026336\",\"booking_status\":\"Confirmed\",\"payment_status\":\"Completed\",\"payment_method\":\"upi\",\"created_at\":\"0000-00-00 00:00:00\",\"updated_at\":\"2025-05-28 21:00:20\",\"payment_details\":\"kevin@okaxis\",\"airline_id\":\"AA\",\"flight_number\":\"AA1053\",\"origin_airport\":\"BLR\",\"destination_airport\":\"HYD\",\"departure_time\":\"2025-05-29 11:00:00\",\"arrival_time\":\"2025-05-29 12:15:00\",\"duration\":75}', '[{\"passenger_id\":28,\"booking_id\":64,\"first_name\":\"Harry \",\"last_name\":\"Anandaraj\",\"gender\":\"male\",\"age\":20,\"seat_number\":\"9A\"}]', 'active', '2025-05-28 15:30:20', '2025-05-28 15:30:20');
 
 -- --------------------------------------------------------
 
@@ -421,7 +431,9 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `notificat
 (17, 12, 'Your booking (Reference: BK-68304F7C62478) has been successfully cancelled. Refund of ₹4,307 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-23 11:01:40'),
 (18, 12, 'Your booking (Reference: BK-6830AF46CC883) has been successfully cancelled. Refund of ₹3,953 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-24 05:13:20'),
 (19, 12, 'Your booking (Reference: BK-6830A6836E354) has been successfully cancelled. Refund of ₹5,930 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-24 05:40:45'),
-(20, 13, 'Your booking (Reference: BK-68317D06E612F) has been successfully cancelled. Refund of ₹3,835 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-24 08:16:26');
+(20, 13, 'Your booking (Reference: BK-68317D06E612F) has been successfully cancelled. Refund of ₹3,835 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-24 08:16:26'),
+(21, 5, 'Your booking (Reference: BK-683721A70303B) has been successfully cancelled. Refund of ₹3,835 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-28 15:34:37'),
+(22, 5, 'Your booking (Reference: BK-68372BFF71D86) has been successfully cancelled. Refund of ₹3,953 will be processed and credited to your account within 7-10 business days.', '', 0, '2025-05-28 15:48:59');
 
 -- --------------------------------------------------------
 
@@ -464,7 +476,14 @@ INSERT INTO `passengers` (`passenger_id`, `booking_id`, `first_name`, `last_name
 (18, 54, 'Dhanya', 'Reddy', 'female', 20, 'TBA'),
 (19, 55, 'Medam ', 'Ritvik', 'male', 18, 'TBA'),
 (20, 56, 'Jayden', 'D\'Souza ', 'male', 20, 'TBA'),
-(21, 57, 'Jayden', 'D\'Souza ', 'male', 20, 'TBA');
+(21, 57, 'Jayden', 'D\'Souza ', 'male', 20, 'TBA'),
+(22, 58, 'Anandaraj', 'A', 'male', 61, '12A,Window'),
+(23, 59, 'Anandaraj', 'A', 'male', 61, '12A,Window'),
+(24, 60, 'Karen', 'Elisha', 'female', 19, '10A,Window'),
+(25, 61, 'Harry ', 'Potter', 'male', 20, '9A'),
+(26, 62, 'Harry ', 'Potter', 'male', 18, '12A,Window'),
+(27, 63, 'Harry ', 'Chezhiyan', 'male', 19, 'TBA'),
+(28, 64, 'Harry ', 'Anandaraj', 'male', 20, '9A');
 
 -- --------------------------------------------------------
 
@@ -544,7 +563,43 @@ INSERT INTO `tickets` (`ticket_id`, `user_id`, `flight_id`, `airline_name`, `num
 (44, 12, 1656, 'Alliance Air', 1, 3350.00, '2025-05-23 21:18:26', ''),
 (45, 11, 1648, 'SpiceJet', 1, 3850.00, '2025-05-24 11:45:37', 'pending'),
 (46, 11, 1652, 'AirAsia India', 1, 3650.00, '2025-05-24 11:49:27', 'pending'),
-(47, 13, 1645, 'Go First', 1, 3250.00, '2025-05-24 13:08:38', '');
+(47, 13, 1645, 'Go First', 1, 3250.00, '2025-05-24 13:08:38', ''),
+(48, 5, 1693, 'Air India', 1, 4350.00, '2025-05-28 19:06:21', 'pending'),
+(49, 5, 1693, 'Air India', 1, 4350.00, '2025-05-28 19:08:37', 'pending'),
+(50, 5, 1702, 'AirAsia India', 1, 3550.00, '2025-05-28 19:10:03', 'pending'),
+(51, 5, 1702, 'AirAsia India', 1, 3550.00, '2025-05-28 19:10:23', 'pending'),
+(52, 5, 1702, 'AirAsia India', 1, 3550.00, '2025-05-28 19:17:03', 'pending'),
+(53, 5, 1693, 'Air India', 1, 4350.00, '2025-05-28 19:29:36', 'pending'),
+(54, 11, 1696, 'Alliance Air', 1, 3350.00, '2025-05-28 19:36:48', 'pending'),
+(55, 11, 1696, 'Alliance Air', 1, 3350.00, '2025-05-28 19:37:29', 'pending'),
+(56, 11, 1696, 'Alliance Air', 1, 3350.00, '2025-05-28 19:41:50', 'pending'),
+(57, 5, 1696, 'Alliance Air', 1, 3350.00, '2025-05-28 19:44:49', ''),
+(58, 5, 1696, 'Alliance Air', 1, 3350.00, '2025-05-28 19:46:11', ''),
+(59, 5, 1696, 'Alliance Air', 1, 3350.00, '2025-05-28 19:50:32', ''),
+(60, 5, 1696, 'Alliance Air', 1, 3350.00, '2025-05-28 19:54:21', ''),
+(61, 5, 1695, 'Go First', 1, 3950.00, '2025-05-28 20:10:16', 'pending'),
+(62, 5, 1334, 'Air India', 1, 5250.00, '2025-05-28 20:11:01', 'pending'),
+(63, 5, 1334, 'Air India', 1, 5250.00, '2025-05-28 20:13:07', 'pending'),
+(64, 5, 1334, 'Air India', 1, 5250.00, '2025-05-28 20:13:40', 'pending'),
+(65, 5, 1335, 'Go First', 1, 3250.00, '2025-05-28 20:14:17', ''),
+(66, 5, 1335, 'Go First', 1, 3250.00, '2025-05-28 20:15:10', ''),
+(67, 5, 1335, 'Go First', 1, 3250.00, '2025-05-28 20:21:52', ''),
+(68, 11, 1705, 'Go First', 1, 3250.00, '2025-05-28 20:32:38', 'pending'),
+(69, 11, 1705, 'Go First', 1, 3250.00, '2025-05-28 20:33:11', 'pending'),
+(70, 11, 1705, 'Go First', 1, 3250.00, '2025-05-28 20:33:48', 'pending'),
+(71, 11, 1705, 'Go First', 1, 3250.00, '2025-05-28 20:34:09', 'pending'),
+(72, 11, 1705, 'Go First', 1, 3250.00, '2025-05-28 20:38:05', 'pending'),
+(73, 11, 1705, 'Go First', 1, 3250.00, '2025-05-28 20:39:30', 'pending'),
+(74, 5, 1696, 'Alliance Air', 1, 3350.00, '2025-05-28 20:40:07', ''),
+(75, 5, 1696, 'Alliance Air', 1, 3350.00, '2025-05-28 20:40:28', ''),
+(76, 5, 1696, 'Alliance Air', 1, 3350.00, '2025-05-28 20:41:00', ''),
+(77, 5, 1696, 'Alliance Air', 1, 3350.00, '2025-05-28 20:46:10', ''),
+(78, 5, 1335, 'Go First', 1, 3250.00, '2025-05-28 20:46:23', ''),
+(79, 5, 1696, 'Alliance Air', 1, 3350.00, '2025-05-28 20:47:09', ''),
+(80, 5, 1335, 'Go First', 1, 3250.00, '2025-05-28 20:48:42', ''),
+(81, 5, 1335, 'Go First', 1, 3250.00, '2025-05-28 20:58:38', ''),
+(82, 5, 1335, 'Go First', 1, 3250.00, '2025-05-28 20:58:42', ''),
+(83, 5, 1696, 'Alliance Air', 1, 3350.00, '2025-05-28 20:59:38', '');
 
 -- --------------------------------------------------------
 
@@ -691,7 +746,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `feedback`
@@ -709,19 +764,19 @@ ALTER TABLE `flights`
 -- AUTO_INCREMENT for table `generated_tickets`
 --
 ALTER TABLE `generated_tickets`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `passengers`
 --
 ALTER TABLE `passengers`
-  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `passenger_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `password_resets`
@@ -733,7 +788,7 @@ ALTER TABLE `password_resets`
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -759,38 +814,11 @@ ALTER TABLE `feedback`
   ADD CONSTRAINT `feedback_ibfk_1` FOREIGN KEY (`flight_id`) REFERENCES `flights` (`flight_id`);
 
 --
--- Constraints for table `flights`
---
-ALTER TABLE `flights`
-  ADD CONSTRAINT `flights_ibfk_1` FOREIGN KEY (`airline_id`) REFERENCES `airlines` (`airline_id`),
-  ADD CONSTRAINT `flights_ibfk_2` FOREIGN KEY (`origin_airport`) REFERENCES `airports` (`airport_id`),
-  ADD CONSTRAINT `flights_ibfk_3` FOREIGN KEY (`destination_airport`) REFERENCES `airports` (`airport_id`);
-
---
 -- Constraints for table `generated_tickets`
 --
 ALTER TABLE `generated_tickets`
   ADD CONSTRAINT `generated_tickets_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`booking_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `generated_tickets_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
-
---
--- Constraints for table `notifications`
---
-ALTER TABLE `notifications`
-  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
-
---
--- Constraints for table `passengers`
---
-ALTER TABLE `passengers`
-  ADD CONSTRAINT `passengers_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`booking_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `tickets`
---
-ALTER TABLE `tickets`
-  ADD CONSTRAINT `tickets_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `tickets_ibfk_2` FOREIGN KEY (`flight_id`) REFERENCES `flights` (`flight_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
