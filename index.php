@@ -105,7 +105,7 @@ $today = date('Y-m-d');
       <span class="text-xl font-bold">BOOKMYFLIGHT</span>
     </div>
     <nav class="hidden md:flex items-center space-x-8">
-      <a href="airline-details.php" class="hover:text-indigo-300 transition">Airlines</a>
+      <a href="airline-details.html" class="hover:text-indigo-300 transition">Airlines</a>
       <a href="feedback.php" class="hover:text-indigo-300 transition">Feedback</a>
       <a href="#destinations" class="hover:text-indigo-300 transition">Destinations</a>
       <div class="relative">
@@ -125,7 +125,7 @@ $today = date('Y-m-d');
   <!-- Mobile Menu -->
   <div id="mobileMenu" class="hidden md:hidden bg-indigo-800 px-6 py-4">
     <div class="flex flex-col space-y-4">
-      <a href="airline-details.php" class="text-white hover:text-indigo-300">Airlines</a>
+      <a href="airline-details.html" class="text-white hover:text-indigo-300">Airlines</a>
       <a href="feedback.php" class="text-white hover:text-indigo-300">Feedback</a>
       <a href="#destinations" class="text-white hover:text-indigo-300">Destinations</a>
       <div class="pt-2 border-t border-indigo-700">
