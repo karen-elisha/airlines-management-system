@@ -47,86 +47,120 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Register | TUXIMO</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Register | BOOKMYFLIGHT</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 font-sans antialiased">
+<body class="bg-gray-900 min-h-screen flex items-center justify-center p-4">
 
-  <!-- Header -->
-  <header class="bg-white shadow-sm">
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <div class="flex items-center space-x-2">
-        <i class="fas fa-shield-alt text-indigo-600 text-2xl"></i>
-        <span class="text-xl font-semibold">Admin Portal</span>
-      </div>
-      <a href="index.html" class="text-gray-600 hover:text-indigo-600 transition">Back to Home</a>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="container mx-auto px-4 py-12 flex justify-center">
-    <div class="bg-white rounded-xl shadow-md w-full max-w-md overflow-hidden">
-
-      <!-- Registration Form -->
-      <div class="p-8">
-        <div class="text-center mb-8">
-          <h1 class="text-2xl font-bold text-gray-800">Register New Admin</h1>
-          <p class="text-gray-600 mt-2">Fill in details to create an account</p>
-        </div>
-
-        <?php if (!empty($error_message)): ?>
-          <div class="mb-4 text-red-600 font-medium"><?php echo $error_message; ?></div>
-        <?php endif; ?>
-
-        <form method="POST" class="space-y-6">
-          <input type="hidden" name="register" value="1" />
-
+  <!-- Register Card -->
+  <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+    <div class="p-8 md:p-10 text-white">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <div class="flex justify-center items-center mb-4">
+          <i class="fas fa-plane-departure text-indigo-400 text-3xl mr-3"></i>
           <div>
-            <label for="full_name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-            <input type="text" name="full_name" required class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-          </div>
-
-          <div>
-            <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-            <input type="text" name="username" required class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-          </div>
-
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input type="email" name="email" required class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-          </div>
-
-          <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <div class="relative">
-              <input type="password" name="password" id="password" required class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-              <button type="button" onclick="togglePassword()" class="absolute right-3 top-3.5 text-gray-500">
-                <i class="far fa-eye"></i>
-              </button>
+            <h1 class="text-2xl font-bold text-indigo-400">BOOKMYFLIGHT</h1>
+            <div class="flex items-center justify-center mt-1">
+              <i class="fas fa-shield-alt text-gray-400 text-sm mr-1"></i>
+              <span class="text-gray-400 text-sm">Admin Portal</span>
             </div>
           </div>
-
-          <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition">
-            Register
-          </button>
-        </form>
+        </div>
+        <p class="text-gray-300 mt-2">Create your admin account</p>
       </div>
+
+      <?php if(!empty($error_message)): ?>
+        <div class="bg-red-500 bg-opacity-20 border border-red-400 text-red-300 px-4 py-3 rounded relative mb-4" role="alert">
+          <span class="block sm:inline"><?php echo htmlspecialchars($error_message); ?></span>
+        </div>
+      <?php endif; ?>
+
+      <!-- Registration Form -->
+      <form method="POST" class="space-y-5">
+        <input type="hidden" name="register" value="1" />
+
+        <div>
+          <label for="full_name" class="block text-sm font-medium mb-1">Full Name</label>
+          <div class="relative">
+            <input type="text" id="full_name" name="full_name" required
+              class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white"
+              value="<?php echo isset($_POST['full_name']) ? htmlspecialchars($_POST['full_name']) : ''; ?>">
+            <i class="fas fa-user-tie absolute right-3 top-3.5 text-gray-400"></i>
+          </div>
+        </div>
+
+        <div>
+          <label for="username" class="block text-sm font-medium mb-1">Username</label>
+          <div class="relative">
+            <input type="text" id="username" name="username" required
+              class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white"
+              value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
+            <i class="fas fa-user absolute right-3 top-3.5 text-gray-400"></i>
+          </div>
+        </div>
+
+        <div>
+          <label for="email" class="block text-sm font-medium mb-1">Email Address</label>
+          <div class="relative">
+            <input type="email" id="email" name="email" required
+              class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white"
+              value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+            <i class="fas fa-envelope absolute right-3 top-3.5 text-gray-400"></i>
+          </div>
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium mb-1">Password</label>
+          <div class="relative">
+            <input type="password" id="password" name="password" required
+              class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white">
+            <i class="fas fa-lock absolute right-3 top-3.5 text-gray-400"></i>
+            <button type="button" onclick="togglePassword()" class="absolute right-10 top-3.5 text-gray-400 hover:text-gray-300">
+              <i class="far fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-2">
+          <a href="index.php" class="inline-flex items-center px-3 py-1 text-sm bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-md transition">
+            <i class="fas fa-home mr-1"></i>
+            Back to Home
+          </a>
+          <a href="admin-login.php" class="text-sm text-indigo-400 hover:underline">
+            Already have an account?
+          </a>
+        </div>
+
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium transition">
+          Create Admin Account
+        </button>
+      </form>
     </div>
-  </main>
+  </div>
 
   <!-- Footer -->
-  <footer class="bg-white py-6 border-t">
-    <div class="container mx-auto px-6 text-center text-gray-500 text-sm">
-      &copy; © 2025 BOOKMYFLIGHT. All rights reserved. | Academic Project
+  <footer class="fixed bottom-0 left-0 right-0 bg-gray-800 py-4 border-t border-gray-700">
+    <div class="container mx-auto px-6 text-center text-gray-400 text-sm">
+      &copy; 2025 BOOKMYFLIGHT. All rights reserved. | Academic Project
+    </div>
   </footer>
 
   <script>
+    // Toggle password visibility
     function togglePassword() {
-      const pwd = document.getElementById('password');
-      pwd.type = pwd.type === 'password' ? 'text' : 'password';
+      const password = document.getElementById('password');
+      const icon = document.querySelector('#password ~ button i');
+      if (password.type === 'password') {
+        password.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        password.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      }
     }
   </script>
 </body>
