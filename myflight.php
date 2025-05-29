@@ -58,7 +58,9 @@ function getAirlineLogo($airline_name) {
         'Vistara' => 'https://logo.clearbit.com/airvistara.com',
         'SpiceJet' => 'https://logo.clearbit.com/spicejet.com',
         'GoAir' => 'https://logo.clearbit.com/goair.in',
-        'Go First' => 'https://logo.clearbit.com/goair.in'
+        'Go First' => 'https://logo.clearbit.com/goair.in',
+        'Alliance Air'=>' https://logo.clearbit.com/allianceair.in',
+        'AirAsia India'=>' https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/AirAsia_New_Logo.svg/1200px-AirAsia_New_Logo.svg.png'
     ];
     return isset($logos[$airline_name]) ? $logos[$airline_name] : '/api/placeholder/40/40';
 }
