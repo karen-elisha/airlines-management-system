@@ -44,9 +44,9 @@ User Module
 
 ![Image](https://github.com/user-attachments/assets/533b10be-7f96-47e1-b7d4-4128af515831)
 
-![Image](https://github.com/user-attachments/assets/6b4989c2-de2f-498e-97ce-4c3de7548ce7)
-
 Admin Module
+
+![Image](https://github.com/user-attachments/assets/6b4989c2-de2f-498e-97ce-4c3de7548ce7)
 
 ![Image](https://github.com/user-attachments/assets/c27e5669-cfab-4cdb-917b-dee4af66284c)
 
